@@ -27,6 +27,9 @@ namespace BD_client.Domain
         [JsonProperty("role")]
         public UserState? Role { get; set; }
 
+        [JsonProperty("uuid")]
+        public String uuid { get; set; }
+
         public User()
         {
 

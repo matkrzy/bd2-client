@@ -1,20 +1,14 @@
-﻿using BD_client.Domain;
-using MahApps.Metro.Controls.Dialogs;
+﻿using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Configuration;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
-using BD_client.Services;
+using BD_client.Api.Core;
+using BD_client.Domain;
 
 namespace BD_client.ViewModels
 {
@@ -26,12 +20,10 @@ namespace BD_client.ViewModels
         public ICommand RegisterCmd { get; set; }
         private String _password;
         private String _email;
+
         public string Password
         {
-            get
-            {
-                return _password;
-            }
+            get { return _password; }
             set
             {
                 _password = value;
@@ -41,10 +33,7 @@ namespace BD_client.ViewModels
 
         public string Email
         {
-            get
-            {
-                return _email;
-            }
+            get { return _email; }
             set
             {
                 _email = value;
@@ -57,53 +46,47 @@ namespace BD_client.ViewModels
             dialogCoordinator = instance;
             LoginCmd = new RelayCommand(x => Login());
             RegisterCmd = new RelayCommand(x => Register());
+
         }
 
-        public static void TemporaryLogin()
-        {
-            var email = ConfigurationManager.AppSettings["Email"];
-            var values = new
-            {
-                email = email,
-                password = ConfigurationManager.AppSettings["Password"]
-            };
-            string json = JsonConvert.SerializeObject(values, Formatting.Indented);
-            ApiRequest.Post("/login", json);
-        }
 
-        private void LoginUser()
+        private void Login()
         {
             var values = new Dictionary<string, string>
             {
-                { "email", Email },
-                { "password", Password }
+                {"email", Email},
+                {"password", Password}
             };
 
-            string json = JsonConvert.SerializeObject(values, Formatting.Indented);
-            ApiRequest.Post("/login", json);
-        }
-        public async void Login()
-        {
+            Response response = new Request("/login").DoPost(values);
 
-            try
+            if (response.AsHttpWebResponse().StatusCode == HttpStatusCode.OK)
             {
-                LoginUser();
+                Cookie cookie = response.AsHttpWebResponse().Cookies[0];
+                String JWT = ConfigurationManager.AppSettings["JWT"] = cookie.Value;
+
+                var user = JsonConvert.DeserializeObject<User>(response.AsString());
+                File.WriteAllText("./token", JWT);
+
+                ConfigurationManager.AppSettings["uuid"] = user.uuid;
+
                 MainWindow.MainVM.Enabled = true;
                 MainWindow.MainVM.Page = "Pages/MyPhotosPage.xaml";
                 MainWindow.MainVM.SelectedIndex = -1;
                 MainWindow.MainVM.User = Email;
             }
-            catch (Exception)
+            else
             {
-                await dialogCoordinator.ShowMessageAsync(this, "Error", "Login failed");
+                dialogCoordinator.ShowMessageAsync(this, "Error", "Login failed");
             }
-
         }
+
 
         public void Register()
         {
             MainWindow.MainVM.Page = "Pages/RegisterPage.xaml";
         }
+
         virtual protected void OnPropertyChanged(string propName)
         {
             if (PropertyChanged != null)

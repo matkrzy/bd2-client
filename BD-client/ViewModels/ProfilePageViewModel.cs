@@ -4,11 +4,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using BD_client.Services;
 
@@ -90,7 +85,7 @@ namespace BD_client.ViewModels
             set
             {
                 _email = value;
-                OnPropertyChanged("Email");
+                OnPropertyChanged("email");
             }
         }
 
