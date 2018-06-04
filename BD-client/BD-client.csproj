@@ -79,6 +79,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Api\Core\Request.cs" />
+    <Compile Include="Api\Core\Response.cs" />
     <Compile Include="Converters\StringToImageConverter.cs" />
     <Compile Include="Common\DataGridBehavior.cs" />
     <Compile Include="Common\NotifyTaskCompletion.cs" />

@@ -66,7 +66,7 @@ namespace BD_client.ViewModels
             set
             {
                 _email = value;
-                OnPropertyChanged("Email");
+                OnPropertyChanged("email");
             }
         }
 
