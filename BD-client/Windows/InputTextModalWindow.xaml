@@ -1,0 +1,25 @@
+﻿<Window x:Class="BD_client.Windows.InputTextModalWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BD_client.Windows"
+        mc:Ignorable="d"
+        Title="ModalWindow" Height="160" Width="300" WindowStartupLocation="CenterScreen" ContentRendered="OnContentRendered">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Label Name="Question" Grid.Row="0">Question:</Label>
+        <TextBox Name="AnswerTextbox" Grid.Row="1">Answer</TextBox>
+
+        <WrapPanel Grid.Row="2" HorizontalAlignment="Right">
+            <Button IsDefault="True" Name="Accept" Click="OnAcceptClick" Margin="0,5">OK</Button>
+            <Button IsCancel="True" Content="Cancel" Margin="10,5"/>
+        </WrapPanel>
+
+    </Grid>
+</Window>

@@ -1,0 +1,41 @@
+﻿<Page x:Class="BD_client.Pages.ProfilePage"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+       xmlns:common="clr-namespace:BD_client.Common"
+      xmlns:local="clr-namespace:BD_client.Pages"
+      mc:Ignorable="d" 
+      Height="500" Width="700"
+      Title="ProfilePage"
+    xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+      Dialog:DialogParticipation.Register="{Binding}">
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid>
+        <Label x:Name="nameLabel" Content="First name" HorizontalAlignment="Left" Margin="222,147,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="surnameLabel" Content="Last name" HorizontalAlignment="Left" Margin="222,178,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="emailLabel" Content="E-mail" HorizontalAlignment="Left" Margin="222,209,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="passwordLabel" Content="Password" HorizontalAlignment="Left" Margin="222,240,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="roleLabel" Content="Role" HorizontalAlignment="Left" Margin="222,271,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="name" HorizontalAlignment="Left" Height="23" Margin="344,147,0,0" TextWrapping="Wrap" Text="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="187"/>
+        <TextBox x:Name="surname" HorizontalAlignment="Left" Height="23" Margin="344,178,0,0" TextWrapping="Wrap" Text="{Binding Path=Surname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="187"/>
+        <TextBox x:Name="email" HorizontalAlignment="Left" Height="23" Margin="344,209,0,0" TextWrapping="Wrap" Text="{Binding Path=Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="187" IsEnabled="False"/>
+        <PasswordBox x:Name="password" HorizontalAlignment="Left" Height="23" Margin="344,240,0,0" VerticalAlignment="Top" Width="187" common:PasswordBoxAssistant.BindPassword="True" common:PasswordBoxAssistant.BoundPassword="{Binding Path=Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox x:Name="role" HorizontalAlignment="Left" Height="23" Margin="344,271,0,0" TextWrapping="Wrap" Text="{Binding Path=Role, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="187" IsEnabled="False"/>
+
+
+        <Button x:Name="editBtn" Content="Edit" Height="50" Width="150" Style="{StaticResource AccentedSquareButtonStyle}" Command="{Binding EditCmd}" Margin="365,329,185,121"/>
+    </Grid>
+</Page>

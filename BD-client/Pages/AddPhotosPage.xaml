@@ -1,0 +1,50 @@
+﻿<Page x:Class="BD_client.Pages.AddPhotosPage"
+       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+      xmlns:common="clr-namespace:BD_client.Common"
+      xmlns:local="clr-namespace:BD_client.Pages"
+      mc:Ignorable="d" 
+      Height="500" Width="700"
+      Title="AddPhotosPage"
+      xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+      Dialog:DialogParticipation.Register="{Binding}">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid>
+
+
+        <Button x:Name="browseBtn" Content="Browse for photos" Height="50" Width="150" Style="{StaticResource AccentedSquareButtonStyle}" Command="{Binding BrowseCmd}" Margin="520,63,30,387"/>
+        <Button x:Name="addBtn" Content="Add Photos" Height="50" Width="150" Style="{StaticResource AccentedSquareButtonStyle}" Command="{Binding AddCmd}" Margin="331,386,215,64"/>
+        <Button x:Name="cancelBtn" Content="Cancel" Height="50" Width="150" Style="{StaticResource AccentedSquareButtonStyle}" Command="{Binding CancelCmd}" Margin="520,386,30,64"/>
+
+        <DataGrid ItemsSource="{Binding Photos}" Margin="55,134,30,128"
+                  AutoGenerateColumns="True"
+                  Style="{StaticResource AzureDataGrid}"                  
+                  SelectedIndex="{Binding DataGridSelectedIndex}"
+                  SelectionMode="Single"
+                  common:DataGridBehavior.UseBrowsableAttributeOnColumn="True">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Remove" Command="{Binding RemovePhotoCmd}"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+
+
+
+        </DataGrid>
+    </Grid>
+</Page>

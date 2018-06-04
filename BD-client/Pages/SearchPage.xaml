@@ -1,0 +1,105 @@
+﻿<Page x:Class="BD_client.Pages.SearchPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+      xmlns:common="clr-namespace:BD_client.Common"
+      xmlns:local="clr-namespace:BD_client.Pages"
+      mc:Ignorable="d" 
+     Height="500" Width="700"
+      Title="SearchPage"
+      xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+      Dialog:DialogParticipation.Register="{Binding}">
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid>
+        <TextBox x:Name="searchDescription" Controls:TextBoxHelper.Watermark="Description" HorizontalAlignment="Left" Height="29" Margin="310,67,0,0" TextWrapping="Wrap" Text="{Binding DescriptionPhrase, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="150" Style="{DynamicResource SearchMetroTextBox}" Controls:TextBoxHelper.ButtonCommand="{Binding DescriptionCmd}"/>
+        <TextBox x:Name="searchTags" Controls:TextBoxHelper.Watermark="Tags" HorizontalAlignment="Left" Height="29" Margin="310,101,0,0" TextWrapping="Wrap" Text="{Binding TagsPhrase, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="150" Style="{DynamicResource SearchMetroTextBox}" Controls:TextBoxHelper.ButtonCommand="{Binding TagsCmd}"/>
+        <TextBox x:Name="searchExif" Controls:TextBoxHelper.Watermark="Exif" HorizontalAlignment="Left" Height="29" Margin="310,135,0,0" TextWrapping="Wrap" Text="{Binding ExifPhrase, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="150" Style="{DynamicResource SearchMetroTextBox}" Controls:TextBoxHelper.ButtonCommand="{Binding ExifCmd}"/>
+
+        <Button x:Name="searchBtn" Content="Search" Height="50" Width="150" Style="{StaticResource AccentedSquareButtonStyle}" Command="{Binding SearchCmd}" Margin="332,191,218,259"/>
+        <Button x:Name="cancelBtn" Content="Cancel" Height="50" Width="150" Style="{StaticResource AccentedSquareButtonStyle}" Command="{Binding CancelCmd}" Margin="520,191,30,259"/>
+        <Controls:SplitButton 
+            Icon="{DynamicResource appbar_folder}"
+            HorizontalContentAlignment="Left"
+            HorizontalAlignment="Center"
+            VerticalContentAlignment="Center"
+            Width="174"
+            SelectedIndex="{Binding CategorySelectedIndex}"
+            ItemsSource="{Binding Categories}"
+            DisplayMemberPath="Name"
+            VerticalAlignment="Center" Margin="106,67,420,336" Height="97" 
+            Command="{Binding CategoryCmd}"/>
+
+        <DataGrid ItemsSource="{Binding SearchFilters}" Margin="491,67,44,336"
+                  AutoGenerateColumns="True"
+                  Style="{StaticResource AzureDataGrid}"
+                  SelectedIndex="{Binding DataGridSelectedIndex}"
+                  SelectionMode="Single">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Remove" Command="{Binding RemoveFilterCmd}"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+        </DataGrid>
+
+
+        <GroupBox Grid.Column="0" Margin="51,262,20,63">
+            <ListBox
+                    Width="{Binding ActualWidth, ElementName=MainGrid}"                
+                    ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    HorizontalAlignment="Left"
+                    IsSynchronizedWithCurrentItem="True"
+                    Name="MyPhotosListBox" 
+                    ItemsSource="{Binding PhotosResult}"
+                    SelectionMode="Extended"
+                    MouseDoubleClick="OnPhotoDbClick">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                            <Image Source="{Binding Path}" Height="{Binding ElementName=ZoomSlider, Path='Value'}" Width="{Binding ElementName=ZoomSlider, Path='Value'}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Stretch="UniformToFill" Margin="0 5 5 0" />
+                            <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Bottom" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Edit" Click="OnEditPhoto"/>
+                        <MenuItem Header="Download" Click="OnDownloadPhoto"/>
+                        <MenuItem Header="Remove" Click="OnRemovePhoto"/>
+                        <MenuItem Header="Share" Click="OnSharePhoto"/>
+                    </ContextMenu>
+                </ListBox.ContextMenu>
+            </ListBox>
+        </GroupBox>
+        <Slider Name="ZoomSlider" 
+                Width="200"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal" 
+                Minimum="40" 
+                Maximum="250" 
+                Value="100" 
+                Style="{DynamicResource FlatSlider}"
+                SmallChange="5"
+                LargeChange="20" Margin="0,442,20,35" />
+
+
+
+    </Grid>
+</Page>

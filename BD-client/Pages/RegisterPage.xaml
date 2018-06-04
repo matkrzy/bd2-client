@@ -1,0 +1,35 @@
+﻿<Page x:Class="BD_client.Pages.RegisterPage"
+xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+      xmlns:local="clr-namespace:BD_client.Pages"
+      xmlns:common="clr-namespace:BD_client.Common"
+      mc:Ignorable="d" 
+      Height="500" Width="700"
+      Title="RegisterPage"
+      xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+      Dialog:DialogParticipation.Register="{Binding}">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid>
+        <TextBox x:Name="name"  Controls:TextBoxHelper.Watermark="Name" HorizontalAlignment="Left" Controls:TextBoxHelper.ClearTextButton="True" Height="23" Margin="174,147,0,0" TextWrapping="Wrap" Text="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="352"/>
+        <TextBox x:Name="surname" Controls:TextBoxHelper.Watermark="Surname" HorizontalAlignment="Left" Controls:TextBoxHelper.ClearTextButton="True" Height="23" Margin="174,178,0,0" TextWrapping="Wrap" Text="{Binding Path=Surname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="352"/>
+        <TextBox x:Name="email" Controls:TextBoxHelper.Watermark="E-mail" HorizontalAlignment="Left" Controls:TextBoxHelper.ClearTextButton="True" Height="23" Margin="174,209,0,0" TextWrapping="Wrap" Text="{Binding Path=Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="352"/>
+        <PasswordBox x:Name="password" Controls:TextBoxHelper.Watermark="Password"  HorizontalAlignment="Left" Controls:TextBoxHelper.ClearTextButton="True" Height="23" Margin="174,240,0,0" VerticalAlignment="Top" Width="352" common:PasswordBoxAssistant.BindPassword="True" common:PasswordBoxAssistant.BoundPassword="{Binding Path=Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <Button x:Name="cancelBtn" Content="Cancel" Height="50" Width="150" Style="{StaticResource AccentedSquareButtonStyle}" Command="{Binding CancelCmd}" Margin="376,297,174,153"/>
+        <Button x:Name="registerBtn" Content="Register" Height="50" Width="150" Style="{StaticResource AccentedSquareButtonStyle}" Command="{Binding RegisterCmd}" Margin="174,297,376,153"/>
+    </Grid>
+</Page>

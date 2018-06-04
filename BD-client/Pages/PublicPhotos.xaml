@@ -1,0 +1,135 @@
+﻿<Page x:Class="BD_client.Pages.PublicPhotos"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+      xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+      xmlns:local="clr-namespace:BD_client.Pages"
+      xmlns:custom="clr-namespace:BD_client.Converters;assembly="
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="PublicPhotos"
+      xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+      Dialog:DialogParticipation.Register="{Binding}">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <custom:StringToImageConverter x:Key="StringToImageConverter" />
+        </ResourceDictionary>
+    </Page.Resources>
+
+
+    <Grid Margin="50,40,10,10" HorizontalAlignment="Center">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="100"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="25"/>
+        </Grid.RowDefinitions>
+        <TextBox Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark ="Search" Grid.Row="0" Grid.Column="1" Height="10" Width="100"/>
+
+        <TabControl Name="TabControl" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2">
+            <TabItem Header="Hot" >
+                <ListBox
+                    ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    IsSynchronizedWithCurrentItem="True"
+                    Name="HotPhotosListBox" 
+                    ItemsSource="{Binding Photos}"
+                    SelectionMode="Single">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDoubleClick">
+                            <i:InvokeCommandAction Command="{Binding LikeCmd}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin=" 0, 20">
+                                <Image Source="{Binding Path, Converter = {StaticResource StringToImageConverter} }" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Top" Stretch="UniformToFill" Margin="0 5 5 0" />
+                                <TextBlock Text="{Binding UploadTime}" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                                <TextBlock Text="{Binding UserEmail}" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                                <TextBlock Text="{Binding Rate}" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </TabItem>
+            <TabItem Header="Trending">
+                <ListBox
+                    ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    IsSynchronizedWithCurrentItem="True"
+                    Name="TrendingPhotosListBox" 
+                    ItemsSource="{Binding Photos}"
+                    SelectionMode="Single">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDoubleClick">
+                            <i:InvokeCommandAction Command="{Binding LikeCmd}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin=" 0, 20">
+                                <Image Source="{Binding Path, Converter = {StaticResource StringToImageConverter} }" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Top" Stretch="UniformToFill" Margin="0 5 5 0" />
+                                <TextBlock Text="{Binding UploadTime}" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                                <TextBlock Text="{Binding UserEmail}" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                                <TextBlock Text="{Binding Rate}" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </TabItem>
+            <TabItem Header="Fresh">
+                <ListBox
+                    ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    IsSynchronizedWithCurrentItem="True"
+                    Name="FreshPhotosListBox" 
+                    ItemsSource="{Binding Photos}"
+                    SelectionMode="Single">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDoubleClick">
+                            <i:InvokeCommandAction Command="{Binding LikeCmd}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin=" 0, 20">
+                                <Image Source="{Binding Path, Converter = {StaticResource StringToImageConverter}}" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Top" Stretch="UniformToFill" Margin="0 5 5 0" />
+                                <TextBlock Text="{Binding UploadTime}" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                                <TextBlock Text="{Binding UserEmail}" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                                <TextBlock Text="{Binding Rate}" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </TabItem>
+        </TabControl>
+        <Button Name="PreviousButton" Content="Previous" HorizontalAlignment="Left" Grid.Row="2" VerticalAlignment="Top" Width="75" Grid.ColumnSpan="2" Margin="5,0,0,0"/>
+        <Button Name="NextButton" Content="Next" Grid.Column="1" HorizontalAlignment="Right" Grid.Row="2" VerticalAlignment="Top" Width="75" Margin="0,0,5,0"/>
+    </Grid>
+</Page>
