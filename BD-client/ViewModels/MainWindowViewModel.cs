@@ -7,8 +7,10 @@ using System.IO;
 using System.Net;
 using BD_client.Services;
 using BD_client.Api.Core;
-using BD_client.Domain;
+using BD_client.Dto;
+using BD_client.Pages;
 using Newtonsoft.Json;
+using RestSharp;
 
 
 namespace BD_client.ViewModels
@@ -80,7 +82,7 @@ namespace BD_client.ViewModels
         {
             if (File.Exists("./token"))
             {
-                this.AutoLogin();
+                this.AutoLoginAsync();
             }
 
             String JWT = ConfigurationManager.AppSettings["JWT"];
@@ -88,11 +90,10 @@ namespace BD_client.ViewModels
 
             if (JWT == "" && email == "")
             {
-                Page = "Pages/LogInPage.xaml";
+                Page = "LogInPage.xaml";
             }
             else
             {
-               
                 MyPhotosCmd = new RelayCommand(x => ShowMyPhotos());
                 ProfileCmd = new RelayCommand(x => Profile());
                 LogoutCmd = new RelayCommand(x => Logout());
@@ -102,26 +103,27 @@ namespace BD_client.ViewModels
 
                 Enabled = true;
                 User = email;
-                Page = "Pages/MyPhotosPage.xaml";
+                Page = "MyPhotosPage.xaml";
+                SelectedIndex = -1;
             }
         }
 
-        private void AutoLogin()
+        private async void AutoLoginAsync()
         {
             ConfigurationManager.AppSettings["JWT"] = File.ReadAllText("./token");
 
-            Response response = new Request("/user/me").DoGet();
+            IRestResponse response = await new Request("/users/me").DoGet();
 
-            if (response.AsHttpWebResponse().StatusCode == HttpStatusCode.OK)
+            if (response.StatusCode == HttpStatusCode.OK)
             {
-                var user = JsonConvert.DeserializeObject<User>(response.AsString());              
+                var user = JsonConvert.DeserializeObject<User>(response.Content);
                 MainWindow.MainVM.User = user.Email;
             }
         }
 
         private void Help()
         {
-            MainWindow.MainVM.Page = "Pages/HelpPage.xaml";
+            MainWindow.MainVM.Page = "HelpPage.xaml";
             MainWindow.MainVM.SelectedIndex = -1;
         }
 
@@ -133,25 +135,25 @@ namespace BD_client.ViewModels
 
         private void ShowCategories()
         {
-            MainWindow.MainVM.Page = "Pages/CategoriesPage.xaml";
+            MainWindow.MainVM.Page = "CategoriesPage.xaml";
             MainWindow.MainVM.SelectedIndex = -1;
         }
 
         private void ShowMyPhotos()
         {
-            MainWindow.MainVM.Page = "Pages/MyPhotosPage.xaml";
+            MainWindow.MainVM.Page = "MyPhotosPage.xaml";
             MainWindow.MainVM.SelectedIndex = -1;
         }
 
         private void ShowPublicPhotos()
         {
-            MainWindow.MainVM.Page = "Pages/PublicPhotos.xaml";
+            MainWindow.MainVM.Page = "PublicPhotos.xaml";
             MainWindow.MainVM.SelectedIndex = -1;
         }
 
         private void Logout()
         {
-            Response response = new Request("/account/logout").DoGet();
+//            Response response = new Request("/account/logout").DoGet();
             String uuid = ConfigurationManager.AppSettings["uudi"];
 
             File.Delete("./token");
@@ -159,7 +161,7 @@ namespace BD_client.ViewModels
             ConfigurationManager.AppSettings["uudi"] = "";
 
             ApiRequest.JWT = null;
-            MainWindow.MainVM.Page = "Pages/LogInPage.xaml";
+            MainWindow.MainVM.Page = "LogInPage.xaml";
             MainWindow.MainVM.SelectedIndex = -1;
             MainWindow.MainVM.Enabled = false;
             MainWindow.MainVM.User = "";
@@ -167,7 +169,7 @@ namespace BD_client.ViewModels
 
         private void Profile()
         {
-            MainWindow.MainVM.Page = "Pages/ProfilePage.xaml";
+            MainWindow.MainVM.Page = "ProfilePage.xaml";
             MainWindow.MainVM.SelectedIndex = -1;
         }
     }

@@ -1,37 +1,38 @@
 ﻿using BD_client.Common;
-using BD_client.Data.Photos;
-using BD_client.Domain;
-using BD_client.Services;
-using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
+using BD_client.Api.Core;
+using BD_client.Dto;
+using Newtonsoft.Json;
+using RestSharp;
 
 namespace BD_client.ViewModels
 {
     public class MyPhotosPageViewModel : INotifyPropertyChanged
     {
-
         public event PropertyChangedEventHandler PropertyChanged = null;
 
         private string _page;
-        public NotifyTaskCompletion<PhotoCollection> Photos { get; set; }
+        public ObservableCollection<Photo> _Photos { get; set; }
+
+        public ObservableCollection<Photo> Photos
+        {
+            get { return _Photos; }
+            set { _Photos = value;
+                OnPropertyChanged("Photos");
+            }
+        }
+
 
         private IDialogCoordinator dialogCoordinator;
 
 
         public string Page
         {
-            get
-            {
-                return _page;
-            }
+            get { return _page; }
             set
             {
                 _page = value;
@@ -42,40 +43,21 @@ namespace BD_client.ViewModels
         public MyPhotosPageViewModel(IDialogCoordinator instance)
         {
             dialogCoordinator = instance;
-            var path = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + "//Img//photos";
-            Photos = new NotifyTaskCompletion<PhotoCollection>(GetAllUserPhotos());
+            this.GetAllUserPhotos();
         }
 
 
-        virtual protected void OnPropertyChanged(string propName)
+        protected virtual void OnPropertyChanged(string propName)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));
         }
 
-        private async Task<PhotoCollection> GetAllUserPhotos()
+        private async void GetAllUserPhotos()
         {
-            var destination = Directory.GetCurrentDirectory() + @"\..\..\tmp\own";
-            var photos = await PhotoService.GetAllUserPhotos();
-            MainWindow.MainVM.Photos = photos;
-            //TODO: różne typy zdjęć, nie tylko jpg
-            foreach (var photo in photos)
-            {
-                var completePath = $@"{destination}\{photo.Id}.jpg";
-                if (!File.Exists(completePath))
-                {
-                    // jeżeli zdjęcie nie jest jeszcze pobrane
-                    if (!(await ImageService.DownloadImageToLocation(completePath, photo.Id)))
-                    {
-                        //TODO: wyświetlić komunikat informujący o błędzie
-                    }
-                }
-            }
-            return new PhotoCollection(destination, photos);
+            IRestResponse response = await new Request("/photos").DoGet();
+
+            this.Photos = JsonConvert.DeserializeObject<ObservableCollection<Photo>>(response.Content);
         }
-
-
-
-
     }
 }

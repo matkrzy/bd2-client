@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Web;
+using RestSharp;
 
 namespace BD_client.Api.Core
 {
@@ -21,104 +18,85 @@ namespace BD_client.Api.Core
     {
         private static String apiHost = ConfigurationManager.AppSettings["ApiHost"];
         private static String apiPath = ConfigurationManager.AppSettings["ApiPath"];
-        private static String JWT = ConfigurationManager.AppSettings["JWT"];
         private static String apiUrl = apiHost + apiPath;
-        private HttpWebRequest request = null;
+        private static String JWT = ConfigurationManager.AppSettings["JWT"];
         private AuthorizationType authType = AuthorizationType.Cookies;
+
+        private RestClient client = null;
+        private RestRequest request = null;
 
         private void AddJwtToken()
         {
-            switch (this.authType)
+            Cookie cookie = new Cookie
             {
-                case AuthorizationType.Cookies:
-                {
-                    Cookie cookie = new Cookie
-                    {
-                        Name = "JWT",
-                        Value = JWT,
-                        Domain = request.RequestUri.Host
-                    };
+                Name = "JWT",
+                Value = JWT,
+                Domain = new Uri(apiUrl).Host,
+            };
 
-                    this.request.CookieContainer = new CookieContainer();
-                    this.request.CookieContainer.Add(cookie);
-                    break;
-                }
-                case AuthorizationType.Header:
-                {
-                    this.request.Headers["Authorization"] = "Bearer " + JWT;
-                    break;
-                }
-            }
-        }
-
-        private void addBody(object data)
-        {
-            string dataString = JsonConvert.SerializeObject(data, Formatting.Indented);
-
-            request.ContentLength = dataString.Length;
-            using (Stream stream = this.request.GetRequestStream())
-            {
-                stream.Write(Encoding.ASCII.GetBytes(dataString), 0, dataString.Length);
-            }
+            this.client.CookieContainer = new CookieContainer();
+            this.client.CookieContainer.Add(cookie);
         }
 
         public Request(String endpoint)
         {
-            String requestUrl = apiUrl + endpoint;
-            this.request = (HttpWebRequest) WebRequest.Create(requestUrl);
+            this.client = new RestClient(apiUrl);
+            this.request = new RestRequest(endpoint);
             this.AddJwtToken();
         }
 
-
-        public Response DoPost(object data)
+        public void AddParameter(String name, String value)
         {
-            this.request.Method = "POST";
-            this.request.ContentType = "application/json";
-
-            this.addBody(data);
-
-            return new Response(this.request);
+            this.request.AddParameter(name, value);
         }
 
-        public Response DoPost(MultipartFormDataContent form)
+        public void AddFile(string path)
         {
-            this.request.Method = "POST";
-            this.request.ContentType = "application/json";
-
-            //TODO add multipart form body convert
-
-            return new Response(this.request);
+            string mimeType = MimeMapping.GetMimeMapping(path);
+            request.AddFile("file", path, "application/octet-stream");
         }
 
-        public Response DoGet(object data)
-        {
-            this.request.Method = "GET";
 
-            return new Response(this.request);
+        public async Task<IRestResponse> DoGet()
+        {
+            this.request.Method = Method.GET;
+
+            return await client.ExecuteTaskAsync(this.request);
         }
 
-        public Response DoGet()
+        public async Task<IRestResponse> DoPost(object data)
         {
-            this.request.Method = "GET";
+            this.request.Method = Method.POST;
+            this.request.AddHeader("Content-type", "application/json");
+            this.request.RequestFormat = DataFormat.Json;
+            request.AddJsonBody(data);
 
-            return new Response(this.request);
+            return await client.ExecuteTaskAsync(this.request);
         }
 
-        public Response DoPut(object data)
+        public async Task<IRestResponse> DoPost()
         {
-            this.request.Method = "PUT";
-            this.request.ContentType = "application/json";
+            this.request.Method = Method.POST;
+            this.request.AlwaysMultipartFormData = true;
 
-            this.addBody(data);
-
-            return new Response(this.request);
+            return await client.ExecuteTaskAsync(this.request);
         }
 
-        public Response DoDelete()
+        public async Task<IRestResponse> DoPut(object data)
         {
-            this.request.Method = "DELETE";
+            this.request.Method = Method.PUT;
+            this.request.AddHeader("Content-type", "application/json");
+            this.request.RequestFormat = DataFormat.Json;
+            request.AddJsonBody(data);
 
-            return new Response(this.request);
+            return await client.ExecuteTaskAsync(this.request);
+        }
+
+        public async Task<IRestResponse> DoDelete()
+        {
+            this.request.Method = Method.DELETE;
+
+            return await client.ExecuteTaskAsync(this.request);
         }
     }
 }

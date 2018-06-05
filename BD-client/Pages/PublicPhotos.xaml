@@ -6,11 +6,11 @@
       xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
       xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
       xmlns:local="clr-namespace:BD_client.Pages"
-      xmlns:custom="clr-namespace:BD_client.Converters;assembly="
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       Title="PublicPhotos"
       xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+      xmlns:utils="clr-namespace:BD_client.Utils"
       Dialog:DialogParticipation.Register="{Binding}">
 
     <Page.Resources>
@@ -23,7 +23,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <custom:StringToImageConverter x:Key="StringToImageConverter" />
+            <utils:StringToImageConverter x:Key="StringToImageConverter" />
         </ResourceDictionary>
     </Page.Resources>
 

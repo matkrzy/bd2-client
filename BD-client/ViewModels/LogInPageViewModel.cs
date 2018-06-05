@@ -1,14 +1,16 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Windows.Input;
 using BD_client.Api.Core;
-using BD_client.Domain;
+using BD_client.Dto;
+using BD_client.Pages;
+using RestSharp;
 
 namespace BD_client.ViewModels
 {
@@ -46,45 +48,49 @@ namespace BD_client.ViewModels
             dialogCoordinator = instance;
             LoginCmd = new RelayCommand(x => Login());
             RegisterCmd = new RelayCommand(x => Register());
-
         }
 
 
-        private void Login()
+        private async void Login()
         {
-            var values = new Dictionary<string, string>
+            var values = new {email = Email, password = Password};
+
+            IRestResponse response = await new Request("/login").DoPost(values);
+
+
+            if (response.StatusCode == HttpStatusCode.OK)
             {
-                {"email", Email},
-                {"password", Password}
-            };
+                try
+                {
+                    var cookie = response.Cookies.ElementAt(0);
 
-            Response response = new Request("/login").DoPost(values);
+                    String JWT = ConfigurationManager.AppSettings["JWT"] = cookie.Value;
 
-            if (response.AsHttpWebResponse().StatusCode == HttpStatusCode.OK)
-            {
-                Cookie cookie = response.AsHttpWebResponse().Cookies[0];
-                String JWT = ConfigurationManager.AppSettings["JWT"] = cookie.Value;
+                    var user = JsonConvert.DeserializeObject<User>(response.Content);
+                    File.WriteAllText("./token", JWT);
 
-                var user = JsonConvert.DeserializeObject<User>(response.AsString());
-                File.WriteAllText("./token", JWT);
+                    ConfigurationManager.AppSettings["uuid"] = user.uuid;
 
-                ConfigurationManager.AppSettings["uuid"] = user.uuid;
-
-                MainWindow.MainVM.Enabled = true;
-                MainWindow.MainVM.Page = "Pages/MyPhotosPage.xaml";
-                MainWindow.MainVM.SelectedIndex = -1;
-                MainWindow.MainVM.User = Email;
+                    MainWindow.MainVM.Enabled = true;
+                    MainWindow.MainVM.Page = "MyPhotosPage.xaml";
+                    MainWindow.MainVM.SelectedIndex = -1;
+                    MainWindow.MainVM.User = Email;
+                }
+                catch (Exception e)
+                {
+                    await dialogCoordinator.ShowMessageAsync(this, "Error", "Login failed");
+                }
             }
             else
             {
-                dialogCoordinator.ShowMessageAsync(this, "Error", "Login failed");
+                await dialogCoordinator.ShowMessageAsync(this, "Error", "Login failed");
             }
         }
 
 
         public void Register()
         {
-            MainWindow.MainVM.Page = "Pages/RegisterPage.xaml";
+            MainWindow.MainVM.Page = "RegisterPage.xaml";
         }
 
         virtual protected void OnPropertyChanged(string propName)

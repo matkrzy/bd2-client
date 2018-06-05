@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
-using BD_client.Domain;
 using Newtonsoft.Json;
 using System.IO;
-using BD_client.Data.Photos;
+using BD_client.Dto;
+using BD_client.Models;
+using BD_client.Pages;
 using BD_client.Services;
+using BD_client.Utils;
 
 namespace BD_client.ViewModels
 {
@@ -17,7 +19,7 @@ namespace BD_client.ViewModels
         public event PropertyChangedEventHandler PropertyChanged = null;
         private IDialogCoordinator dialogCoordinator;
         private string _page;
-        public ObservableCollection<Domain.Category> Categories { get; set; }
+        public ObservableCollection<Dto.Category> Categories { get; set; }
         public ObservableCollection<SearchFilter> SearchFilters { get; set; }
         public ObservableCollection<Photo> PhotosResult { get; set; }
         public List<Photo> Photos { get; set; }
@@ -40,7 +42,7 @@ namespace BD_client.ViewModels
         public SearchPageViewModel(IDialogCoordinator instance)
         {
             dialogCoordinator = instance;
-            Categories = new ObservableCollection<Domain.Category>();
+            Categories = new ObservableCollection<Dto.Category>();
             Photos = MainWindow.MainVM.Photos;
             PhotosResult = new ObservableCollection<Photo>();
             SearchFilters = new ObservableCollection<SearchFilter>();
@@ -68,7 +70,7 @@ namespace BD_client.ViewModels
             String responseContent = ApiRequest.Get(url);
             JsonTextReader reader = new JsonTextReader(new StringReader(responseContent));
             reader.SupportMultipleContent = true;
-            List<Domain.Category> categoriesList = null;
+            List<Dto.Category> categoriesList = null;
             while (true)
             {
                 if (!reader.Read())
@@ -77,7 +79,7 @@ namespace BD_client.ViewModels
                 }
 
                 JsonSerializer serializer = new JsonSerializer();
-                categoriesList = serializer.Deserialize<List<Domain.Category>>(reader);
+                categoriesList = serializer.Deserialize<List<Dto.Category>>(reader);
 
             }
             bool repeated = false;
@@ -102,7 +104,7 @@ namespace BD_client.ViewModels
 
         private void AddExifFilter()
         {
-            SearchFilters.Add(new Domain.SearchFilter() { Type = "Exif", Filter = ExifPhrase });
+            SearchFilters.Add(new SearchFilter() { Type = "Exif", Filter = ExifPhrase });
         }
 
         private void RemoveFilter()
@@ -112,12 +114,12 @@ namespace BD_client.ViewModels
 
         private void AddTagsFilter()
         {
-            SearchFilters.Add(new Domain.SearchFilter() { Type = "Tag", Filter = TagsPhrase });
+            SearchFilters.Add(new SearchFilter() { Type = "Tag", Filter = TagsPhrase });
         }
 
         private void AddDescriptionFilter()
         {
-            SearchFilters.Add(new Domain.SearchFilter() { Type = "Description", Filter = DescriptionPhrase });
+            SearchFilters.Add(new SearchFilter() { Type = "Description", Filter = DescriptionPhrase });
         }
 
         public string Page
@@ -638,13 +640,13 @@ namespace BD_client.ViewModels
 
         private void Cancel()
         {
-            MainWindow.MainVM.Page = "Pages/MyPhotosPage.xaml";
+            MainWindow.MainVM.Page = "MyPhotosPage.xaml";
             MainWindow.MainVM.SelectedIndex = -1;
         }
 
         private void AddCategoryFilter()
         {
-            SearchFilters.Add(new Domain.SearchFilter() { Type = "Category", Filter = Categories[CategorySelectedIndex].Name });
+            SearchFilters.Add(new SearchFilter() { Type = "Category", Filter = Categories[CategorySelectedIndex].Name });
         }
 
         virtual protected void OnPropertyChanged(string propName)

@@ -1,5 +1,4 @@
-﻿using BD_client.Domain;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using BD_client.Dto;
+using BD_client.Models;
 
 namespace BD_client.Windows
 {

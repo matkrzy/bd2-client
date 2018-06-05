@@ -1,16 +1,11 @@
-﻿using BD_client.Common;
-using BD_client.Domain;
-using BD_client.Domain.Enums;
-using BD_client.Services;
+﻿using BD_client.Services;
 using BD_client.ViewModels;
 using MahApps.Metro.Controls.Dialogs;
-using System;
 using System.Configuration;
 using System.IO;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
+using BD_client.Enums;
 
 namespace BD_client.Pages
 {

@@ -1,16 +1,10 @@
-﻿using BD_client.Domain;
-using MahApps.Metro.Controls.Dialogs;
+﻿using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
+using BD_client.Pages;
 using BD_client.Services;
 
 namespace BD_client.ViewModels
@@ -99,7 +93,7 @@ namespace BD_client.ViewModels
 
         private void Cancel()
         {
-            MainWindow.MainVM.Page= "Pages/LogInPage.xaml";
+            MainWindow.MainVM.Page= "LogInPage.xaml";
         }
 
         private async void Register()
@@ -108,7 +102,7 @@ namespace BD_client.ViewModels
             {
                 RegisterUser();
                 await dialogCoordinator.ShowMessageAsync(this, "Success", "User registered");
-                MainWindow.MainVM.Page = "Pages/LogInPage.xaml";
+                MainWindow.MainVM.Page = "LogInPage.xaml";
 
             }
             catch (Exception)
@@ -125,7 +119,7 @@ namespace BD_client.ViewModels
                 { "lastName", Surname },
                 { "email", Email },
                 { "password", Password },
-                { "role", "USER" }
+                { "role", "User" }
             };
 
             string json = JsonConvert.SerializeObject(values, Formatting.Indented);

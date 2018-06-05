@@ -1,15 +1,12 @@
-﻿using BD_client.Domain;
-using MahApps.Metro.Controls.Dialogs;
+﻿using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
+using BD_client.Dto;
+using BD_client.Pages;
 using BD_client.Services;
 
 namespace BD_client.ViewModels
@@ -159,7 +156,7 @@ namespace BD_client.ViewModels
 
         private void Cancel()
         {
-            MainWindow.MainVM.Page = "Pages/MyPhotosPage.xaml";
+            MainWindow.MainVM.Page = "MyPhotosPage.xaml";
             MainWindow.MainVM.SelectedIndex = -1;
         }
 

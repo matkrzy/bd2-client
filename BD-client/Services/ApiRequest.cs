@@ -18,7 +18,7 @@ namespace BD_client.Services
         private static String apiHost = ConfigurationManager.AppSettings["ApiHost"];
         private static String apiPath = ConfigurationManager.AppSettings["ApiPath"];
         private static String apiUrl = apiHost + apiPath;
-        public static String JWT = null;
+        public static String JWT = ConfigurationManager.AppSettings["JWT"];
 
         private static String GetEndpointUrl(String endpointPath)
         {
