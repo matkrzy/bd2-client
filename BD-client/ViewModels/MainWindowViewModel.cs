@@ -1,13 +1,15 @@
-﻿using BD_client.Domain;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Configuration;
+using System.IO;
+using System.Net;
 using BD_client.Services;
+using BD_client.Api.Core;
+using BD_client.Domain;
+using Newtonsoft.Json;
+
 
 namespace BD_client.ViewModels
 {
@@ -22,8 +24,8 @@ namespace BD_client.ViewModels
         public ICommand PublicPhotosCmd { get; }
         public ICommand CategoriesCmd { get; }
 
-        public List<int> List { get; set; }
-        public List<Photo> Photos { get; set; }
+        public List<int> List { get; set; } = null;
+        public List<Photo> Photos { get; set; } = null;
 
         private bool _enabled;
 
@@ -32,10 +34,7 @@ namespace BD_client.ViewModels
 
         public int SelectedIndex
         {
-            get
-            {
-                return _selectedIndex;
-            }
+            get { return _selectedIndex; }
             set
             {
                 _selectedIndex = value;
@@ -45,10 +44,7 @@ namespace BD_client.ViewModels
 
         public String User
         {
-            get
-            {
-                return _user;
-            }
+            get { return _user; }
             set
             {
                 _user = value;
@@ -58,10 +54,7 @@ namespace BD_client.ViewModels
 
         public bool Enabled
         {
-            get
-            {
-                return _enabled;
-            }
+            get { return _enabled; }
             set
             {
                 _enabled = value;
@@ -73,10 +66,7 @@ namespace BD_client.ViewModels
 
         public string Page
         {
-            get
-            {
-                return _page;
-            }
+            get { return _page; }
             set
             {
                 _page = value;
@@ -88,31 +78,44 @@ namespace BD_client.ViewModels
 
         public MainWindowViewModel()
         {
-            List = null;
-            MyPhotosCmd = new RelayCommand(x => ShowMyPhotos());
-            ProfileCmd = new RelayCommand(x => Profile());
-            LogoutCmd = new RelayCommand(x => Logout());
-            HelpCmd = new RelayCommand(x => Help());
-            PublicPhotosCmd = new RelayCommand(x => ShowPublicPhotos());
-            CategoriesCmd = new RelayCommand(x => ShowCategories());
-
-            var mode = ConfigurationManager.AppSettings["Mode"];
-
-            // tryb developmentu
-            if (mode.Equals("development"))
+            if (File.Exists("./token"))
             {
-                Page = "Pages/MyPhotosPage.xaml";
-                LogInPageViewModel.TemporaryLogin();
-                _enabled = true;
-                _selectedIndex = -1;
-                _user = "DEVELOPMENT";
+                this.AutoLogin();
+            }
+
+            String JWT = ConfigurationManager.AppSettings["JWT"];
+            String email = ConfigurationManager.AppSettings["Email"];
+
+            if (JWT == "" && email == "")
+            {
+                Page = "Pages/LogInPage.xaml";
             }
             else
             {
-                Page = "Pages/LogInPage.xaml";
-                Enabled = false;
-                SelectedIndex = -1;
-                User = "";
+               
+                MyPhotosCmd = new RelayCommand(x => ShowMyPhotos());
+                ProfileCmd = new RelayCommand(x => Profile());
+                LogoutCmd = new RelayCommand(x => Logout());
+                HelpCmd = new RelayCommand(x => Help());
+                PublicPhotosCmd = new RelayCommand(x => ShowPublicPhotos());
+                CategoriesCmd = new RelayCommand(x => ShowCategories());
+
+                Enabled = true;
+                User = email;
+                Page = "Pages/MyPhotosPage.xaml";
+            }
+        }
+
+        private void AutoLogin()
+        {
+            ConfigurationManager.AppSettings["JWT"] = File.ReadAllText("./token");
+
+            Response response = new Request("/user/me").DoGet();
+
+            if (response.AsHttpWebResponse().StatusCode == HttpStatusCode.OK)
+            {
+                var user = JsonConvert.DeserializeObject<User>(response.AsString());              
+                MainWindow.MainVM.User = user.Email;
             }
         }
 
@@ -133,6 +136,7 @@ namespace BD_client.ViewModels
             MainWindow.MainVM.Page = "Pages/CategoriesPage.xaml";
             MainWindow.MainVM.SelectedIndex = -1;
         }
+
         private void ShowMyPhotos()
         {
             MainWindow.MainVM.Page = "Pages/MyPhotosPage.xaml";
@@ -147,7 +151,13 @@ namespace BD_client.ViewModels
 
         private void Logout()
         {
-            ApiRequest.Post("/account/logout", null);
+            Response response = new Request("/account/logout").DoGet();
+            String uuid = ConfigurationManager.AppSettings["uudi"];
+
+            File.Delete("./token");
+            ConfigurationManager.AppSettings["JWT"] = "";
+            ConfigurationManager.AppSettings["uudi"] = "";
+
             ApiRequest.JWT = null;
             MainWindow.MainVM.Page = "Pages/LogInPage.xaml";
             MainWindow.MainVM.SelectedIndex = -1;

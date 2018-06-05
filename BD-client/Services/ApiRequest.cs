@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
+
 namespace BD_client.Services
 {
     public class ApiRequest
@@ -90,6 +91,7 @@ namespace BD_client.Services
         }
 
         #region Piotrek
+
         public static async Task<HttpResponseMessage> GetAsync(string endpointPath)
         {
             var baseUri = new Uri(apiHost);
@@ -156,6 +158,7 @@ namespace BD_client.Services
                 return await client.PutAsync(GetEndpointUrl(endpointPath), stringContent);
             }
         }
+
         #endregion
 
         public static async Task<bool> PostFile(string endpointPath, string pathToFile, string fileName)
