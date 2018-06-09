@@ -39,7 +39,11 @@ namespace BD_client.ViewModels
 
         public PublicPhotosPageViewModel(IDialogCoordinator instance, string photoDestination)
         {
-            Photos = new PhotoCollection(photoDestination);
+            try
+            {
+                Photos = new PhotoCollection(photoDestination);
+            }
+            catch (Exception) { }
             dialogCoordinator = instance;
             LikeCmd = new RelayCommand(async x => await Like());
         }

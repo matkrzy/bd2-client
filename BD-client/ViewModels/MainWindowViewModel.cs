@@ -127,7 +127,8 @@ namespace BD_client.ViewModels
 
         private void Help()
         {
-            MainWindow.MainVM.Page = "Pages/HelpPage.xaml";
+            string pathToHtmlFile = System.IO.Directory.GetCurrentDirectory() + @"\..\..\Resources\help.html";
+            System.Diagnostics.Process.Start(pathToHtmlFile);
             MainWindow.MainVM.SelectedIndex = -1;
         }
 

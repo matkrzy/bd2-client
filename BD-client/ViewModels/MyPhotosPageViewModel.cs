@@ -42,7 +42,11 @@ namespace BD_client.ViewModels
         public MyPhotosPageViewModel(IDialogCoordinator instance)
         {
             dialogCoordinator = instance;
-            Photos = new NotifyTaskCompletion<PhotoCollection>(GetAllUserPhotos());
+            try
+            {
+                Photos = new NotifyTaskCompletion<PhotoCollection>(GetAllUserPhotos());
+            }
+            catch(Exception) {  }
         }
 
         virtual protected void OnPropertyChanged(string propName)
