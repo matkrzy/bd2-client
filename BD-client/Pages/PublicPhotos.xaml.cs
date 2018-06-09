@@ -57,7 +57,13 @@ namespace BD_client.Pages
                 foreach (var photo in photos)
                 {
                     //TODO: różne typy zdjęć, nie jedynie .jpg
-                    var completePath = $@"{PhotoDestination}\{photo.Id}.jpg";
+                    string completePath;
+                    if (photo.Name.Contains(".jpeg"))
+                        completePath = $@"{PhotoDestination}\{photo.Id}.jpeg";
+                    else if (photo.Name.Contains(".png"))
+                        completePath = $@"{PhotoDestination}\{photo.Id}.png";
+                    else
+                        completePath = $@"{PhotoDestination}\{photo.Id}.jpg";
                     if (!File.Exists(completePath))
                     {
                         // jeżeli zdjęcie nie jest jeszcze pobrane

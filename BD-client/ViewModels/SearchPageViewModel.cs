@@ -36,6 +36,7 @@ namespace BD_client.ViewModels
         private string _exifPhrase;
         private string _tagsPhrase;
         private string _path;
+        public List<string> TagsAutocomplete { get; set; }
 
         public SearchPageViewModel(IDialogCoordinator instance)
         {
@@ -55,6 +56,33 @@ namespace BD_client.ViewModels
             GetCategories();
             CategorySelectedIndex = 0;
             Path = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + "\\tmp\\own";
+            TagsAutocomplete = new List<string>();
+        }
+
+        private void GetTags()
+        {
+            string url = MainWindow.MainVM.BaseUrl + "api/v1/tags/"+TagsPhrase;
+            String responseContent = ApiRequest.Get(url);
+            JsonTextReader reader = new JsonTextReader(new StringReader(responseContent));
+            reader.SupportMultipleContent = true;
+            List<Domain.Tag> tagsList = null;
+            while (true)
+            {
+                if (!reader.Read())
+                {
+                    break;
+                }
+
+                JsonSerializer serializer = new JsonSerializer();
+                tagsList = serializer.Deserialize<List<Domain.Tag>>(reader);
+
+            }
+
+            foreach(var tag in tagsList)
+            {
+                TagsAutocomplete.Add(tag.Name);
+            }
+
         }
 
         private void RemovePhoto()
@@ -154,9 +182,17 @@ namespace BD_client.ViewModels
             }
             set
             {
-                _tagsPhrase = value;
-                OnPropertyChanged("TagsPhrase");
+                if (SetField(ref _tagsPhrase, value, "TagsPhrase"))
+                    GetTags();
             }
+        }
+
+        protected bool SetField<T>(ref T field, T value, string propertyName)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
         }
 
         public string ExifPhrase

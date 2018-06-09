@@ -63,7 +63,13 @@ namespace BD_client.ViewModels
             //TODO: różne typy zdjęć, nie tylko jpg
             foreach (var photo in photos)
             {
-                var completePath = $@"{destination}\{photo.Id}.jpg";
+                string completePath;
+                if (photo.Name.Contains(".jpeg"))
+                    completePath = $@"{destination}\{photo.Id}.jpeg";
+                else if(photo.Name.Contains(".png"))
+                    completePath = $@"{destination}\{photo.Id}.png";
+                else
+                    completePath = $@"{destination}\{photo.Id}.jpg";
                 if (!File.Exists(completePath))
                 {
                     // jeżeli zdjęcie nie jest jeszcze pobrane
