@@ -14,7 +14,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using BD_client.Services;
 
 namespace BD_client.ViewModels
 {
@@ -61,6 +60,7 @@ namespace BD_client.ViewModels
 
         public static void TemporaryLogin()
         {
+            var url = ConfigurationManager.AppSettings["BaseApiUrl"] + "api/v1/login";
             var email = ConfigurationManager.AppSettings["Email"];
             var values = new
             {
@@ -68,7 +68,7 @@ namespace BD_client.ViewModels
                 password = ConfigurationManager.AppSettings["Password"]
             };
             string json = JsonConvert.SerializeObject(values, Formatting.Indented);
-            ApiRequest.Post("/login", json);
+            ApiRequest.Post(url, json);
         }
 
         private void LoginUser()
@@ -80,7 +80,8 @@ namespace BD_client.ViewModels
             };
 
             string json = JsonConvert.SerializeObject(values, Formatting.Indented);
-            ApiRequest.Post("/login", json);
+            String url = MainWindow.MainVM.BaseUrl + "api/v1/login";
+            ApiRequest.Post(url, json);
         }
         public async void Login()
         {

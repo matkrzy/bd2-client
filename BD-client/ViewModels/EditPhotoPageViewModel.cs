@@ -11,7 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using BD_client.Services;
 
 namespace BD_client.ViewModels
 {
@@ -86,7 +85,7 @@ namespace BD_client.ViewModels
 
         private bool DeleteAllTags(long photoID)
         {
-            string url = "/tags/all/" + photoID;
+            string url = MainWindow.MainVM.BaseUrl + "api/v1/tags/all/" + photoID;
             try
             {
                 ApiRequest.Delete(url);
@@ -100,7 +99,7 @@ namespace BD_client.ViewModels
 
         private void EditSinglePhoto()    
         {
-            string url = "/photos/" + Photos[SelectedIndex].Id;
+            string url = MainWindow.MainVM.BaseUrl + "api/v1/photos/" + Photos[SelectedIndex].Id;
             string[] jsonTags = Tags.Split(' ');
             string json;
 
@@ -124,7 +123,7 @@ namespace BD_client.ViewModels
             if (!DeleteAllTags(Photos[SelectedIndex].Id))
                 throw new Exception();
             //Post tags
-            url = "/tags";
+            url = MainWindow.MainVM.BaseUrl + "api/v1/tags";
             List<TagDTO> tagList = new List<TagDTO>();
             for (int i = 0; i < jsonTags.Length; i++)
             {
@@ -177,7 +176,7 @@ namespace BD_client.ViewModels
             var photoIndex = new List<int>();
             for (int index = 0; index < Photos.Count; index++)
             {
-                string url = "/photos/" + Photos[index].Id;
+                string url = MainWindow.MainVM.BaseUrl + "api/v1/photos/" + Photos[index].Id;
                 string[] jsonTags = Tags.Split(' ');
                 string json;
 
@@ -202,7 +201,7 @@ namespace BD_client.ViewModels
                     return photoIndex;
 
                 //Post tags
-                url = "/tags";
+                url = MainWindow.MainVM.BaseUrl + "api/v1/tags";
                 List<TagDTO> tagList = new List<TagDTO>();
                 for (int i = 0; i < jsonTags.Length; i++)
                 {

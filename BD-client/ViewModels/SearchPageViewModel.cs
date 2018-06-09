@@ -64,7 +64,7 @@ namespace BD_client.ViewModels
 
         private void GetCategories()
         {
-            string url = "/categories";
+            string url = MainWindow.MainVM.BaseUrl + "api/v1/categories";
             String responseContent = ApiRequest.Get(url);
             JsonTextReader reader = new JsonTextReader(new StringReader(responseContent));
             reader.SupportMultipleContent = true;
@@ -233,7 +233,7 @@ namespace BD_client.ViewModels
             foreach (var selectedCategory in SelectedCategoriesIds)
             {
                 photosToDisplay.Clear();
-                string url = "/photos/categories/any/" + selectedCategory;
+                string url = MainWindow.MainVM.BaseUrl + "api/v1/photos/categories/any/" + selectedCategory;
                 string response = ApiRequest.Get(url);
                 var photosFromCategory = JsonConvert.DeserializeObject<List<Photo>>(response);
                 foreach (var photo in photosFromCategory)
@@ -447,68 +447,25 @@ namespace BD_client.ViewModels
 
         private void CheckInExif(List<int> tmpResult, ExifMetadata exif, string exifPhrase, int i)
         {
-            if ((!string.IsNullOrEmpty(exif.ApplicationName) && exif.ApplicationName.ToLower().Contains(exifPhrase.ToLower())) ||
-    (!string.IsNullOrEmpty(exif.CameraManufacturer) && exif.CameraManufacturer.ToLower().Contains(exifPhrase.ToLower())) ||
-    (!string.IsNullOrEmpty(exif.CameraModel) && exif.CameraModel.ToLower().Contains(exifPhrase.ToLower())) ||
-    (!string.IsNullOrEmpty(exif.Comment) && exif.Comment.ToLower().Contains(exifPhrase.ToLower())) ||
-    (!string.IsNullOrEmpty(exif.Copyright) && exif.Copyright.ToLower().Contains(exifPhrase.ToLower())) ||
-    (!string.IsNullOrEmpty(exif.Date) && exif.Date.ToLower().Contains(exifPhrase.ToLower())) ||
-    (!string.IsNullOrEmpty(exif.Format) && exif.Format.ToLower().Contains(exifPhrase.ToLower())) ||
-    (!string.IsNullOrEmpty(exif.Location) && exif.Location.ToLower().Contains(exifPhrase.ToLower())) ||
-    (!string.IsNullOrEmpty(exif.Title) && exif.Title.ToLower().Contains(exifPhrase.ToLower())))
-                tmpResult.Add(i);
-
-            if (exif.Authors != null)
+            if (exif.ExifIFD0 != null)
             {
-                foreach (var author in exif.Authors)
+                foreach (var tag in exif.ExifIFD0)
                 {
-                    if (author.ToLower().Contains(exifPhrase.ToLower()))
-                    {
-                        if (!tmpResult.Contains(i))
-                            tmpResult.Add(i);
-                    }
-                }
-            }
-
-            if (exif.Keywords != null)
-            {
-                foreach (var keyword in exif.Keywords)
-                {
-                    if (keyword.ToLower().Contains(exifPhrase.ToLower()))
-                    {
-                        if (!tmpResult.Contains(i))
-                            tmpResult.Add(i);
-                    }
-                }
-            }
-
-            if (exif.Rating != null)
-            {
-                if (exif.Rating.Value.ToString().Contains(exifPhrase))
-                {
-                    if (!tmpResult.Contains(i))
+                    if ((!string.IsNullOrEmpty(tag.Name) && tag.Name.ToLower().Contains(exifPhrase.ToLower())) ||
+                        (!string.IsNullOrEmpty(tag.Description) && tag.Description.ToLower().Contains(exifPhrase.ToLower())))
                         tmpResult.Add(i);
                 }
             }
 
-            if (exif.Width != null)
+            if(exif.ExifSubIFD != null)
             {
-                if (exif.Width.Value.ToString().Contains(exifPhrase))
+                foreach (var tag in exif.ExifSubIFD)
                 {
-                    if (!tmpResult.Contains(i))
+                    if ((!string.IsNullOrEmpty(tag.Name) && tag.Name.ToLower().Contains(exifPhrase.ToLower())) ||
+                        (!string.IsNullOrEmpty(tag.Description) && tag.Description.ToLower().Contains(exifPhrase.ToLower())))
                         tmpResult.Add(i);
                 }
             }
-
-            if (exif.Height != null)
-            {
-                if (exif.Height.Value.ToString().Contains(exifPhrase))
-                {
-                    if (!tmpResult.Contains(i))
-                        tmpResult.Add(i);
-                }
-            }
-
         }
 
 

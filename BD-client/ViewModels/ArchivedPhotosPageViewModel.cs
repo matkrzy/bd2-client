@@ -15,7 +15,7 @@ using System.Windows.Input;
 
 namespace BD_client.ViewModels
 {
-    public class MyPhotosPageViewModel : INotifyPropertyChanged
+    public class ArchivedPhotosPageViewModel : INotifyPropertyChanged
     {
 
         public event PropertyChangedEventHandler PropertyChanged = null;
@@ -39,11 +39,13 @@ namespace BD_client.ViewModels
             }
         }
 
-        public MyPhotosPageViewModel(IDialogCoordinator instance)
+        public ArchivedPhotosPageViewModel(IDialogCoordinator instance)
         {
             dialogCoordinator = instance;
-            Photos = new NotifyTaskCompletion<PhotoCollection>(GetAllUserPhotos());
+            var path = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + "//Img//photos";
+            Photos = new NotifyTaskCompletion<PhotoCollection>(GetArchivedUserPhotos());
         }
+
 
         virtual protected void OnPropertyChanged(string propName)
         {
@@ -51,10 +53,10 @@ namespace BD_client.ViewModels
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));
         }
 
-        private async Task<PhotoCollection> GetAllUserPhotos()
+        private async Task<PhotoCollection> GetArchivedUserPhotos()
         {
             var destination = Directory.GetCurrentDirectory() + @"\..\..\tmp\own";
-            var photos = await PhotoService.GetAllUserPhotos();
+            var photos = await PhotoService.GetArchivedUserPhotos();
             MainWindow.MainVM.Photos = photos;
             //TODO: różne typy zdjęć, nie tylko jpg
             foreach (var photo in photos)
@@ -72,10 +74,10 @@ namespace BD_client.ViewModels
             return new PhotoCollection(destination, photos);
         }
 
-        public async void Archive(int id)
+        public async void Reactive(long id)
         {
-            var res = await PhotoService.ChangePhotoState(PhotoState.ARCHIVED, id);
-            foreach (var photo in MainWindow.MainVM.Photos)
+            var res = await PhotoService.ChangePhotoState(PhotoState.ACTIVE, id);
+            foreach(var photo in MainWindow.MainVM.Photos)
             {
                 if (photo.Id == id)
                 {
@@ -84,9 +86,10 @@ namespace BD_client.ViewModels
                     break;
                 }
             }
-
-
+            
+            
         }
+
 
 
     }

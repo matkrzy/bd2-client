@@ -76,8 +76,6 @@ namespace BD_client.ViewModels
             var photoIndex = new List<int>();
             for (int i = 0; i < Photos.Count; i++)
             {
-                //TODO: co z photoState i shareState ?
-                //var addedPhotoId = await PhotoService.AddPhoto(Photos[i].Name, Photos[i].Description, Photos[i].PhotoState, Photos[i].ShareState);
                 var addedPhotoId = await PhotoService.AddPhoto(Photos[i].Name, Photos[i].Description, PhotoState.ACTIVE, ShareState.PRIVATE);
                 if (await ImageService.UploadImage(addedPhotoId, Photos[i].Path, Photos[i].Name))
                 {
@@ -90,7 +88,7 @@ namespace BD_client.ViewModels
         {
 
             List<int> photoIndex = await AddPhotos();
-            await dialogCoordinator.ShowMessageAsync(this, "Result", photoIndex.Count + " of " + Photos.Count + " photos was added");
+            await dialogCoordinator.ShowMessageAsync(this, "Result", "Operation completed");
             for (int i = photoIndex.Count - 1; i >= 0; i--)
             {
                 Photos.RemoveAt(photoIndex[i]);

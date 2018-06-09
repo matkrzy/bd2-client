@@ -55,6 +55,7 @@ namespace BD_client.Pages
             SearchButton.Click += async (s, e) => OnSearchButtonClick(s, e);
             AddRootCategoryButton.Click += async (s, e) => OnAddRootCategoryButtonClick(s, e);
 
+            // treeView context menu
             AddCategoryContextMenuItem.Click += async (s, e) => OnAddContextMenuButtonClick(s, e);
             RenameCategoryContextMenuItem.Click += async (s, e) => OnRenameContextMenuButtonClick(s, e);
             RemoveCategoryContextMenuItem.Click += async (s, e) => OnRemoveContextMenuButtonClick(s, e);
@@ -62,7 +63,10 @@ namespace BD_client.Pages
             PasteCategoryContextMenuItem.Click += async (s, e) => OnPasteContextMenuButtonClick(s, e);
             AssignToCategoryContextMenuItem.Click += async (s, e) => OnAssignToCategoryContextMenuButtonClick(s, e);
 
+            // photos Listbox context menu
             DissociatePhotosContextMenuItem.Click += async (s, e) => OnDissociatePhotosContextMenuItemClick(s, e);
+            ArchivePhotosContextMenuItem.Click += async (s, e) => OnArchivePhotosContextMenuItemClick(s, e);
+
 
             PasteCategoryContextMenuItem.IsEnabled = false;
 
@@ -173,21 +177,9 @@ namespace BD_client.Pages
 
         private void OnPhotoDbClick(object sender, MouseButtonEventArgs e)
         {
-
+            var allPhotos = ViewModel.Photos;
+            new PhotoDetailsWindow(allPhotos, CategoryPhotosListBox.SelectedIndex).Show();
         }
-        private void OnEditPhoto(object sender, RoutedEventArgs e)
-        {
-
-        }
-        private void OnDownloadPhoto(object sender, RoutedEventArgs e)
-        {
-
-        }
-        private void OnRemovePhoto(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         /// <summary>
         /// Dodaj kategorię jako dziecko aktualnie zaznaczonej kategorii bądź jako root jeżeli żadna z kategorii nie jest zaznaczona
         /// </summary>
@@ -344,7 +336,7 @@ namespace BD_client.Pages
                     var selectedPhotosIds = selectPhotosModalWindow.SelectedPhotosIds;
                     foreach (var selectedPhotoId in selectedPhotosIds)
                     {
-                        if(!(await CategoryService.AssignPhotoToCategory(selectedNode.Id, selectedPhotoId)))
+                        if (!(await CategoryService.AssignPhotoToCategory(selectedNode.Id, selectedPhotoId)))
                         {
                             ///TODO: wyświetlić komunikat o niepowodzeniu
                         }
@@ -364,14 +356,16 @@ namespace BD_client.Pages
                 ViewModel.Photos.Photos.AddRange(photosToDisplay);
             }
             ViewModel.Photos.Update();
+            ChangeMainVMPhotosList();
         }
 
+        // common photos context menu
         private async Task OnDissociatePhotosContextMenuItemClick(object sender, RoutedEventArgs e)
         {
             var selectedCategory = Categories.SelectedItem as CategoryViewModel;
             var selectedPhotos = CategoryPhotosListBox.SelectedItems.Cast<Photo>();
 
-            if(selectedCategory != null && selectedPhotos != null)
+            if (selectedCategory != null && selectedPhotos != null)
             {
                 foreach (var photo in selectedPhotos)
                 {
@@ -381,7 +375,67 @@ namespace BD_client.Pages
                     }
                 }
                 await ReloadCategoryPhotos(selectedCategory.Id);
-            }           
+            }
+        }
+        private async Task OnArchivePhotosContextMenuItemClick(object sender, RoutedEventArgs e)
+        {
+            foreach (var item in CategoryPhotosListBox.SelectedItems)
+            {
+                await ArchivePhoto((MainWindow.MainVM.Photos[CategoryPhotosListBox.Items.IndexOf(item)].Id));
+            }
+        }
+        private async Task ArchivePhoto(int id)
+        {
+            var res = await PhotoService.ChangePhotoState(PhotoState.ARCHIVED, id);
+        }
+        private void OnEditPhoto(object sender, RoutedEventArgs e)
+        {
+            var list = new List<int>();
+            foreach (var item in CategoryPhotosListBox.SelectedItems)
+            {
+                list.Add(CategoryPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
+            }
+            MainWindow.MainVM.List = list;
+            MainWindow.MainVM.SelectedIndex = 1;
+            MainWindow.MainVM.Page = "Pages/EditPhotoPage.xaml";
+        }
+        private void OnDownloadPhoto(object sender, RoutedEventArgs e)
+        {
+            var list = new List<int>();
+
+            foreach (var item in CategoryPhotosListBox.SelectedItems)
+            {
+                list.Add(CategoryPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
+            }
+            MainWindow.MainVM.List = list;
+            MainWindow.MainVM.SelectedIndex = 3;
+            MainWindow.MainVM.Page = "Pages/DownloadPage.xaml";
+        }
+        private void OnRemovePhoto(object sender, RoutedEventArgs e)
+        {
+            var list = new List<int>();
+            foreach (var item in CategoryPhotosListBox.SelectedItems)
+            {
+                list.Add(CategoryPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
+            }
+            MainWindow.MainVM.List = list;
+            MainWindow.MainVM.SelectedIndex = 4;
+            MainWindow.MainVM.Page = "Pages/RemovePhotoPage.xaml";
+        }
+        private void OnSharePhoto(object sender, RoutedEventArgs e)
+        {
+            var list = new List<int>();
+            foreach (var item in this.CategoryPhotosListBox.SelectedItems)
+            {
+                list.Add(CategoryPhotosListBox.Items.IndexOf(item)); // Add selected indexes to the List<int>
+            }
+            MainWindow.MainVM.List = list;
+            MainWindow.MainVM.SelectedIndex = 5;
+            MainWindow.MainVM.Page = "Pages/SharePage.xaml";
+        }
+        private void ChangeMainVMPhotosList()
+        {       
+            MainWindow.MainVM.Photos = ViewModel.Photos.ToList();
         }
     }
 }

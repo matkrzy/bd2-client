@@ -1,0 +1,73 @@
+﻿Application’s purpose is to keep user’s photos sorted in one place.
+
+♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦
+
+My Photos Tab
+
+In this tab, you can see all your private photos. There are few options available (add, edit, download, share, remove, search) descripted below. 
+
+• • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • •
+
+Adding photos
+To add photo, you need to select “Add photo” option in hamburger menu on the left side of the application. Then, click browse photos and select photos in open dialog. After placing them in data grid, click add photos. Dialog will tell you if the operation ended with success or with error.
+
+Editing photos
+To edit photo, you need to select photos you want to edit in tab “My Photos” and then right-click on them and select “Edit” option. Then you can enter tags and description, that you want to have saved in database. If you want to edit all selected photos, you need to select checkbox “Edit all photos”, which is under photos’ data grid.
+
+Searching photos
+To search photos, you need to select “Search photos” option in hamburger menu on the left side of the application. Then, you need to enter search filter (e.g. category, phrase from description, tags or exif). After clicking search, found photos will appear on bottom of this page. You can select them and right-click to choose next options.
+
+Downloading photos
+To download photos, you need to select photos you want to download in tab “My Photos” and then right-click on them and select “Download” option. After you click download, you need to choose folder, where you want to save selected photos. Dialog will tell you if the operation ended with success or with error.
+
+Removing photos
+To remove photos, you need to select photos you want to remove in tab “My Photos” and then right-click on them and select “Remove” option. If you want to remove photos, that appeared in data grid, you need to click remove button. Dialog will tell you if the operation ended with success or with error.
+
+Sharing photos
+To share photos, you need to select photos you want to share in tab “My Photos” and then right-click on them and select “Share” option. If you want to share photos, that appeared in data grid, you need to enter e-mail from user that you want to share your photos to and then click share button. Dialog will tell you if the operation ended with success or with error.
+
+♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦
+
+Public Photos Tab
+
+In Public Photos tab you can see public photos divided into three tabs - Hot, Trending and Fresh.
+
+• • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • •
+
+Hot
+In hot tab you can see photos which have the current potential of becoming trending posts.
+
+Trending
+In trending tab you can see photos with the largest amount of likes all the time.
+
+Fresh
+In fresh tab you can see the newest photos, which are shared to everyone.
+
+♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦
+
+Archived Photos Tab
+
+In Archived Photos tab you cann see all archived photos.
+
+♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦
+
+Categories Tab
+
+In Categories tab you have all categories displayed in a tree view. At first, you see only parents’ categories. If you want to see all children of parents’ categories, you have to double-click on them and then the tree view will be extended. If you want to see photos related with selected category, you have to click on its name. You can zoom in and zoom out displayed photos by using slider. At the bottom, you can add new categories and search selected phrase in all categories’ names. By using right mouse click, you can add more categories, remove, move, rename, assign and paste them.
+
+♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦ ♦
+
+Settings Tab
+
+Settings tab is the place where you can adjust your application.
+
+• • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • •
+
+Profile
+In profile tab you can check your profile details and edit them, by entering new values and clicking edit button. Dialog will tell you if the operation ended with success or with error.
+
+Help
+In help tab you can find this little help ☺
+
+Logout
+If you want to change user or exit the application, you can logout using this tab.
