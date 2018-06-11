@@ -11,7 +11,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using BD_client.Services;
 
 namespace BD_client.ViewModels
 {
@@ -129,7 +128,8 @@ namespace BD_client.ViewModels
             };
 
             string json = JsonConvert.SerializeObject(values, Formatting.Indented);
-            ApiRequest.Post("/users", json);
+            String url = MainWindow.MainVM.BaseUrl + "api/v1/users";
+            ApiRequest.Post(url, json);
         }
 
         virtual protected void OnPropertyChanged(string propName)

@@ -13,7 +13,7 @@ namespace BD_client.Services
     {
         public static async Task<bool> DownloadImageToLocation(string path, int photoId)
         {
-            var response = await ApiRequest.GetAsync($"/images/{photoId}");
+            var response = await ApiRequest.GetAsync($"api/v1/images/{photoId}");
             if (response.IsSuccessStatusCode)
             {
                 try
@@ -34,7 +34,7 @@ namespace BD_client.Services
 
         public static async Task<bool> UploadImage(int id, string pathToImage, string imageName)
         {
-            return await ApiRequest.PostFile($"/images/{id}", pathToImage, imageName);
+            return await ApiRequest.PostFile($"api/v1/images/{id}", pathToImage, imageName);
         }
 
         public static ExifMetadata GetPhotoMetadata(string imagePath)

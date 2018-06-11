@@ -20,7 +20,7 @@ namespace BD_client.Pages
     public partial class PublicPhotos : Page
     {
         private int CurrentPage;
-        private PublicPhotoType CurrentTab;
+        private PublicPhotoType? CurrentTab;
         private readonly int PhotosPerPage;
         public int PhotosCount { get; set; }
         public PublicPhotosPageViewModel ViewModel;
@@ -38,7 +38,7 @@ namespace BD_client.Pages
 
             PhotoDestination = Directory.GetCurrentDirectory() + @"\..\..\tmp\public";
             CurrentPage = 0;
-            CurrentTab = PublicPhotoType.Hot;
+            CurrentTab = null;
             PhotosPerPage = int.Parse(ConfigurationManager.AppSettings["PhotosPerPage"]);
             ViewModel = new PublicPhotosPageViewModel(DialogCoordinator.Instance, PhotoDestination);
             DataContext = ViewModel;
@@ -47,8 +47,7 @@ namespace BD_client.Pages
         private async Task GetPublicPhotos()
         {
             ClearDirectory();
-            //TODO: docelowo będzie tak
-            var photos = await PhotoService.GetPublicPhotos(CurrentTab, CurrentPage, PhotosPerPage);
+            var photos = await PhotoService.GetPublicPhotos(CurrentTab.Value, CurrentPage, PhotosPerPage);
             //var photos = await PhotoService.GetAllUserPhotos();
             if (photos != null)
             {
@@ -58,7 +57,13 @@ namespace BD_client.Pages
                 foreach (var photo in photos)
                 {
                     //TODO: różne typy zdjęć, nie jedynie .jpg
-                    var completePath = $@"{PhotoDestination}\{photo.Id}.jpg";
+                    string completePath;
+                    if (photo.Name.Contains(".jpeg"))
+                        completePath = $@"{PhotoDestination}\{photo.Id}.jpeg";
+                    else if (photo.Name.Contains(".png"))
+                        completePath = $@"{PhotoDestination}\{photo.Id}.png";
+                    else
+                        completePath = $@"{PhotoDestination}\{photo.Id}.jpg";
                     if (!File.Exists(completePath))
                     {
                         // jeżeli zdjęcie nie jest jeszcze pobrane
@@ -91,7 +96,7 @@ namespace BD_client.Pages
                 CurrentPage--;
                 //Jeżeli się cofnęliśmy to oznacza ze można przejść do przodu z powrotem
                 NextButton.IsEnabled = true;
-                if(CurrentPage == 0)
+                if (CurrentPage == 0)
                 {
                     //Nie ma już nic wcześniej
                     PreviousButton.IsEnabled = false;
@@ -107,11 +112,15 @@ namespace BD_client.Pages
 
         private async Task OnTabSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            CurrentTab = (PublicPhotoType)TabControl.SelectedIndex;
-            CurrentPage = 0;
-            PreviousButton.IsEnabled = false;
-            await GetPublicPhotos();
-            NextButton.IsEnabled = await CheckIfThereAreMoreToDisplay();
+            var newTab = (PublicPhotoType)TabControl.SelectedIndex;
+            if (CurrentTab != newTab)
+            {
+                CurrentTab = newTab;
+                CurrentPage = 0;
+                PreviousButton.IsEnabled = false;
+                await GetPublicPhotos();
+                NextButton.IsEnabled = await CheckIfThereAreMoreToDisplay();
+            }
         }
 
         private async Task<bool> CheckIfThereAreMoreToDisplay()

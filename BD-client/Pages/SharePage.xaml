@@ -28,7 +28,8 @@
         <Button x:Name="shareBtn" Content="Share Photos" Height="50" Width="150" Style="{StaticResource AccentedSquareButtonStyle}" Command="{Binding ShareCmd}" Margin="332,402,215,48"/>
         <Button x:Name="cancelBtn" Content="Cancel" Height="50" Width="150" Style="{StaticResource AccentedSquareButtonStyle}" Command="{Binding CancelCmd}" Margin="521,402,30,48"/>
         <TextBox x:Name="userNameBox" Text="{Binding Path=Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Controls:TextBoxHelper.Watermark="E-mail" Controls:TextBoxHelper.ClearTextButton="True" HorizontalAlignment="Left" Height="23" Margin="55,415,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="183"/>
-
+        <CheckBox x:Name="UserShareCheckbox" Content="Share to user" HorizontalAlignment="Left" Margin="55,392,0,0" VerticalAlignment="Top" IsChecked="{Binding UserShare}"/>
+        <CheckBox x:Name="PublicShareCheckbox" Content="Public share" HorizontalAlignment="Left" Margin="55,371,0,0" VerticalAlignment="Top" IsChecked="{Binding PublicShare}"/>
         <Label x:Name="downloadItems" Content="Do you want to share this items?" HorizontalAlignment="Left" Margin="55,97,0,0" VerticalAlignment="Top"/>
 
         <DataGrid ItemsSource="{Binding Photos}" Margin="55,128,30,134"

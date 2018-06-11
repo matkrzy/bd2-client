@@ -145,6 +145,7 @@
               Panel.ZIndex="100">
             <MenuItem Header="My photos" Command="{Binding MyPhotosCmd}" IsEnabled="{Binding Enabled}" />
             <MenuItem Header="Public photos" Command="{Binding PublicPhotosCmd}" IsEnabled="{Binding Enabled}"/>
+            <MenuItem Header="Archived photos" Command="{Binding ArchivedPhotosCmd}" IsEnabled="{Binding Enabled}"/>
             <MenuItem Header="Categories" Command="{Binding CategoriesCmd}" IsEnabled="{Binding Enabled}"/>
             <MenuItem Header="Settings"  IsEnabled="{Binding Enabled}">
                 <MenuItem Header="Profile" Command="{Binding ProfileCmd}"/>

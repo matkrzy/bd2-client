@@ -23,5 +23,7 @@
         </ResourceDictionary>
     </Page.Resources>
 
-    <Grid/>
+    <Grid>
+        <TextBox x:Name="help" HorizontalAlignment="Left" Height="420" Margin="69,39,0,0" TextWrapping="Wrap" Text="{Binding Help}" VerticalAlignment="Top" Width="580" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Auto" TextAlignment="Justify"/>
+    </Grid>
 </Page>

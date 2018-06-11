@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Configuration;
-using BD_client.Services;
 
 namespace BD_client.ViewModels
 {
@@ -20,6 +19,7 @@ namespace BD_client.ViewModels
         public ICommand LogoutCmd { get; set; }
         public ICommand MyPhotosCmd { get; set; }
         public ICommand PublicPhotosCmd { get; }
+        public ICommand ArchivedPhotosCmd { get; }
         public ICommand CategoriesCmd { get; }
 
         public List<int> List { get; set; }
@@ -29,6 +29,7 @@ namespace BD_client.ViewModels
 
         private int _selectedIndex;
         private String _user;
+        public readonly string BaseUrl;
 
         public int SelectedIndex
         {
@@ -88,8 +89,10 @@ namespace BD_client.ViewModels
 
         public MainWindowViewModel()
         {
+            BaseUrl = ConfigurationManager.AppSettings["BaseApiUrl"];
             List = null;
             MyPhotosCmd = new RelayCommand(x => ShowMyPhotos());
+            ArchivedPhotosCmd = new RelayCommand(x => ShowArchivedPhotos());
             ProfileCmd = new RelayCommand(x => Profile());
             LogoutCmd = new RelayCommand(x => Logout());
             HelpCmd = new RelayCommand(x => Help());
@@ -116,9 +119,16 @@ namespace BD_client.ViewModels
             }
         }
 
+        private void ShowArchivedPhotos()
+        {
+            MainWindow.MainVM.Page = "Pages/ArchivedPhotosPage.xaml";
+            MainWindow.MainVM.SelectedIndex = -1;
+        }
+
         private void Help()
         {
-            MainWindow.MainVM.Page = "Pages/HelpPage.xaml";
+            string pathToHtmlFile = System.IO.Directory.GetCurrentDirectory() + @"\..\..\Resources\help.html";
+            System.Diagnostics.Process.Start(pathToHtmlFile);
             MainWindow.MainVM.SelectedIndex = -1;
         }
 
@@ -147,7 +157,8 @@ namespace BD_client.ViewModels
 
         private void Logout()
         {
-            ApiRequest.Post("/account/logout", null);
+            string url = MainWindow.MainVM.BaseUrl + "api/v1/account/logout";
+            ApiRequest.Post(url,null);
             ApiRequest.JWT = null;
             MainWindow.MainVM.Page = "Pages/LogInPage.xaml";
             MainWindow.MainVM.SelectedIndex = -1;

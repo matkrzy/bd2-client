@@ -54,22 +54,5 @@ namespace BD_client.Domain
             }
 
         }
-        //TODO: tego sie pozbyc
-        public void DisplayAll()
-        {
-            ClearItems();
-            try
-            {
-                //TODO:
-                foreach (var fileInfo in DirectoryInfo.GetFiles("*.jpg"))
-                {
-                    Add(new Photo(fileInfo.FullName, 0));
-                }
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show($"An Error Occured: {e.Message}");
-            }
-        }
-    }
+      }
 }

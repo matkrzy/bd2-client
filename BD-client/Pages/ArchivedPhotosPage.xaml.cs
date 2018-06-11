@@ -1,4 +1,5 @@
-﻿using BD_client.Data.Photos;
+﻿using BD_client.Common;
+using BD_client.Data.Photos;
 using BD_client.Domain;
 using BD_client.Services;
 using BD_client.ViewModels;
@@ -25,15 +26,14 @@ namespace BD_client.Pages
     /// <summary>
     /// Interaction logic for MyPhotos.xaml
     /// </summary>
-    public partial class MyPhotosPage : Page
+    public partial class ArchivedPhotosPage : Page
     {
-        public MyPhotosPageViewModel ViewModel;
+        public ArchivedPhotosPageViewModel ViewModel;
 
-        public MyPhotosPage()
+        public ArchivedPhotosPage()
         {
             InitializeComponent();
-            //MyPhotosListBox.MouseDoubleClick += async (s, e) => OnPhotoDbClick(s, e);
-            ViewModel = new MyPhotosPageViewModel(DialogCoordinator.Instance);
+            ViewModel = new ArchivedPhotosPageViewModel(DialogCoordinator.Instance);
             DataContext = ViewModel;
         }
 
@@ -43,37 +43,24 @@ namespace BD_client.Pages
         {
             var allPhotos = ViewModel.Photos.Result;
             new PhotoDetailsWindow(allPhotos, MyPhotosListBox.SelectedIndex).Show();
-
         }
 
-        private void OnArchivePhoto(object sender, RoutedEventArgs e)
+        private void OnReactivePhoto(object sender, RoutedEventArgs e)
         {
-            List<int> list = new List<int>();
+            List<long> list = new List<long>();
 
             foreach (var item in this.MyPhotosListBox.SelectedItems)
             {
                 list.Add((MainWindow.MainVM.Photos[this.MyPhotosListBox.Items.IndexOf(item)].Id));
             }
 
-            foreach (var id in list)
+            foreach(var id in list)
             {
-                ViewModel.Archive(id);
+                ViewModel.Reactive(id);
             }
             ViewModel.Photos.Result.Update();
         }
 
-        private void OnEditPhoto(object sender, RoutedEventArgs e)
-        {
-            List<int> list = new List<int>();
-
-            foreach (var item in this.MyPhotosListBox.SelectedItems)
-            {
-                list.Add(this.MyPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
-            }
-            MainWindow.MainVM.List = list;
-            MainWindow.MainVM.SelectedIndex = 1;
-            MainWindow.MainVM.Page = "Pages/EditPhotoPage.xaml";
-        }
         private void OnDownloadPhoto(object sender, RoutedEventArgs e)
         {
             List<int> list = new List<int>();
@@ -97,19 +84,6 @@ namespace BD_client.Pages
             MainWindow.MainVM.List = list;
             MainWindow.MainVM.SelectedIndex = 4;
             MainWindow.MainVM.Page = "Pages/RemovePhotoPage.xaml";
-        }
-
-        private void OnSharePhoto(object sender, RoutedEventArgs e)
-        {
-            List<int> list = new List<int>();
-
-            foreach (var item in this.MyPhotosListBox.SelectedItems)
-            {
-                list.Add(this.MyPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
-            }
-            MainWindow.MainVM.List = list;
-            MainWindow.MainVM.SelectedIndex = 5;
-            MainWindow.MainVM.Page = "Pages/SharePage.xaml";
         }
     }
 }

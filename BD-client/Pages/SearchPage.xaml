@@ -1,4 +1,5 @@
 ﻿<Page x:Class="BD_client.Pages.SearchPage"
+      xmlns:wpf="http://wpfcontrols.com/"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -24,10 +25,14 @@
     </Page.Resources>
 
     <Grid>
-        <TextBox x:Name="searchDescription" Controls:TextBoxHelper.Watermark="Description" HorizontalAlignment="Left" Height="29" Margin="310,67,0,0" TextWrapping="Wrap" Text="{Binding DescriptionPhrase, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="150" Style="{DynamicResource SearchMetroTextBox}" Controls:TextBoxHelper.ButtonCommand="{Binding DescriptionCmd}"/>
-        <TextBox x:Name="searchTags" Controls:TextBoxHelper.Watermark="Tags" HorizontalAlignment="Left" Height="29" Margin="310,101,0,0" TextWrapping="Wrap" Text="{Binding TagsPhrase, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="150" Style="{DynamicResource SearchMetroTextBox}" Controls:TextBoxHelper.ButtonCommand="{Binding TagsCmd}"/>
-        <TextBox x:Name="searchExif" Controls:TextBoxHelper.Watermark="Exif" HorizontalAlignment="Left" Height="29" Margin="310,135,0,0" TextWrapping="Wrap" Text="{Binding ExifPhrase, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="150" Style="{DynamicResource SearchMetroTextBox}" Controls:TextBoxHelper.ButtonCommand="{Binding ExifCmd}"/>
-
+        <TextBox x:Name="searchDescription" Controls:TextBoxHelper.Watermark="Description" HorizontalAlignment="Left" Height="29" Margin="90,67,0,0" TextWrapping="Wrap" Text="{Binding DescriptionPhrase, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="150" Style="{DynamicResource SearchMetroTextBox}" Controls:TextBoxHelper.ButtonCommand="{Binding DescriptionCmd}"/>
+        <TextBox x:Name="searchTags"  KeyUp="TextBox_KeyUp" Controls:TextBoxHelper.Watermark="Tags" HorizontalAlignment="Left" Height="29" Margin="90,135,0,0" TextWrapping="Wrap" Text="{Binding TagsPhrase, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="150" Style="{DynamicResource SearchMetroTextBox}" Controls:TextBoxHelper.ButtonCommand="{Binding TagsCmd}"/>
+        <Border BorderBrush="Black" BorderThickness="1" Margin="90,164,460,299" Visibility="Hidden">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="-1,-1,0,9">
+                <StackPanel Name="resultStack" Height="46" Width="149"></StackPanel>
+            </ScrollViewer>
+        </Border>
+        <TextBox x:Name="searchExif" Controls:TextBoxHelper.Watermark="Exif" HorizontalAlignment="Left" Height="29" Margin="90,101,0,0" TextWrapping="Wrap" Text="{Binding ExifPhrase, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="150" Style="{DynamicResource SearchMetroTextBox}" Controls:TextBoxHelper.ButtonCommand="{Binding ExifCmd}"/>
         <Button x:Name="searchBtn" Content="Search" Height="50" Width="150" Style="{StaticResource AccentedSquareButtonStyle}" Command="{Binding SearchCmd}" Margin="332,191,218,259"/>
         <Button x:Name="cancelBtn" Content="Cancel" Height="50" Width="150" Style="{StaticResource AccentedSquareButtonStyle}" Command="{Binding CancelCmd}" Margin="520,191,30,259"/>
         <Controls:SplitButton 
@@ -39,7 +44,7 @@
             SelectedIndex="{Binding CategorySelectedIndex}"
             ItemsSource="{Binding Categories}"
             DisplayMemberPath="Name"
-            VerticalAlignment="Center" Margin="106,67,420,336" Height="97" 
+            VerticalAlignment="Center" Margin="283,67,243,336" Height="97" 
             Command="{Binding CategoryCmd}"/>
 
         <DataGrid ItemsSource="{Binding SearchFilters}" Margin="491,67,44,336"

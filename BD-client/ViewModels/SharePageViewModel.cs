@@ -10,7 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using BD_client.Services;
 
 namespace BD_client.ViewModels
 {
@@ -25,6 +24,8 @@ namespace BD_client.ViewModels
         public ICommand RemovePhotoCmd { get; set; }
         public ICommand ShareCmd { get; set; }
         private IDialogCoordinator dialogCoordinator;
+        public bool PublicShare { get; set; }
+        public bool UserShare { get; set; }
 
         public int DataGridSelectedIndex
         {
@@ -102,22 +103,56 @@ namespace BD_client.ViewModels
         }
         private async void Share()
         {
-            List<int> photoIndex = SharePhoto();
-            await dialogCoordinator.ShowMessageAsync(this, "Result", photoIndex.Count + " of " + Photos.Count + " photos was shared");
-            for (int i = photoIndex.Count - 1; i >= 0; i--)
+            if (UserShare)
             {
-                Photos.RemoveAt(photoIndex[i]);
+                List<int> photoIndex = SharePhoto();
+                await dialogCoordinator.ShowMessageAsync(this, "Result", photoIndex.Count + " of " + Photos.Count + " photos was shared");
             }
+            if (PublicShare)
+            {
+                List<int> photoIndex = PublicSharePhoto();
+                await dialogCoordinator.ShowMessageAsync(this, "Result", photoIndex.Count + " of " + Photos.Count + " photos was shared");
+            }
+
         }
 
         private User GetUserInfo(string email)
         {
-            string url = "/users/" + email;
+            string url = MainWindow.MainVM.BaseUrl + "api/v1/users/" + email;
             String responseContent = ApiRequest.Get(url);
             User user = JsonConvert.DeserializeObject<User>(responseContent);
             return user;
 
         }
+
+        private List<int> PublicSharePhoto()
+        {
+            var photoIndex = new List<int>();
+
+            for (int i = 0; i < Photos.Count; i++)
+            {
+
+                var valuesPhoto = new Dictionary<string, string>
+                {
+                    { "shareState", ShareState.PUBLIC.ToString() }
+                };
+
+                var json = JsonConvert.SerializeObject(valuesPhoto, Formatting.Indented);
+                string url = MainWindow.MainVM.BaseUrl + "api/v1/photos/" + Photos[i].Id;
+                try
+                {
+                    ApiRequest.Put(url, json);
+                    photoIndex.Add(i);
+                }
+                catch (Exception)
+                {
+
+                }
+            }
+            return photoIndex;
+
+        }
+
 
         private List<int> SharePhoto()
         {
@@ -142,7 +177,7 @@ namespace BD_client.ViewModels
                 };
 
                 var json = JsonConvert.SerializeObject(valuesPhoto, Formatting.Indented);
-                var photosUrl = "/shares";
+                var photosUrl = MainWindow.MainVM.BaseUrl + "api/v1/shares";
                 try
                 {
                     ApiRequest.Post(photosUrl, json);
