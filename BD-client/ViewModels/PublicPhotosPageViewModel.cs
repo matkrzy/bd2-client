@@ -1,7 +1,10 @@
-﻿using MahApps.Metro.Controls.Dialogs;
+﻿using System;
+using MahApps.Metro.Controls.Dialogs;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using BD_client.Models;
+using BD_client.Services;
 
 namespace BD_client.ViewModels
 {

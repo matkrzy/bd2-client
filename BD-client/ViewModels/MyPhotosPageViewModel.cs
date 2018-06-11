@@ -62,18 +62,16 @@ namespace BD_client.ViewModels
         
         public async void Archive(int id)
         {
-            var res = await PhotoService.ChangePhotoState(PhotoState.ARCHIVED, id);
-            foreach (var photo in MainWindow.MainVM.Photos)
-            {
-                if (photo.Id == id)
-                {
-                    Photos.Result.Remove(photo);
-                    MainWindow.MainVM.Photos.Remove(photo);
-                    break;
-                }
-            }
-
-
+//            var res = await PhotoService.ChangePhotoState(PhotoState.ARCHIVED, id);
+//            foreach (var photo in MainWindow.MainVM.Photos)
+//            {
+//                if (photo.Id == id)
+//                {
+//                    Photos.Result.Remove(photo);
+//                    MainWindow.MainVM.Photos.Remove(photo);
+//                    break;
+//                }
+//            }
         }
     }
 }

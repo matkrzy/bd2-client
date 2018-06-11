@@ -41,15 +41,15 @@ namespace BD_client.Models
         }
         public void Update(IEnumerable<int> exceptIds)
         {
-            ClearItems();
-            foreach(var fileInfo in DirectoryInfo.GetFiles())
-            {
-                int photoId;
-                if (int.TryParse(Path.GetFileNameWithoutExtension(fileInfo.FullName), out photoId) && !exceptIds.Contains(photoId))
-                {
-                    Add(new Photo(fileInfo.FullName, photoId));
-                }
-            }
+//            ClearItems();
+//            foreach(var fileInfo in DirectoryInfo.GetFiles())
+//            {
+//                int photoId;
+//                if (int.TryParse(Path.GetFileNameWithoutExtension(fileInfo.FullName), out photoId) && !exceptIds.Contains(photoId))
+//                {
+//                    Add(new Photo(fileInfo.FullName, photoId));
+//                }
+//            }
 
         }
       }

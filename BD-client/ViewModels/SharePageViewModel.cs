@@ -1,16 +1,12 @@
-﻿using BD_client.Domain;
-using MahApps.Metro.Controls.Dialogs;
+﻿using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using BD_client.Dto;
+using BD_client.Enums;
 using BD_client.Pages;
 using BD_client.Services;
 
@@ -137,7 +133,7 @@ namespace BD_client.ViewModels
 
                 var valuesPhoto = new Dictionary<string, string>
                 {
-                    { "shareState", ShareState.PUBLIC.ToString() }
+                    { "shareState", ShareState.Public.ToString() }
                 };
 
                 var json = JsonConvert.SerializeObject(valuesPhoto, Formatting.Indented);

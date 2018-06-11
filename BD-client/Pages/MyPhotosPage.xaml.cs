@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using BD_client.Api.Core;
 using BD_client.Dto;
+using BD_client.Windows;
 using RestSharp;
 
 namespace BD_client.Pages
@@ -28,9 +29,9 @@ namespace BD_client.Pages
 
 
         private void OnPhotoDbClick(object sender, MouseButtonEventArgs e)
-        { var allPhotos = ViewModel.Photos.Result;
-            new PhotoDetailsWindow(allPhotos, MyPhotosListBox.SelectedIndex).Show();
-
+        {
+//            var allPhotos = ViewModel.Photos;
+//            new PhotoDetailsWindow(allPhotos, MyPhotosListBox.SelectedIndex).Show();
         }
 
         private void OnArchivePhoto(object sender, RoutedEventArgs e)
@@ -46,7 +47,8 @@ namespace BD_client.Pages
             {
                 ViewModel.Archive(id);
             }
-            ViewModel.Photos.Result.Update();
+
+//            ViewModel.Photos.Result.Update();
         }
 
         private void OnEditPhoto(object sender, RoutedEventArgs e)
@@ -79,8 +81,7 @@ namespace BD_client.Pages
 
         private async void OnRemovePhoto(object sender, RoutedEventArgs e)
         {
-
-            ObservableCollection<Photo> photos = new ObservableCollection<Photo>(vm.Photos);
+            ObservableCollection<Photo> photos = new ObservableCollection<Photo>(ViewModel.Photos);
 
             foreach (var item in this.MyPhotosListBox.SelectedItems)
             {
@@ -93,7 +94,7 @@ namespace BD_client.Pages
                 }
             }
 
-            vm.Photos = photos;
+            ViewModel.Photos = photos;
         }
 
         private void OnSharePhoto(object sender, RoutedEventArgs e)

@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using BD_client.Dto;
+using BD_client.Enums;
 
 namespace BD_client.Pages
 {
@@ -378,7 +379,7 @@ namespace BD_client.Pages
         }
         private async Task ArchivePhoto(int id)
         {
-            var res = await PhotoService.ChangePhotoState(PhotoState.ARCHIVED, id);
+            var res = await PhotoService.ChangePhotoState(PhotoState.Archived, id);
         }
         private void OnEditPhoto(object sender, RoutedEventArgs e)
         {

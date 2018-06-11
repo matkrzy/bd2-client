@@ -67,7 +67,7 @@ namespace BD_client.ViewModels
             String responseContent = ApiRequest.Get(url);
             JsonTextReader reader = new JsonTextReader(new StringReader(responseContent));
             reader.SupportMultipleContent = true;
-            List<Domain.Tag> tagsList = null;
+            List<Tag> tagsList = null;
             while (true)
             {
                 if (!reader.Read())
@@ -76,7 +76,7 @@ namespace BD_client.ViewModels
                 }
 
                 JsonSerializer serializer = new JsonSerializer();
-                tagsList = serializer.Deserialize<List<Domain.Tag>>(reader);
+                tagsList = serializer.Deserialize<List<Tag>>(reader);
 
             }
 
