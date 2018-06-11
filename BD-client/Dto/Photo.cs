@@ -24,6 +24,7 @@ namespace BD_client.Dto
         [JsonProperty("uploadTime")]
         public DateTime UploadTime { get; set; }
 
+        
         [JsonProperty("description")]
         public string Description { get; set; } = "";
 

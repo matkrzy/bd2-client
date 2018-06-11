@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -8,7 +8,6 @@ using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 
 namespace BD_client.Services
@@ -92,7 +91,7 @@ namespace BD_client.Services
 
         #region Piotrek
 
-        public static async Task<HttpResponseMessage> GetAsync(string endpointPath)
+        public static async Task<HttpResponseMessage> GetAsync(string url)
         {
             var baseUri = new Uri(apiHost);
             var cookieContainer = new CookieContainer();
@@ -192,7 +191,6 @@ namespace BD_client.Services
                 cookie.Domain = request.RequestUri.Host;
                 request.CookieContainer.Add(cookie);
             }
-
             request.Method = "PUT";
             request.ContentType = "application/json";
             using (var requestStream = request.GetRequestStream())

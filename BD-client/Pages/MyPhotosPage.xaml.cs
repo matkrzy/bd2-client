@@ -1,4 +1,4 @@
-﻿using BD_client.ViewModels;
+using BD_client.ViewModels;
 using MahApps.Metro.Controls.Dialogs;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,17 +17,36 @@ namespace BD_client.Pages
     /// </summary>
     public partial class MyPhotosPage : Page
     {
-        MyPhotosPageViewModel vm = new MyPhotosPageViewModel(DialogCoordinator.Instance);
+        public MyPhotosPageViewModel ViewModel;
 
         public MyPhotosPage()
         {
             InitializeComponent();
-            DataContext = vm;
+            ViewModel = new MyPhotosPageViewModel(DialogCoordinator.Instance);
+            DataContext = ViewModel;
         }
 
 
         private void OnPhotoDbClick(object sender, MouseButtonEventArgs e)
+        { var allPhotos = ViewModel.Photos.Result;
+            new PhotoDetailsWindow(allPhotos, MyPhotosListBox.SelectedIndex).Show();
+
+        }
+
+        private void OnArchivePhoto(object sender, RoutedEventArgs e)
         {
+            List<int> list = new List<int>();
+
+            foreach (var item in this.MyPhotosListBox.SelectedItems)
+            {
+                list.Add((MainWindow.MainVM.Photos[this.MyPhotosListBox.Items.IndexOf(item)].Id));
+            }
+
+            foreach (var id in list)
+            {
+                ViewModel.Archive(id);
+            }
+            ViewModel.Photos.Result.Update();
         }
 
         private void OnEditPhoto(object sender, RoutedEventArgs e)

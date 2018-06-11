@@ -67,7 +67,7 @@ namespace BD_client.ViewModels
             set
             {
                 _email = value;
-                OnPropertyChanged("email");
+                OnPropertyChanged("Email");
             }
         }
 
@@ -123,7 +123,8 @@ namespace BD_client.ViewModels
             };
 
             string json = JsonConvert.SerializeObject(values, Formatting.Indented);
-            ApiRequest.Post("/users", json);
+            String url = MainWindow.MainVM.BaseUrl + "api/v1/users";
+            ApiRequest.Post(url, json);
         }
 
         virtual protected void OnPropertyChanged(string propName)

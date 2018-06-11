@@ -90,6 +90,7 @@
                     <MenuItem Header="Edit" Click="OnEditPhoto"/>
                     <MenuItem Header="Download" Click="OnDownloadPhoto"/>
                     <MenuItem Header="Remove" Click="OnRemovePhoto"/>
+                    <MenuItem Name="ArchivePhotosContextMenuItem" Header="Archive"/>
                     <MenuItem Name="DissociatePhotosContextMenuItem" Header="Dissociate"/>
                 </ContextMenu>
             </ListBox.ContextMenu>

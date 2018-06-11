@@ -15,6 +15,7 @@ namespace BD_client.ViewModels
         {
             var path = System.IO.Directory.GetCurrentDirectory() + @"\..\..\tmp\own";
             Photos = new PhotoCollection(path);
+           
         }
 
 

@@ -47,6 +47,7 @@
                     IsSynchronizedWithCurrentItem="True"
                     Name="HotPhotosListBox" 
                     ItemsSource="{Binding Photos}"
+                    SelectedIndex="{Binding SelectedPhoto}"
                     SelectionMode="Single">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseDoubleClick">

@@ -59,5 +59,21 @@ namespace BD_client.ViewModels
 
             this.Photos = JsonConvert.DeserializeObject<ObservableCollection<Photo>>(response.Content);
         }
+        
+        public async void Archive(int id)
+        {
+            var res = await PhotoService.ChangePhotoState(PhotoState.ARCHIVED, id);
+            foreach (var photo in MainWindow.MainVM.Photos)
+            {
+                if (photo.Id == id)
+                {
+                    Photos.Result.Remove(photo);
+                    MainWindow.MainVM.Photos.Remove(photo);
+                    break;
+                }
+            }
+
+
+        }
     }
 }

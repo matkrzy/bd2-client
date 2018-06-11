@@ -88,9 +88,9 @@ namespace BD_client.ViewModels
             }
         }
 
-        private void RemovePhotoFromDisc(string name)
+        private void RemovePhotoFromDisc(long name)
         {
-            var destination = System.IO.Directory.GetCurrentDirectory() + @"\..\..\tmp\own\"+name;
+            var destination = System.IO.Directory.GetCurrentDirectory() + @"\..\..\tmp\own\"+name+".jpg";
             if (File.Exists(destination))
             {
                 File.Delete(destination);
@@ -104,16 +104,16 @@ namespace BD_client.ViewModels
             var photoIndex = new List<int>();
             for (int i = 0; i < Photos.Count; i++)
             {
-                var photosUrl = "/photos/"+Photos[i].Id;
+                var photosUrl = MainWindow.MainVM.BaseUrl + "api/v1/photos/"+Photos[i].Id;
                 try
                 {
-                    RemovePhotoFromDisc(Photos[i].Name);
+                    RemovePhotoFromDisc(Photos[i].Id);
                     ApiRequest.Delete(photosUrl);
                     photoIndex.Add(i);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-
+                    string msg = e.Message;
                 }
             }
             return photoIndex;

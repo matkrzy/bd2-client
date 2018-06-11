@@ -11,17 +11,54 @@ namespace BD_client.ViewModels
         public PhotoCollection Photos { get; set; }
         public ICommand LikeCmd { get; set; }
         private IDialogCoordinator dialogCoordinator;
+        private int _selectedPhoto;
+
+        public int SelectedPhoto
+        {
+            get
+            {
+                return _selectedPhoto;
+            }
+            set
+            {
+                _selectedPhoto = value;
+                OnPropertyChanged("SelectedPhoto");
+            }
+        }
 
         public PublicPhotosPageViewModel(IDialogCoordinator instance, string photoDestination)
         {
-            Photos = new PhotoCollection(photoDestination);
+            try
+            {
+                Photos = new PhotoCollection(photoDestination);
+            }
+            catch (Exception) { }
             dialogCoordinator = instance;
-            LikeCmd = new RelayCommand(x => Like());
+            LikeCmd = new RelayCommand(async x => await Like());
         }
 
-        private async void Like()
+        private async Task Like()
         {
-            await dialogCoordinator.ShowMessageAsync(this, "New like", "You ♥ this photo");
+            var resAdd = await PhotoService.AddRate(Photos[SelectedPhoto].Id);
+            if (resAdd)
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "New like", "You ♥ this photo");
+                Photos[SelectedPhoto].Rate++;
+            }
+            else
+            {
+                var resRemove = await PhotoService.RemoveRate(Photos[SelectedPhoto].Id);
+                if(resRemove)
+                {
+                    await dialogCoordinator.ShowMessageAsync(this, "Unliked", "You disliked this photo");
+                    Photos[SelectedPhoto].Rate--;
+                }
+                else
+                {
+                    await dialogCoordinator.ShowMessageAsync(this, "Error", "Error occured");
+                }
+            }
+            Photos.Update();
         }
 
         virtual protected void OnPropertyChanged(string propName)

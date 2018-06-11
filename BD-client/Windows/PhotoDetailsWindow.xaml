@@ -1,0 +1,74 @@
+﻿<Window x:Class="BD_client.Windows.PhotoDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BD_client.Windows"
+        xmlns:custom="clr-namespace:BD_client.Converters;assembly="
+        mc:Ignorable="d"
+        Title="Photo details" WindowState="Maximized" ResizeMode="NoResize">
+    <Window.Resources>
+        <ResourceDictionary>
+            <!-- Headers for metadata properties -->
+            <Style x:Key="MetadataHeader" TargetType="{x:Type Label}">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5" >
+                            <LinearGradientBrush.GradientStops>
+                                <GradientStop Offset="0.5" Color="{x:Static SystemColors.AppWorkspaceColor}" />
+                                <GradientStop Offset="2" Color="Transparent" />
+                            </LinearGradientBrush.GradientStops>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="FontWeight" Value="Bold" />
+            </Style>
+            <custom:StringToImageConverter x:Key="StringToImageConverter" />
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="200"/>
+        </Grid.ColumnDefinitions>
+        <!-- Image-->
+        <Image Source="{Binding Photo.Path, Converter = {StaticResource StringToImageConverter} }" Grid.Column="0" Grid.Row="0" Grid.RowSpan="4"/>
+        <TextBox Grid.Column="1" Grid.Row="0" FontSize="20" TextAlignment="Center" Background="#45ADE6" Foreground="#fff" IsReadOnly="True">Photo details</TextBox>
+        <GroupBox Grid.Column="1" Grid.Row="1">
+            <StackPanel>
+                <Label Style="{StaticResource MetadataHeader}">Title</Label>
+                <Label Content="{Binding Photo.Name}"/>
+                <Label Style="{StaticResource MetadataHeader}">Description</Label>
+                <Label Content="{Binding Photo.Description}" />
+                <Label Style="{StaticResource MetadataHeader}">Upload date</Label>
+                <Label Content="{Binding Photo.UploadTime}" />
+                <Label Style="{StaticResource MetadataHeader}">Author</Label>
+                <Label Content="{Binding Photo.UserEmail}" />
+            </StackPanel>
+        </GroupBox>
+        <TextBox Grid.Column="1" Grid.Row="2" FontSize="20" TextAlignment="Center" Background="#45ADE6" Foreground="#fff" IsReadOnly="True">Exif metadata</TextBox>
+        <GroupBox Grid.Column="1" Grid.Row="3" Margin="0,0,10,10">
+            <StackPanel>
+                <ListBox Height ="310" ScrollViewer.VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
+                    Name="ExifListBox" ItemsSource="{Binding ExifList}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontWeight="Bold" FontSize="9" Text="{Binding Path=Name}"/>
+                                <TextBlock FontSize="9" Text=": " />
+                                <TextBlock FontSize="9" Text="{Binding Path=Description}" />
+                            </StackPanel>
+                    </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+        </GroupBox>
+    </Grid>
+</Window>

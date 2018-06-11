@@ -86,7 +86,7 @@ namespace BD_client.ViewModels
             set
             {
                 _email = value;
-                OnPropertyChanged("email");
+                OnPropertyChanged("Email");
             }
         }
 
@@ -129,7 +129,7 @@ namespace BD_client.ViewModels
 
         private void GetUserInfo()
         {
-            string url = "/users/"+ MainWindow.MainVM.User;
+            string url = MainWindow.MainVM.BaseUrl + "api/v1/users/"+ MainWindow.MainVM.User;
             String responseContent = ApiRequest.Get(url);
             User user = JsonConvert.DeserializeObject<User>(responseContent);
             id = user.id;
@@ -152,7 +152,8 @@ namespace BD_client.ViewModels
 
             string json = JsonConvert.SerializeObject(values, Formatting.Indented);
 
-            ApiRequest.Put("/users", json);
+            String url = MainWindow.MainVM.BaseUrl + "api/v1/users";
+            ApiRequest.Put(url, json);
         }
 
 

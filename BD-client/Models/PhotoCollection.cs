@@ -41,33 +41,16 @@ namespace BD_client.Models
         }
         public void Update(IEnumerable<int> exceptIds)
         {
-//            ClearItems();
-//            foreach(var fileInfo in DirectoryInfo.GetFiles())
-//            {
-//                int photoId;
-//                if (int.TryParse(Path.GetFileNameWithoutExtension(fileInfo.FullName), out photoId) && !exceptIds.Contains(photoId))
-//                {
-//                    Add(new Photo(fileInfo.FullName, photoId));
-//                }
-//            }
+            ClearItems();
+            foreach(var fileInfo in DirectoryInfo.GetFiles())
+            {
+                int photoId;
+                if (int.TryParse(Path.GetFileNameWithoutExtension(fileInfo.FullName), out photoId) && !exceptIds.Contains(photoId))
+                {
+                    Add(new Photo(fileInfo.FullName, photoId));
+                }
+            }
 
         }
-        //TODO: tego sie pozbyc
-        public void DisplayAll()
-        {
-//            ClearItems();
-//            try
-//            {
-//                //TODO:
-//                foreach (var fileInfo in DirectoryInfo.GetFiles("*.jpg"))
-//                {
-//                    Add(new Photo(fileInfo.FullName, 0));
-//                }
-//            }
-//            catch (Exception e)
-//            {
-//                MessageBox.Show($"An Error Occured: {e.Message}");
-//            }
-        }
-    }
+      }
 }
