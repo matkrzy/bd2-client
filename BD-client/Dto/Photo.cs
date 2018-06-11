@@ -21,7 +21,7 @@ namespace BD_client.Dto
         public long UserId { get; set; }
 
         [Browsable(false)]
-        [JsonProperty("uploadTime")]
+        [JsonProperty("creationDate")]
         public DateTime UploadTime { get; set; }
 
         

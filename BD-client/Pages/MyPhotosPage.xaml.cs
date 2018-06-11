@@ -30,8 +30,8 @@ namespace BD_client.Pages
 
         private void OnPhotoDbClick(object sender, MouseButtonEventArgs e)
         {
-//            var allPhotos = ViewModel.Photos;
-//            new PhotoDetailsWindow(allPhotos, MyPhotosListBox.SelectedIndex).Show();
+            var allPhotos = ViewModel.Photos;
+            new PhotoDetailsWindow(allPhotos, MyPhotosListBox.SelectedIndex).Show();
         }
 
         private void OnArchivePhoto(object sender, RoutedEventArgs e)

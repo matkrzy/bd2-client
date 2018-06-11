@@ -35,7 +35,6 @@
           <e p="UserState.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
-          <e p="ExifMetadata.cs" t="Include" />
           <e p="PhotoCollection.cs" t="Include" />
         </e>
         <e p="obj" t="ExcludeRecursive" />
@@ -99,6 +98,7 @@
           <e p="PhotoService.cs" t="Include" />
         </e>
         <e p="Utils" t="Include">
+          <e p="ExifMetadata.cs" t="Include" />
           <e p="SearchFilter.cs" t="Include" />
           <e p="StringToImageConverter.cs" t="Include" />
         </e>
@@ -113,6 +113,7 @@
           <e p="LogInPageViewModel.cs" t="Include" />
           <e p="MainWindowViewModel.cs" t="Include" />
           <e p="MyPhotosPageViewModel.cs" t="Include" />
+          <e p="PhotoDetailsWindowViewModel.cs" t="Include" />
           <e p="ProfilePageViewModel.cs" t="Include" />
           <e p="PublicPhotosPageViewModel.cs" t="Include" />
           <e p="RegisterPageViewModel.cs" t="Include" />
@@ -120,9 +121,6 @@
           <e p="RemovePhotoPageViewModel.cs" t="Include" />
           <e p="SearchPageViewModel.cs" t="Include" />
           <e p="SharePageViewModel.cs" t="Include" />
-          <e p="Windows" t="Include">
-            <e p="PhotoDetailsWindowViewModel.cs" t="Include" />
-          </e>
         </e>
         <e p="Windows" t="Include">
           <e p="InputTextModalWindow.xaml" t="Include" />
