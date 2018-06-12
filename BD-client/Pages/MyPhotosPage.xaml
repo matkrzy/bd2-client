@@ -37,7 +37,8 @@
                 Name="MyPhotosListBox"
                 ItemsSource="{Binding Photos}"
                 SelectionMode="Extended"
-                MouseDoubleClick="OnPhotoDbClick">
+                MouseDoubleClick="OnPhotoDbClick"
+               >
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Orientation="Horizontal" />

@@ -47,6 +47,7 @@ namespace BD_client.ViewModels
                 try
                 {
                     this.ExifList.Remove(this.ExifList.Single(i => i.Type == 700));
+                    this.ExifList.Remove(this.ExifList.Single(i => i.Type == 36864));
                 }
                 catch (Exception e)
                 {
