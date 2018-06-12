@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using BD_client.Api.Core;
 using BD_client.Dto;
+using BD_client.Enums;
 using BD_client.Windows;
 using RestSharp;
 
@@ -35,33 +36,35 @@ namespace BD_client.Pages
             new PhotoDetailsWindow(allPhotos, MyPhotosListBox.SelectedIndex).Show();
         }
 
-        private void OnArchivePhoto(object sender, RoutedEventArgs e)
+        private async void OnArchivePhoto(object sender, RoutedEventArgs e)
         {
-            List<int> list = new List<int>();
-
-            foreach (var item in this.MyPhotosListBox.SelectedItems)
+            foreach (Photo photo in this.MyPhotosListBox.SelectedItems)
             {
-                list.Add((MainWindow.MainVM.Photos[this.MyPhotosListBox.Items.IndexOf(item)].Id));
+                photo.PhotoState = PhotoState.ARCHIVED;
+                IRestResponse response = await new Request($"/photos/{photo.Id}").DoPut(photo);
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    //TODO action on success
+                }
+                else
+                {
+                    //TODO action on failure
+                }
             }
 
-            foreach (var id in list)
-            {
-                ViewModel.Archive(id);
-            }
-
-//            ViewModel.Photos.Result.Update();
         }
 
         private void OnEditPhoto(object sender, RoutedEventArgs e)
         {
-            List<int> list = new List<int>();
+            MainWindow.MainVM.Photos = new List<Photo>();
 
-            foreach (var item in this.MyPhotosListBox.SelectedItems)
+            foreach (Photo photo in this.MyPhotosListBox.SelectedItems)
             {
-                list.Add(this.MyPhotosListBox.Items.IndexOf(item)); // Add selected indexes to the List<int>
+                MainWindow.MainVM.Photos.Add(photo);
             }
 
-            MainWindow.MainVM.List = list;
+
             MainWindow.MainVM.SelectedIndex = 1;
             MainWindow.MainVM.Page = "EditPhotoPage.xaml";
         }
@@ -75,7 +78,7 @@ namespace BD_client.Pages
                 list.Add(this.MyPhotosListBox.Items.IndexOf(item)); // Add selected indexes to the List<int>
             }
 
-            MainWindow.MainVM.List = list;
+//            MainWindow.MainVM.List = list;
             MainWindow.MainVM.SelectedIndex = 3;
             MainWindow.MainVM.Page = "DownloadPage.xaml";
         }
@@ -107,7 +110,7 @@ namespace BD_client.Pages
                 list.Add(this.MyPhotosListBox.Items.IndexOf(item)); // Add selected indexes to the List<int>
             }
 
-            MainWindow.MainVM.List = list;
+//            MainWindow.MainVM.List = list;
             MainWindow.MainVM.SelectedIndex = 5;
             MainWindow.MainVM.Page = "SharePage.xaml";
         }

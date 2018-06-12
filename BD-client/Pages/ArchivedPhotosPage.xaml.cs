@@ -54,7 +54,7 @@ namespace BD_client.Pages
             {
                 list.Add(this.MyPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
             }
-            MainWindow.MainVM.List = list;
+//            MainWindow.MainVM.List = list;
             MainWindow.MainVM.SelectedIndex = 3;
             MainWindow.MainVM.Page = "Pages/DownloadPage.xaml";
         }
@@ -66,7 +66,7 @@ namespace BD_client.Pages
             {
                 list.Add(this.MyPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
             }
-            MainWindow.MainVM.List = list;
+//            MainWindow.MainVM.List = list;
             MainWindow.MainVM.SelectedIndex = 4;
             MainWindow.MainVM.Page = "Pages/RemovePhotoPage.xaml";
         }

@@ -387,7 +387,7 @@ namespace BD_client.Pages
             {
                 list.Add(CategoryPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
             }
-            MainWindow.MainVM.List = list;
+//            MainWindow.MainVM.List = list;
             MainWindow.MainVM.SelectedIndex = 1;
             MainWindow.MainVM.Page = "Pages/EditPhotoPage.xaml";
         }
@@ -399,7 +399,7 @@ namespace BD_client.Pages
             {
                 list.Add(CategoryPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
             }
-            MainWindow.MainVM.List = list;
+//            MainWindow.MainVM.List = list;
             MainWindow.MainVM.SelectedIndex = 3;
             MainWindow.MainVM.Page = "Pages/DownloadPage.xaml";
         }
@@ -410,24 +410,24 @@ namespace BD_client.Pages
             {
                 list.Add(CategoryPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
             }
-            MainWindow.MainVM.List = list;
+//            MainWindow.MainVM.List = list;
             MainWindow.MainVM.SelectedIndex = 4;
             MainWindow.MainVM.Page = "Pages/RemovePhotoPage.xaml";
         }
         private void OnSharePhoto(object sender, RoutedEventArgs e)
         {
-            var list = new List<int>();
-            foreach (var item in this.CategoryPhotosListBox.SelectedItems)
-            {
-                list.Add(CategoryPhotosListBox.Items.IndexOf(item)); // Add selected indexes to the List<int>
-            }
-            MainWindow.MainVM.List = list;
-            MainWindow.MainVM.SelectedIndex = 5;
-            MainWindow.MainVM.Page = "Pages/SharePage.xaml";
+//            var list = new List<int>();
+//            foreach (var item in this.CategoryPhotosListBox.SelectedItems)
+//            {
+//                list.Add(CategoryPhotosListBox.Items.IndexOf(item)); // Add selected indexes to the List<int>
+//            }
+//            MainWindow.MainVM.List = list;
+//            MainWindow.MainVM.SelectedIndex = 5;
+//            MainWindow.MainVM.Page = "Pages/SharePage.xaml";
         }
         private void ChangeMainVMPhotosList()
         {       
-            MainWindow.MainVM.Photos = ViewModel.Photos.ToList();
+//            MainWindow.MainVM.Photos = ViewModel.Photos.ToList();
         }
     }
 }

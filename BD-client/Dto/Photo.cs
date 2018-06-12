@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Windows.Media.Imaging;
 using BD_client.Enums;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace BD_client.Dto
 {
@@ -17,6 +18,8 @@ namespace BD_client.Dto
         [JsonProperty("creationDate")]
         public DateTime CreationDate { get; set; }
 
+        [JsonProperty("name")] public string Name { get; set; }
+
         [JsonProperty("description")] public string Description { get; set; } = "";
 
         [Browsable(false)]
@@ -26,8 +29,6 @@ namespace BD_client.Dto
 //      [Browsable(false)]
 //      [JsonProperty("likes")]
 //      public int likes { get; set; }
-
-        [JsonProperty("name")] public string Name { get; set; }
 
         [Browsable(false)]
         [JsonProperty("path")]
@@ -39,7 +40,8 @@ namespace BD_client.Dto
 
         [Browsable(false)]
         [JsonProperty("state")]
-        public PhotoState PhotoState { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
+        public PhotoState PhotoState { get; set; } 
 
         [Browsable(false)]
         [JsonProperty("url")]
