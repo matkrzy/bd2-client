@@ -62,5 +62,9 @@ namespace BD_client.Windows
             DataContext = new PhotoDetailsWindowViewModel(photos.ElementAt(CurrentItemIndex));
         }
 
+        private void ExifListBox_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            this.ExifListBox.Height = this.Container.ActualHeight;
+        }
     }
 }
