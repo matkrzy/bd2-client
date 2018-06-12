@@ -462,48 +462,50 @@ namespace BD_client.ViewModels
 
         private List<int> GetAllPhotoIndexExif()
         {
-            List<int> resultPhotoIndex = null;
-            List<int> tmpResult = new List<int>();
-            List<string> searchExif = GetExifFilters();
-            if (searchExif != null)
-            {
-                for (int i = 0; i < Photos.Count; i++)
-                {
-                    string path = Path + "\\" + Photos[i].Id + ".jpg";
-                    ExifMetadata exif = ImageService.GetPhotoMetadata(path);
-                    foreach (var exifPhrase in searchExif)
-                    {
-                        CheckInExif(tmpResult, exif, exifPhrase, i);
-                    }
-                    resultPhotoIndex = Intersect(resultPhotoIndex, tmpResult);
-                }
-                return resultPhotoIndex;
-            }
-            else
-                return null;
+//            List<int> resultPhotoIndex = null;
+//            List<int> tmpResult = new List<int>();
+//            List<string> searchExif = GetExifFilters();
+//            if (searchExif != null)
+//            {
+//                for (int i = 0; i < Photos.Count; i++)
+//                {
+//                    string path = Path + "\\" + Photos[i].Id + ".jpg";
+//                    ExifMetadata exif = ImageService.GetPhotoMetadata(path);
+//                    foreach (var exifPhrase in searchExif)
+//                    {
+//                        CheckInExif(tmpResult, exif, exifPhrase, i);
+//                    }
+//                    resultPhotoIndex = Intersect(resultPhotoIndex, tmpResult);
+//                }
+//                return resultPhotoIndex;
+//            }
+//            else
+//                return null;
+
+            return null;
         }
 
         private void CheckInExif(List<int> tmpResult, ExifMetadata exif, string exifPhrase, int i)
         {
-            if (exif.ExifIFD0 != null)
-            {
-                foreach (var tag in exif.ExifIFD0)
-                {
-                    if ((!string.IsNullOrEmpty(tag.Name) && tag.Name.ToLower().Contains(exifPhrase.ToLower())) ||
-                        (!string.IsNullOrEmpty(tag.Description) && tag.Description.ToLower().Contains(exifPhrase.ToLower())))
-                        tmpResult.Add(i);
-                }
-            }
-
-            if(exif.ExifSubIFD != null)
-            {
-                foreach (var tag in exif.ExifSubIFD)
-                {
-                    if ((!string.IsNullOrEmpty(tag.Name) && tag.Name.ToLower().Contains(exifPhrase.ToLower())) ||
-                        (!string.IsNullOrEmpty(tag.Description) && tag.Description.ToLower().Contains(exifPhrase.ToLower())))
-                        tmpResult.Add(i);
-                }
-            }
+//            if (exif.ExifIFD0 != null)
+//            {
+//                foreach (var tag in exif.ExifIFD0)
+//                {
+//                    if ((!string.IsNullOrEmpty(tag.Name) && tag.Name.ToLower().Contains(exifPhrase.ToLower())) ||
+//                        (!string.IsNullOrEmpty(tag.Description) && tag.Description.ToLower().Contains(exifPhrase.ToLower())))
+//                        tmpResult.Add(i);
+//                }
+//            }
+//
+//            if(exif.ExifSubIFD != null)
+//            {
+//                foreach (var tag in exif.ExifSubIFD)
+//                {
+//                    if ((!string.IsNullOrEmpty(tag.Name) && tag.Name.ToLower().Contains(exifPhrase.ToLower())) ||
+//                        (!string.IsNullOrEmpty(tag.Description) && tag.Description.ToLower().Contains(exifPhrase.ToLower())))
+//                        tmpResult.Add(i);
+//                }
+//            }
         }
 
 

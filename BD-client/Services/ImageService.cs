@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BD_client.Models;
+using BD_client.Utils;
 
 namespace BD_client.Services
 {
@@ -36,9 +37,9 @@ namespace BD_client.Services
             return await ApiRequest.PostFile($"api/v1/images/{id}", pathToImage, imageName);
         }
 
-        public static ExifMetadata GetPhotoMetadata(string imagePath)
-        {
-            return new ExifMetadata(imagePath);
-        }
+//        public static ExifMetadata GetPhotoMetadata(string imagePath)
+//        {
+////            return new ExifMetadata(imagePath);
+//        }
     }
 }

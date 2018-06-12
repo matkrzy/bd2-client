@@ -1,8 +1,10 @@
-﻿using BD_client.ViewModels.Windows;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using BD_client.Dto;
 using BD_client.Models;
+using BD_client.ViewModels;
 
 namespace BD_client.Windows
 {
@@ -11,22 +13,21 @@ namespace BD_client.Windows
     /// </summary>
     public partial class PhotoDetailsWindow : Window
     {
-        public PhotoCollection Photos { get; set; }
-
         private int CurrentItemIndex;
         private int PhotoCollectionCount;
+        private ObservableCollection<Photo> photos;
 
-        public PhotoDetailsWindow(PhotoCollection photos, int selectedPhotoIndex)
+        public PhotoDetailsWindow(ObservableCollection<Photo> photos, int selectedPhotoIndex)
         {
             InitializeComponent();
-            Photos = photos;
-
+       
+            this.photos = photos;
             CurrentItemIndex = selectedPhotoIndex;
-            PhotoCollectionCount = Photos.Count;
+            PhotoCollectionCount = photos.Count;
 
             KeyDown += OnKeyDown;
 
-            var photo = Photos.ElementAt(CurrentItemIndex);
+            var photo = photos.ElementAt(CurrentItemIndex);
             DataContext = new PhotoDetailsWindowViewModel(photo);
         }
 
@@ -57,8 +58,8 @@ namespace BD_client.Windows
             {
                 CurrentItemIndex = PhotoCollectionCount - 1;
             }
-            var newPhoto = Photos.ElementAt(CurrentItemIndex);
-            DataContext = new PhotoDetailsWindowViewModel(newPhoto);
+     
+            DataContext = new PhotoDetailsWindowViewModel(photos.ElementAt(CurrentItemIndex));
         }
 
     }

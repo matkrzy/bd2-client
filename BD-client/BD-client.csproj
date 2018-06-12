@@ -97,7 +97,7 @@
     <Compile Include="Common\DataGridBehavior.cs" />
     <Compile Include="Common\NotifyTaskCompletion.cs" />
     <Compile Include="Common\PasswordBoxAssistant.cs" />
-    <Compile Include="Models\ExifMetadata.cs" />
+    <Compile Include="Utils\ExifMetadata.cs" />
     <Compile Include="Models\PhotoCollection.cs" />
     <Compile Include="Enums\PhotoState.cs" />
     <Compile Include="Enums\ShareState.cs" />
@@ -172,7 +172,7 @@
     <Compile Include="ViewModels\RemovePhotoPageViewModel.cs" />
     <Compile Include="ViewModels\SearchPageViewModel.cs" />
     <Compile Include="ViewModels\SharePageViewModel.cs" />
-    <Compile Include="ViewModels\Windows\PhotoDetailsWindowViewModel.cs" />
+    <Compile Include="ViewModels\PhotoDetailsWindowViewModel.cs" />
     <Compile Include="Windows\InputTextModalWindow.xaml.cs">
       <DependentUpon>InputTextModalWindow.xaml</DependentUpon>
     </Compile>
