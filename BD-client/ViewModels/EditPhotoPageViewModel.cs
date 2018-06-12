@@ -1,23 +1,20 @@
-﻿using BD_client.Data.Utils;
-using BD_client.Domain;
-using MahApps.Metro.Controls.Dialogs;
+﻿using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
+using BD_client.Dto;
+using BD_client.Pages;
+using BD_client.Services;
 
 namespace BD_client.ViewModels
 {
     class EditPhotoPageViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged = null;
-        public ObservableCollection<Domain.Category> Categories { get; set; }
+        public ObservableCollection<Dto.Category> Categories { get; set; }
         public ICommand CancelCmd { get; set; }
         public ICommand EditCmd { get; set; }
         private IDialogCoordinator dialogCoordinator;
@@ -34,7 +31,7 @@ namespace BD_client.ViewModels
             dialogCoordinator = instance;
             SelectedCategory = 0;
             Photos = new ObservableCollection<Photo>();
-            Categories = new ObservableCollection<Domain.Category>();
+            Categories = new ObservableCollection<Dto.Category>();
             CancelCmd = new RelayCommand(x => Cancel());
             EditCmd = new RelayCommand(x => Edit());
             if (MainWindow.MainVM.List != null)
@@ -79,7 +76,7 @@ namespace BD_client.ViewModels
 
         private void Cancel()
         {
-            MainWindow.MainVM.Page = "Pages/MyPhotosPage.xaml";
+            MainWindow.MainVM.Page = "MyPhotosPage.xaml";
             MainWindow.MainVM.SelectedIndex = -1;
         }
 
@@ -124,11 +121,11 @@ namespace BD_client.ViewModels
                 throw new Exception();
             //Post tags
             url = MainWindow.MainVM.BaseUrl + "api/v1/tags";
-            List<TagDTO> tagList = new List<TagDTO>();
+            List<Tag> tagList = new List<Tag>();
             for (int i = 0; i < jsonTags.Length; i++)
             {
-                TagDTO newTag = new TagDTO();
-                newTag.name = jsonTags[i];
+                Tag newTag = new Tag();
+                newTag.Name = jsonTags[i];
                 newTag.photo = Photos[SelectedIndex].Id;
                 tagList.Add(newTag);
             }
@@ -166,7 +163,7 @@ namespace BD_client.ViewModels
             {
                 await dialogCoordinator.ShowMessageAsync(this, "Error", "Editing failed");
             }
-            MainWindow.MainVM.Page = "Pages/MyPhotosPage.xaml";
+            MainWindow.MainVM.Page = "MyPhotosPage.xaml";
             MainWindow.MainVM.SelectedIndex = -1;
 
         }
@@ -202,11 +199,11 @@ namespace BD_client.ViewModels
 
                 //Post tags
                 url = MainWindow.MainVM.BaseUrl + "api/v1/tags";
-                List<TagDTO> tagList = new List<TagDTO>();
+                List<Tag> tagList = new List<Tag>();
                 for (int i = 0; i < jsonTags.Length; i++)
                 {
-                    TagDTO newTag = new TagDTO();
-                    newTag.name = jsonTags[i];
+                    Tag newTag = new Tag();
+                    newTag.Name = jsonTags[i];
                     newTag.photo = Photos[index].Id;
                     tagList.Add(newTag);
                 }

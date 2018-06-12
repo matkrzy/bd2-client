@@ -1,11 +1,8 @@
-﻿using BD_client.Data.Photos;
-using BD_client.Domain;
-using BD_client.Services;
-using System;
+﻿using BD_client.Services;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BD_client.Dto;
+using BD_client.Models;
 
 namespace BD_client.ViewModels.Windows
 {

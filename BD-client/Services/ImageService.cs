@@ -1,11 +1,10 @@
-﻿using BD_client.Data.Photos;
-using BD_client.Domain;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BD_client.Models;
 
 namespace BD_client.Services
 {

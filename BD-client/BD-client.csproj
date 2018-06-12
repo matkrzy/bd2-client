@@ -36,7 +36,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
@@ -55,11 +55,15 @@
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="RestSharp, Version=106.3.0.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.3.0\lib\net452\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -87,18 +91,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converters\StringToImageConverter.cs" />
+    <Compile Include="Api\Core\Request.cs" />
+    <Compile Include="Api\Utils\Utils.cs" />
+    <Compile Include="Utils\StringToImageConverter.cs" />
     <Compile Include="Common\DataGridBehavior.cs" />
     <Compile Include="Common\NotifyTaskCompletion.cs" />
     <Compile Include="Common\PasswordBoxAssistant.cs" />
-    <Compile Include="Data\Photos\ExifMetadata.cs" />
-    <Compile Include="Data\Photos\PhotoCollection.cs" />
-    <Compile Include="Data\Photos\PhotoState.cs" />
-    <Compile Include="Data\Photos\PublicPhoto.cs" />
-    <Compile Include="Data\Photos\ShareState.cs" />
-    <Compile Include="Data\Photos\Tag.cs" />
-    <Compile Include="Data\Utils\TagDTO.cs" />
-    <Compile Include="Domain\Enums\PublicPhotoType.cs" />
+    <Compile Include="Models\ExifMetadata.cs" />
+    <Compile Include="Models\PhotoCollection.cs" />
+    <Compile Include="Enums\PhotoState.cs" />
+    <Compile Include="Enums\ShareState.cs" />
+    <Compile Include="Dto\Tag.cs" />
+    <Compile Include="Enums\PublicPhotoType.cs" />
     <Compile Include="Pages\ArchivedPhotosPage.xaml.cs">
       <DependentUpon>ArchivedPhotosPage.xaml</DependentUpon>
     </Compile>
@@ -109,13 +113,13 @@
       <DependentUpon>LoadingPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Services\ApiRequest.cs" />
-    <Compile Include="Data\Photos\Category.cs" />
-    <Compile Include="Data\Photos\Photo.cs" />
-    <Compile Include="Data\Utils\SearchFilter.cs" />
-    <Compile Include="Data\Users\User.cs" />
-    <Compile Include="Data\Users\UserState.cs" />
-    <Compile Include="Pages\AddPhotosPage.xaml.cs">
-      <DependentUpon>AddPhotosPage.xaml</DependentUpon>
+    <Compile Include="Dto\Category.cs" />
+    <Compile Include="Dto\Photo.cs" />
+    <Compile Include="Utils\SearchFilter.cs" />
+    <Compile Include="Dto\User.cs" />
+    <Compile Include="Enums\UserState.cs" />
+    <Compile Include="Pages\AddPhotosView.xaml.cs">
+      <DependentUpon>AddPhotosView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\CategoriesPage.xaml.cs">
       <DependentUpon>CategoriesPage.xaml</DependentUpon>
@@ -154,7 +158,7 @@
     <Compile Include="ViewModels\AddPhotosPageViewModel.cs" />
     <Compile Include="ViewModels\ArchivedPhotosPageViewModel.cs" />
     <Compile Include="ViewModels\CategoriesPageViewModel.cs" />
-    <Compile Include="ViewModels\Category\CategoryViewModel.cs" />
+    <Compile Include="ViewModels\CategoryViewModel.cs" />
     <Compile Include="ViewModels\DownloadPageViewModel.cs" />
     <Compile Include="ViewModels\EditPhotoPageViewModel.cs" />
     <Compile Include="ViewModels\HelpPageViewModel.cs" />
@@ -178,7 +182,7 @@
     <Compile Include="Windows\SelectPhotosModalWindow.xaml.cs">
       <DependentUpon>SelectPhotosModalWindow.xaml</DependentUpon>
     </Compile>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Pages\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -186,11 +190,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Pages\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Pages\AddPhotosPage.xaml">
+    <Page Include="Pages\AddPhotosView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -310,11 +314,9 @@
     <Resource Include="Resources\Entypo-license.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="icon.ico" />
+    <Resource Include="Resources\icon.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Themes\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
   </ItemGroup>

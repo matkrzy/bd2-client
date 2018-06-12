@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BD_client.Windows"
-        xmlns:custom="clr-namespace:BD_client.Converters;assembly="
         mc:Ignorable="d"
         Title="Photo details" WindowState="Maximized" ResizeMode="NoResize">
     <Window.Resources>
@@ -24,7 +23,6 @@
                 <Setter Property="Foreground" Value="White" />
                 <Setter Property="FontWeight" Value="Bold" />
             </Style>
-            <custom:StringToImageConverter x:Key="StringToImageConverter" />
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
@@ -39,7 +37,7 @@
             <ColumnDefinition Width="200"/>
         </Grid.ColumnDefinitions>
         <!-- Image-->
-        <Image Source="{Binding Photo.Path, Converter = {StaticResource StringToImageConverter} }" Grid.Column="0" Grid.Row="0" Grid.RowSpan="4"/>
+        <Image Source="{Binding Photo.Url }" Grid.Column="0" Grid.Row="0" Grid.RowSpan="4"/>
         <TextBox Grid.Column="1" Grid.Row="0" FontSize="20" TextAlignment="Center" Background="#45ADE6" Foreground="#fff" IsReadOnly="True">Photo details</TextBox>
         <GroupBox Grid.Column="1" Grid.Row="1">
             <StackPanel>

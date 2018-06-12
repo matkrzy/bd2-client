@@ -1,29 +1,19 @@
-﻿using BD_client.Domain;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using MahApps.Metro;
-using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Globalization;
-using Newtonsoft.Json;
-using System.IO;
-using BD_client.Services;
+using System.Net;
+using BD_client.Api.Core;
+using BD_client.Dto;
+using BD_client.Pages;
+using RestSharp;
 
 namespace BD_client.ViewModels
 {
     class AddPhotosPageViewModel : INotifyPropertyChanged
     {
-
-
         public event PropertyChangedEventHandler PropertyChanged = null;
         public ObservableCollection<Photo> Photos { get; set; }
 
@@ -48,7 +38,6 @@ namespace BD_client.ViewModels
             openFileDialog.Filter = "Image files (*.jpg, *.jpeg, *.png) | *.jpg; *.jpeg; *.png";
             openFileDialog.Multiselect = true;
             Photos = new ObservableCollection<Photo>();
-
         }
 
         private void RemovePhoto()
@@ -58,55 +47,53 @@ namespace BD_client.ViewModels
 
         private void Browse()
         {
-
             var result = openFileDialog.ShowDialog();
 
             if (result == true)
             {
-
                 for (int i = 0; i < openFileDialog.FileNames.Length; i++)
                 {
-                    Photos.Add(new Domain.Photo() { Id = i + 1, Path = openFileDialog.FileNames[i], Name = openFileDialog.SafeFileNames[i], UploadTime = DateTime.Now });
+                    Photos.Add(new Photo()
+                    {
+                        Path = openFileDialog.FileNames[i],
+                        Name = openFileDialog.SafeFileNames[i]
+                    });
                 }
             }
         }
 
-        private async Task<List<int>> AddPhotos()
-        {
-            var photoIndex = new List<int>();
-            for (int i = 0; i < Photos.Count; i++)
-            {
-                var addedPhotoId = await PhotoService.AddPhoto(Photos[i].Name, Photos[i].Description, PhotoState.ACTIVE, ShareState.PRIVATE);
-                if (await ImageService.UploadImage(addedPhotoId, Photos[i].Path, Photos[i].Name))
-                {
-                    photoIndex.Add(i);
-                }
-            }
-            return photoIndex;
-        }
         private async void Add()
         {
-
-            List<int> photoIndex = await AddPhotos();
-            await dialogCoordinator.ShowMessageAsync(this, "Result", "Operation completed");
-            for (int i = photoIndex.Count - 1; i >= 0; i--)
+            foreach (var photo in Photos)
             {
-                Photos.RemoveAt(photoIndex[i]);
+                Request request = new Request("/photos");
+                request.AddFile(photo.Path);
+                request.AddParameter("description", photo.Description);
+                request.AddParameter("name", photo.Name);
+                IRestResponse response = await request.DoPost();
+
+                if (response.StatusCode == HttpStatusCode.Created)
+                {
+                }
+                else
+                {
+                    await dialogCoordinator.ShowMessageAsync(this, "Error",
+                        "Error occurred during upload" + photo.Name + " file");
+                }
             }
+
+            Photos.Clear();
         }
 
         private void Cancel()
         {
-            MainWindow.MainVM.Page = "Pages/MyPhotosPage.xaml";
+            MainWindow.MainVM.Page = "MyPhotosPage.xaml";
             MainWindow.MainVM.SelectedIndex = -1;
         }
 
         public string Page
         {
-            get
-            {
-                return _page;
-            }
+            get { return _page; }
             set
             {
                 _page = value;
@@ -116,10 +103,7 @@ namespace BD_client.ViewModels
 
         public int DataGridSelectedIndex
         {
-            get
-            {
-                return _dataGridSelectedIndex;
-            }
+            get { return _dataGridSelectedIndex; }
             set
             {
                 _dataGridSelectedIndex = value;

@@ -1,19 +1,10 @@
 ﻿using BD_client.ViewModels;
 using MahApps.Metro.Controls.Dialogs;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace BD_client.Pages
 {
@@ -44,7 +35,7 @@ namespace BD_client.Pages
             }
             MainWindow.MainVM.List = list;
             MainWindow.MainVM.SelectedIndex = 1;
-            MainWindow.MainVM.Page = "Pages/EditPhotoPage.xaml";
+            MainWindow.MainVM.Page = "EditPhotoPage.xaml";
         }
         private void OnDownloadPhoto(object sender, RoutedEventArgs e)
         {
@@ -56,7 +47,7 @@ namespace BD_client.Pages
             }
             MainWindow.MainVM.List = list;
             MainWindow.MainVM.SelectedIndex = 3;
-            MainWindow.MainVM.Page = "Pages/DownloadPage.xaml";
+            MainWindow.MainVM.Page = "DownloadPage.xaml";
         }
         private void OnRemovePhoto(object sender, RoutedEventArgs e)
         {
@@ -68,7 +59,7 @@ namespace BD_client.Pages
             }
             MainWindow.MainVM.List = list;
             MainWindow.MainVM.SelectedIndex = 4;
-            MainWindow.MainVM.Page = "Pages/RemovePhotoPage.xaml";
+            MainWindow.MainVM.Page = "RemovePhotoPage.xaml";
         }
 
         private void OnSharePhoto(object sender, RoutedEventArgs e)
@@ -81,7 +72,7 @@ namespace BD_client.Pages
             }
             MainWindow.MainVM.List = list;
             MainWindow.MainVM.SelectedIndex = 5;
-            MainWindow.MainVM.Page = "Pages/SharePage.xaml";
+            MainWindow.MainVM.Page = "SharePage.xaml";
         }
 
         private void TextBox_KeyUp(object sender, KeyEventArgs e)

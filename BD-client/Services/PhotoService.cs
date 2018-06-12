@@ -1,14 +1,13 @@
-﻿using BD_client.Domain;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using BD_client.Data.Photos;
 using System.IO;
 using BD_client.Services.Base;
-using BD_client.Domain.Enums;
+using BD_client.Dto;
+using BD_client.Enums;
 using System.Net.Http;
 using System.Net;
 
@@ -55,7 +54,7 @@ namespace BD_client.Services
 
         public static async Task<int> GetPhotosCount(bool arePublic)
         {
-            var shareState = arePublic ? "PUBLIC" : "PRIVATE";
+            var shareState = arePublic ? "Public" : "Private";
             var res = await ApiRequest.GetAsync($"api/v1/photos/count/{shareState}");
             var content = await res.Content.ReadAsStringAsync();
             var dictionary = JsonConvert.DeserializeObject<Dictionary<string, int>>(content);

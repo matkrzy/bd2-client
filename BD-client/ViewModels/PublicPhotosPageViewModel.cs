@@ -1,18 +1,10 @@
-﻿using BD_client.Common;
-using BD_client.Data.Photos;
-using BD_client.Domain;
-using BD_client.Domain.Enums;
-using BD_client.Services;
+﻿using System;
 using MahApps.Metro.Controls.Dialogs;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Configuration;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using BD_client.Models;
+using BD_client.Services;
 
 namespace BD_client.ViewModels
 {

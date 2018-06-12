@@ -1,24 +1,15 @@
-﻿using BD_client.Data.Photos;
-using BD_client.Domain;
-using BD_client.Services;
 using BD_client.ViewModels;
-using BD_client.Windows;
-using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.ObjectModel;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using BD_client.Api.Core;
+using BD_client.Dto;
+using BD_client.Windows;
+using RestSharp;
 
 namespace BD_client.Pages
 {
@@ -32,18 +23,15 @@ namespace BD_client.Pages
         public MyPhotosPage()
         {
             InitializeComponent();
-            //MyPhotosListBox.MouseDoubleClick += async (s, e) => OnPhotoDbClick(s, e);
             ViewModel = new MyPhotosPageViewModel(DialogCoordinator.Instance);
             DataContext = ViewModel;
         }
 
 
-
         private void OnPhotoDbClick(object sender, MouseButtonEventArgs e)
         {
-            var allPhotos = ViewModel.Photos.Result;
-            new PhotoDetailsWindow(allPhotos, MyPhotosListBox.SelectedIndex).Show();
-
+//            var allPhotos = ViewModel.Photos;
+//            new PhotoDetailsWindow(allPhotos, MyPhotosListBox.SelectedIndex).Show();
         }
 
         private void OnArchivePhoto(object sender, RoutedEventArgs e)
@@ -59,7 +47,8 @@ namespace BD_client.Pages
             {
                 ViewModel.Archive(id);
             }
-            ViewModel.Photos.Result.Update();
+
+//            ViewModel.Photos.Result.Update();
         }
 
         private void OnEditPhoto(object sender, RoutedEventArgs e)
@@ -68,35 +57,44 @@ namespace BD_client.Pages
 
             foreach (var item in this.MyPhotosListBox.SelectedItems)
             {
-                list.Add(this.MyPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
+                list.Add(this.MyPhotosListBox.Items.IndexOf(item)); // Add selected indexes to the List<int>
             }
+
             MainWindow.MainVM.List = list;
             MainWindow.MainVM.SelectedIndex = 1;
-            MainWindow.MainVM.Page = "Pages/EditPhotoPage.xaml";
+            MainWindow.MainVM.Page = "EditPhotoPage.xaml";
         }
+
         private void OnDownloadPhoto(object sender, RoutedEventArgs e)
         {
             List<int> list = new List<int>();
 
             foreach (var item in this.MyPhotosListBox.SelectedItems)
             {
-                list.Add(this.MyPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
+                list.Add(this.MyPhotosListBox.Items.IndexOf(item)); // Add selected indexes to the List<int>
             }
+
             MainWindow.MainVM.List = list;
             MainWindow.MainVM.SelectedIndex = 3;
-            MainWindow.MainVM.Page = "Pages/DownloadPage.xaml";
+            MainWindow.MainVM.Page = "DownloadPage.xaml";
         }
-        private void OnRemovePhoto(object sender, RoutedEventArgs e)
+
+        private async void OnRemovePhoto(object sender, RoutedEventArgs e)
         {
-            List<int> list = new List<int>();
+            ObservableCollection<Photo> photos = new ObservableCollection<Photo>(ViewModel.Photos);
 
             foreach (var item in this.MyPhotosListBox.SelectedItems)
             {
-                list.Add(this.MyPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
+                Photo photo = item as Photo;
+
+                IRestResponse response = await new Request($"/photos/{photo.Id}").DoDelete();
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    photos.Remove(photo);
+                }
             }
-            MainWindow.MainVM.List = list;
-            MainWindow.MainVM.SelectedIndex = 4;
-            MainWindow.MainVM.Page = "Pages/RemovePhotoPage.xaml";
+
+            ViewModel.Photos = photos;
         }
 
         private void OnSharePhoto(object sender, RoutedEventArgs e)
@@ -105,11 +103,12 @@ namespace BD_client.Pages
 
             foreach (var item in this.MyPhotosListBox.SelectedItems)
             {
-                list.Add(this.MyPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
+                list.Add(this.MyPhotosListBox.Items.IndexOf(item)); // Add selected indexes to the List<int>
             }
+
             MainWindow.MainVM.List = list;
             MainWindow.MainVM.SelectedIndex = 5;
-            MainWindow.MainVM.Page = "Pages/SharePage.xaml";
+            MainWindow.MainVM.Page = "SharePage.xaml";
         }
     }
 }

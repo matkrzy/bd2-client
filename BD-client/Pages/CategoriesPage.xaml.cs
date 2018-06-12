@@ -1,24 +1,17 @@
 ﻿using BD_client.Common;
-using BD_client.Domain;
 using BD_client.Services;
 using BD_client.ViewModels;
-using BD_client.ViewModels.Category;
 using BD_client.Windows;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using BD_client.Dto;
+using BD_client.Enums;
 
 namespace BD_client.Pages
 {
@@ -386,7 +379,7 @@ namespace BD_client.Pages
         }
         private async Task ArchivePhoto(int id)
         {
-            var res = await PhotoService.ChangePhotoState(PhotoState.ARCHIVED, id);
+            var res = await PhotoService.ChangePhotoState(PhotoState.Archived, id);
         }
         private void OnEditPhoto(object sender, RoutedEventArgs e)
         {
