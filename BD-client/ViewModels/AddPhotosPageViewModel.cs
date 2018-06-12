@@ -26,7 +26,6 @@ namespace BD_client.ViewModels
         private int _dataGridSelectedIndex;
         private String _page;
 
-
         public AddPhotosPageViewModel(IDialogCoordinator instance)
         {
             dialogCoordinator = instance;
@@ -34,9 +33,11 @@ namespace BD_client.ViewModels
             CancelCmd = new RelayCommand(x => Cancel());
             RemovePhotoCmd = new RelayCommand(x => RemovePhoto());
             AddCmd = new RelayCommand(x => Add());
-            openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Image files (*.jpg, *.jpeg, *.png) | *.jpg; *.jpeg; *.png";
-            openFileDialog.Multiselect = true;
+            openFileDialog = new OpenFileDialog
+            {
+                Filter = "Image files (*.jpg, *.jpeg, *.png) | *.jpg; *.jpeg; *.png",
+                Multiselect = true
+            };
             Photos = new ObservableCollection<Photo>();
         }
 

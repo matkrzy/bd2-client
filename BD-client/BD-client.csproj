@@ -93,7 +93,6 @@
     </ApplicationDefinition>
     <Compile Include="Api\Core\Request.cs" />
     <Compile Include="Api\Utils\Utils.cs" />
-    <Compile Include="Utils\StringToImageConverter.cs" />
     <Compile Include="Common\DataGridBehavior.cs" />
     <Compile Include="Common\NotifyTaskCompletion.cs" />
     <Compile Include="Common\PasswordBoxAssistant.cs" />

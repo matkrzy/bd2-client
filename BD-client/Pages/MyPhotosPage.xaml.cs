@@ -19,6 +19,7 @@ namespace BD_client.Pages
     public partial class MyPhotosPage : Page
     {
         public MyPhotosPageViewModel ViewModel;
+        public IDialogCoordinator dialogCoordinator;
 
         public MyPhotosPage()
         {

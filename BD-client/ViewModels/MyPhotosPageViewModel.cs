@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using System.Windows;
 using BD_client.Api.Core;
 using BD_client.Dto;
 using Newtonsoft.Json;
@@ -25,9 +26,7 @@ namespace BD_client.ViewModels
                 OnPropertyChanged("Photos");
             }
         }
-
-
-        private IDialogCoordinator dialogCoordinator;
+        public IDialogCoordinator dialogCoordinator;
 
 
         public string Page
