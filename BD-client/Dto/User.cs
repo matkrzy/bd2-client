@@ -6,18 +6,20 @@ namespace BD_client.Dto
 {
     public class User
     {
-        [JsonProperty("userID")]
+        [JsonProperty("id")]
         public long id { get; set; }
-        [JsonProperty("firstName")]
+
+        [JsonProperty("first_name")]
         public String FirstName { get; set; }
-        [JsonProperty("lastName")]
+
+        [JsonProperty("last_name")]
         public String LastName { get; set; }
+
         [JsonProperty("email")]
         public String Email { get; set; }
-        [JsonProperty("password")]
-        public String Password { get; set; }
+
         [JsonProperty("role")]
-        public UserState? Role { get; set; }
+        public UserRole Role { get; set; }
 
         [JsonProperty("uuid")]
         public String uuid { get; set; }

@@ -251,8 +251,7 @@ namespace BD_client.Pages
                 var category = new Category
                 {
                     Id = CategoryToMove.Id,
-                    Name = CategoryToMove.Name,
-                    ParentId = null
+                    Name = CategoryToMove.Name    
                 };
                 if (await CategoryService.EditCategory(category))
                 {
@@ -379,7 +378,7 @@ namespace BD_client.Pages
         }
         private async Task ArchivePhoto(int id)
         {
-            var res = await PhotoService.ChangePhotoState(PhotoState.Archived, id);
+            var res = await PhotoService.ChangePhotoState(PhotoState.ARCHIVED, id);
         }
         private void OnEditPhoto(object sender, RoutedEventArgs e)
         {

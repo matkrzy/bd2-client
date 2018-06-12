@@ -99,7 +99,7 @@
     <Compile Include="Utils\ExifMetadata.cs" />
     <Compile Include="Models\PhotoCollection.cs" />
     <Compile Include="Enums\PhotoState.cs" />
-    <Compile Include="Enums\ShareState.cs" />
+    <Compile Include="Enums\PhotoVisibility.cs" />
     <Compile Include="Dto\Tag.cs" />
     <Compile Include="Enums\PublicPhotoType.cs" />
     <Compile Include="Pages\ArchivedPhotosPage.xaml.cs">
@@ -116,7 +116,7 @@
     <Compile Include="Dto\Photo.cs" />
     <Compile Include="Utils\SearchFilter.cs" />
     <Compile Include="Dto\User.cs" />
-    <Compile Include="Enums\UserState.cs" />
+    <Compile Include="Enums\UserRole.cs" />
     <Compile Include="Pages\AddPhotosView.xaml.cs">
       <DependentUpon>AddPhotosView.xaml</DependentUpon>
     </Compile>

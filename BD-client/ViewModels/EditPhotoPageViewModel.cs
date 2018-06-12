@@ -56,16 +56,16 @@ namespace BD_client.ViewModels
 
         private void ShowPhotosDetails()
         {
-            Tags = "";
-            if (Photos[SelectedIndex].Tags != null)
-            {
-                for (int i = 0; i < Photos[SelectedIndex].Tags.Count; i++)
-                {
-                    Tags += Photos[SelectedIndex].Tags[i].Name;
-                    if(i+1 != Photos[SelectedIndex].Tags.Count)
-                        Tags += " ";
-                }
-            }
+//            Tags = "";
+//            if (Photos[SelectedIndex].Tags != null)
+//            {
+//                for (int i = 0; i < Photos[SelectedIndex].Tags.Count; i++)
+//                {
+//                    Tags += Photos[SelectedIndex].Tags[i].Name;
+//                    if(i+1 != Photos[SelectedIndex].Tags.Count)
+//                        Tags += " ";
+//                }
+//            }
 
             Description = "";
             if (Photos[SelectedIndex].Description != null)
@@ -126,7 +126,7 @@ namespace BD_client.ViewModels
             {
                 Tag newTag = new Tag();
                 newTag.Name = jsonTags[i];
-                newTag.photo = Photos[SelectedIndex].Id;
+//                newTag.photo = Photos[SelectedIndex].Id;
                 tagList.Add(newTag);
             }
             try
@@ -204,7 +204,7 @@ namespace BD_client.ViewModels
                 {
                     Tag newTag = new Tag();
                     newTag.Name = jsonTags[i];
-                    newTag.photo = Photos[index].Id;
+//                    newTag.photo = Photos[index].Id;
                     tagList.Add(newTag);
                 }
 
@@ -302,12 +302,12 @@ namespace BD_client.ViewModels
             }
             else
             {
-                for (int i = 0; i < Photos[SelectedIndex].Tags.Count; i++)
-                {
-                    Tags += Photos[SelectedIndex].Tags[i].Name;
-                    if(i+1!= Photos[SelectedIndex].Tags.Count)
-                        Tags += " ";
-                }
+//                for (int i = 0; i < Photos[SelectedIndex].Tags.Count; i++)
+//                {
+//                    Tags += Photos[SelectedIndex].Tags[i].Name;
+//                    if(i+1!= Photos[SelectedIndex].Tags.Count)
+//                        Tags += " ";
+//                }
 
                 Description = Photos[SelectedIndex].Description;
             }

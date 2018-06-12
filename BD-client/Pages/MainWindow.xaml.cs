@@ -1,6 +1,7 @@
 ﻿using System;
 using BD_client.ViewModels;
 using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 
 namespace BD_client.Pages
 {
@@ -14,7 +15,7 @@ namespace BD_client.Pages
         public MainWindow()
         {
             InitializeComponent();
-            MainVM = new MainWindowViewModel();
+            MainVM = new MainWindowViewModel(DialogCoordinator.Instance);
             DataContext = MainVM;
         }
 

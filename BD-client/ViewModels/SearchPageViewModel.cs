@@ -299,16 +299,16 @@ namespace BD_client.ViewModels
         private List<int> SearchTags(string searchPhrase)
         {
             List<int> photoIndex = new List<int>();
-            for (int i = 0; i < Photos.Count; i++)
-            {
-                for (int j = 0; j < Photos[i].Tags.Count; j++)
-                {
-                    if (Photos[i].Tags[j].Name.ToLower().Contains(searchPhrase.ToLower()))
-                    {
-                        photoIndex.Add(i);
-                    }
-                }
-            }
+//            for (int i = 0; i < Photos.Count; i++)
+//            {
+//                for (int j = 0; j < Photos[i].Tags.Count; j++)
+//                {
+//                    if (Photos[i].Tags[j].Name.ToLower().Contains(searchPhrase.ToLower()))
+//                    {
+//                        photoIndex.Add(i);
+//                    }
+//                }
+//            }
 
             return photoIndex;
         }

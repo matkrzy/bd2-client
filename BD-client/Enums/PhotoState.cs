@@ -2,7 +2,7 @@
 {
     public enum PhotoState
     {
-        Active,
-        Archived
+        ACTIVE,
+        ARCHIVED
     }
 }

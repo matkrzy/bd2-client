@@ -133,7 +133,7 @@ namespace BD_client.ViewModels
 
                 var valuesPhoto = new Dictionary<string, string>
                 {
-                    { "shareState", ShareState.Public.ToString() }
+//                    { "shareState", PhotoVisibility.Public.ToString() }
                 };
 
                 var json = JsonConvert.SerializeObject(valuesPhoto, Formatting.Indented);

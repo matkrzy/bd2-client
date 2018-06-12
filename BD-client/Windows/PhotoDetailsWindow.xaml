@@ -25,54 +25,60 @@
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="30" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="30" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="200" />
         </Grid.ColumnDefinitions>
-        <!-- Image-->
-        <Image Source="{Binding Photo.Url }" Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" />
-        <TextBox Grid.Column="1" Grid.Row="0" FontSize="20" TextAlignment="Center" Background="#45ADE6"
-                 Foreground="#fff" IsReadOnly="True">
-            Photo details
-        </TextBox>
-        <GroupBox Grid.Column="1" Grid.Row="1">
-            <StackPanel>
-                <Label Style="{StaticResource MetadataHeader}">Title</Label>
-                <Label Content="{Binding Photo.Name}" />
-                <Label Style="{StaticResource MetadataHeader}">Description</Label>
-                <Label Content="{Binding Photo.Description}" />
-                <Label Style="{StaticResource MetadataHeader}">Upload date</Label>
-                <Label Content="{Binding Photo.UploadTime}" />
-                <Label Style="{StaticResource MetadataHeader}">Author</Label>
-                <Label Content="{Binding Photo.User}" />
-            </StackPanel>
-        </GroupBox>
-        <TextBox Grid.Column="1" Grid.Row="2" FontSize="20" TextAlignment="Center" Background="#45ADE6"
-                 Foreground="#fff" IsReadOnly="True">
-            Exif metadata
-        </TextBox>
-        <GroupBox Grid.Column="1" Grid.Row="3" Margin="0,0,10,10">
-            <StackPanel>
-                <ListBox Height="310" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                         IsSynchronizedWithCurrentItem="True"
-                         Name="ExifListBox" ItemsSource="{Binding ExifList}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock FontWeight="Bold" FontSize="9" Text="{Binding Path=Name}" />
-                                <TextBlock FontSize="9" Text=": " />
-                                <TextBlock FontSize="9" Text="{Binding Path=Description}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </StackPanel>
-        </GroupBox>
+        <Image Source="{Binding Photo.Url }" Grid.Column="0" />
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30" />
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="30" />
+                <RowDefinition Height="*" x:Name="Container" x:FieldModifier="private"/>
+            </Grid.RowDefinitions>
+            <TextBlock
+                Grid.Row="0"
+                FontSize="20"
+                TextAlignment="Center"
+                Background="#45ADE6"
+                Foreground="#fff">
+                Photo details
+            </TextBlock>
+            <GroupBox Grid.Row="1">
+                <StackPanel>
+                    <Label Style="{StaticResource MetadataHeader}">Title</Label>
+                    <Label Content="{Binding Photo.Name}" />
+                    <Label Style="{StaticResource MetadataHeader}">Description</Label>
+                    <Label Content="{Binding Photo.Description}" />
+                    <Label Style="{StaticResource MetadataHeader}">Upload date</Label>
+                    <Label Content="{Binding Photo.CreationDate}" />
+                    <Label Style="{StaticResource MetadataHeader}">Author</Label>
+                    <Label Content="{Binding Photo.User}" />
+                </StackPanel>
+            </GroupBox>
+            <TextBlock Grid.Row="2" FontSize="20" TextAlignment="Center" Background="#45ADE6"
+                     Foreground="#fff">
+                Exif metadata
+            </TextBlock>
+            <GroupBox Grid.Row="3" Margin="0,0,0,0">
+                <StackPanel>
+                    <ListBox 
+                        ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             IsSynchronizedWithCurrentItem="True"
+                             Name="ExifListBox" ItemsSource="{Binding ExifList}" MaxHeight="{Binding ActualHeight, ElementName=Container}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock FontWeight="Bold" FontSize="9" Text="{Binding Path=Name}" />
+                                    <TextBlock FontSize="9" Text=": " />
+                                    <TextBlock FontSize="9" Text="{Binding Path=Description}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </GroupBox>
+        </Grid>
     </Grid>
 </Window>

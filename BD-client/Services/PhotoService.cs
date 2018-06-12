@@ -28,7 +28,7 @@ namespace BD_client.Services
             return await BaseService.GetAsync<List<Photo>>(path);
         }
 
-        public static async Task<int> AddPhoto(string name, string description, PhotoState photoState, ShareState shareState)
+        public static async Task<int> AddPhoto(string name, string description, PhotoState photoState, PhotoVisibility shareState)
         {
             var body = new { name = name, description = description, photoState = photoState.ToString(), shareState = shareState.ToString() };
             var res = await ApiRequest.PostAsync("api/v1/photos", body);
