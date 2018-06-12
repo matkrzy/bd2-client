@@ -10,55 +10,51 @@ namespace BD_client.Dto
     public class Photo
     {
         [Browsable(false)]
-        [JsonProperty("id")]
-        public int Id { get; set; }
-
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [Browsable(false)]
-        [JsonProperty("userId")]
-        public long UserId { get; set; }
+        [JsonProperty("categoryIds")]
+        public List<int> CategoryIds { get; set; }
 
         [Browsable(false)]
         [JsonProperty("creationDate")]
-        public DateTime UploadTime { get; set; }
+        public DateTime CreationDate { get; set; }
 
-        
-        [JsonProperty("description")]
-        public string Description { get; set; } = "";
+        [JsonProperty("description")] public string Description { get; set; } = "";
 
         [Browsable(false)]
-        [JsonProperty("shareState")]
-        public ShareState ShareState { get; set; }
+        [JsonProperty("id")]
+        public int Id { get; set; }
+
+//      [Browsable(false)]
+//      [JsonProperty("likes")]
+//      public int likes { get; set; }
+
+        [JsonProperty("name")] public string Name { get; set; }
 
         [Browsable(false)]
-        [JsonProperty("photoState")]
+        [JsonProperty("path")]
+        public String Path { get; set; }
+
+//      [Browsable(false)]
+//      [JsonProperty("shares")]
+//      public int Shares { get; set; }
+
+        [Browsable(false)]
+        [JsonProperty("state")]
         public PhotoState PhotoState { get; set; }
-
-        [Browsable(false)]
-        [JsonProperty("rate")]
-        public int Rate { get; set; }
-
-        [Browsable(false)]
-        [JsonProperty("tags")]
-        public List<Tag> Tags { get; set; }
-
-        [Browsable(false)]
-        public int LikeCount { get; set; }
-
-        [Browsable(false)]
-        public BitmapFrame Image { get; set; }
 
         [Browsable(false)]
         [JsonProperty("url")]
         public String Url { get; set; }
 
         [Browsable(false)]
-        [JsonProperty("path")]
-        public String Path { get; set; }
-        
+        [JsonProperty("userId")]
+        public long UserId { get; set; }
 
-        public Photo(){}
+        [Browsable(false)]
+        [JsonProperty("visibility")]
+        public PhotoVisibility ShareState { get; set; }
+
+        public Photo()
+        {
+        }
     }
 }

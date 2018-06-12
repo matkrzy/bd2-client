@@ -46,7 +46,7 @@ namespace BD_client.ViewModels
             if (resAdd)
             {
                 await dialogCoordinator.ShowMessageAsync(this, "New like", "You ♥ this photo");
-                Photos[SelectedPhoto].Rate++;
+//                Photos[SelectedPhoto].Rate++;
             }
             else
             {
@@ -54,7 +54,7 @@ namespace BD_client.ViewModels
                 if(resRemove)
                 {
                     await dialogCoordinator.ShowMessageAsync(this, "Unliked", "You disliked this photo");
-                    Photos[SelectedPhoto].Rate--;
+//                    Photos[SelectedPhoto].Rate--;
                 }
                 else
                 {

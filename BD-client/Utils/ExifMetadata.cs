@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Net;
 using BD_client.Dto;
 using MetadataExtractor;
@@ -13,7 +14,7 @@ namespace BD_client.Utils
     /// </summary>
     public class ExifMetadata
     {
-        public ObservableCollection<Tag> Exif { get; set; }
+        public ObservableCollection<Tag> Exif { get; set; } = new ObservableCollection<Tag>();
 
         public ExifMetadata(Stream stream)
         {
@@ -24,7 +25,7 @@ namespace BD_client.Utils
                 if (directory.Name == "Exif IFD0")
                     Exif = new ObservableCollection<Tag>(directory.Tags);
                 if (directory.Name == "Exif SubIFD")
-                    Exif = new ObservableCollection<Tag>(directory.Tags);
+                    Exif = new ObservableCollection<Tag>(Exif.Union(directory.Tags));
             }
         }
     }

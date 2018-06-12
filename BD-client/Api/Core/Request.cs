@@ -27,15 +27,18 @@ namespace BD_client.Api.Core
 
         private void AddJwtToken()
         {
-            Cookie cookie = new Cookie
+            if (!JWT.Equals(""))
             {
-                Name = "JWT",
-                Value = JWT,
-                Domain = new Uri(apiUrl).Host,
-            };
+                Cookie cookie = new Cookie
+                {
+                    Name = "JWT",
+                    Value = JWT,
+                    Domain = new Uri(apiUrl).Host,
+                };
 
-            this.client.CookieContainer = new CookieContainer();
-            this.client.CookieContainer.Add(cookie);
+                this.client.CookieContainer = new CookieContainer();
+                this.client.CookieContainer.Add(cookie);
+            }
         }
 
         public Request(String endpoint)
@@ -61,7 +64,7 @@ namespace BD_client.Api.Core
         {
             this.request.Method = Method.GET;
 
-            return await client.ExecuteTaskAsync(this.request);
+            return await ExecuteRequest();
         }
 
         public async Task<IRestResponse> DoPost(object data)
@@ -71,7 +74,7 @@ namespace BD_client.Api.Core
             this.request.RequestFormat = DataFormat.Json;
             request.AddJsonBody(data);
 
-            return await client.ExecuteTaskAsync(this.request);
+            return await ExecuteRequest();
         }
 
         public async Task<IRestResponse> DoPost()
@@ -79,7 +82,7 @@ namespace BD_client.Api.Core
             this.request.Method = Method.POST;
             this.request.AlwaysMultipartFormData = true;
 
-            return await client.ExecuteTaskAsync(this.request);
+            return await ExecuteRequest();
         }
 
         public async Task<IRestResponse> DoPut(object data)
@@ -89,14 +92,29 @@ namespace BD_client.Api.Core
             this.request.RequestFormat = DataFormat.Json;
             request.AddJsonBody(data);
 
-            return await client.ExecuteTaskAsync(this.request);
+            return await ExecuteRequest();
         }
 
         public async Task<IRestResponse> DoDelete()
         {
             this.request.Method = Method.DELETE;
 
-            return await client.ExecuteTaskAsync(this.request);
+            return await ExecuteRequest();
+        }
+
+        private async Task<IRestResponse> ExecuteRequest()
+        {
+            try
+            {
+                return await client.ExecuteTaskAsync(this.request);
+            }
+            catch (Exception e)
+            {
+                RestResponse failResponse = new RestResponse();
+                failResponse.StatusCode = HttpStatusCode.BadRequest;
+                failResponse.Content = "";
+                return failResponse;
+            }
         }
     }
 }

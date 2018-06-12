@@ -4,11 +4,13 @@ namespace BD_client.Dto
 {
     public class Category
     {
-        [JsonProperty("categoryID")]
+        [JsonProperty("id")]
         public int Id { get; set; }
+
         [JsonProperty("name")]
         public string Name { get; set; }
-        [JsonProperty("parentCategory")]
+
+        [JsonProperty("parent_id")]
         public int? ParentId { get; set; }
     }
 }

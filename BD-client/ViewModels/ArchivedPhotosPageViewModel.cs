@@ -71,7 +71,7 @@ namespace BD_client.ViewModels
 
         public async void Reactive(long id)
         {
-            var res = await PhotoService.ChangePhotoState(PhotoState.Active, id);
+            var res = await PhotoService.ChangePhotoState(PhotoState.ACTIVE, id);
             foreach(var photo in MainWindow.MainVM.Photos)
             {
                 if (photo.Id == id)

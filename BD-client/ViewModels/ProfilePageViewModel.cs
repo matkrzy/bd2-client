@@ -136,8 +136,7 @@ namespace BD_client.ViewModels
             Name = user.FirstName;
             Surname = user.LastName;
             Email = user.Email;
-            Password = user.Password;
-            Role = user.Role.Value.ToString();
+            Role = user.Role.ToString();
 
         }
 

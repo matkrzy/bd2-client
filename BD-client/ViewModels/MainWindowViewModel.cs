@@ -9,7 +9,7 @@ using BD_client.Services;
 using BD_client.Api.Core;
 using BD_client.Dto;
 using BD_client.Pages;
-using Newtonsoft.Json;
+using MahApps.Metro.Controls.Dialogs;
 using RestSharp;
 
 
@@ -18,6 +18,7 @@ namespace BD_client.ViewModels
     public class MainWindowViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged = null;
+        private IDialogCoordinator dialogCoordinator;
 
         public ICommand ProfileCmd { get; set; }
         public ICommand HelpCmd { get; set; }
@@ -78,10 +79,10 @@ namespace BD_client.ViewModels
             }
         }
 
-        internal LogInPageViewModel DataContext { get; private set; }
-
-        public MainWindowViewModel()
+        public MainWindowViewModel(IDialogCoordinator instance)
         {
+            dialogCoordinator = instance;
+
             if (File.Exists("./token"))
             {
                 this.AutoLoginAsync();
@@ -119,14 +120,26 @@ namespace BD_client.ViewModels
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                var user = JsonConvert.DeserializeObject<User>(response.Content);
-                MainWindow.MainVM.User = user.Email;
+                try
+                {
+                    var user = Api.Utils.Utils.Deserialize<User>(response);
+//                    var user = Api.Utils.Utils.Deserialize<User>(response, this, dialogCoordinator, "Something went wrong");
+                    MainWindow.MainVM.User = user.Email;
+                }
+                catch (Exception e)
+                {
+                    Page = "LogInPage.xaml";
+                }
+            }
+            else
+            {
+                Page = "LogInPage.xaml";
             }
         }
 
         private void ShowArchivedPhotos()
         {
-            MainWindow.MainVM.Page = "Pages/ArchivedPhotosPage.xaml";
+            MainWindow.MainVM.Page = "ArchivedPhotosPage.xaml";
             MainWindow.MainVM.SelectedIndex = -1;
         }
 
@@ -135,12 +148,6 @@ namespace BD_client.ViewModels
             string pathToHtmlFile = System.IO.Directory.GetCurrentDirectory() + @"\..\..\Resources\help.html";
             System.Diagnostics.Process.Start(pathToHtmlFile);
             MainWindow.MainVM.SelectedIndex = -1;
-        }
-
-        virtual protected void OnPropertyChanged(string propName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propName));
         }
 
         private void ShowCategories()
@@ -181,6 +188,12 @@ namespace BD_client.ViewModels
         {
             MainWindow.MainVM.Page = "ProfilePage.xaml";
             MainWindow.MainVM.SelectedIndex = -1;
+        }
+
+        protected virtual void OnPropertyChanged(string propName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propName));
         }
     }
 }
