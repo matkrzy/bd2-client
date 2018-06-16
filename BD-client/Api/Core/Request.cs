@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
+using Newtonsoft.Json;
 using RestSharp;
 
 namespace BD_client.Api.Core
@@ -90,7 +91,10 @@ namespace BD_client.Api.Core
             this.request.Method = Method.PUT;
             this.request.AddHeader("Content-type", "application/json");
             this.request.RequestFormat = DataFormat.Json;
-            request.AddJsonBody(data);
+            var output = JsonConvert.SerializeObject(data);
+//            request.AddBody(output);
+
+             request.AddParameter("application/json",JsonConvert.SerializeObject(data), ParameterType.RequestBody);
 
             return await ExecuteRequest();
         }

@@ -33,7 +33,7 @@ namespace BD_client.Pages
             {
                 list.Add(this.MyPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
             }
-            MainWindow.MainVM.List = list;
+//            MainWindow.MainVM.List = list;
             MainWindow.MainVM.SelectedIndex = 1;
             MainWindow.MainVM.Page = "EditPhotoPage.xaml";
         }
@@ -45,34 +45,34 @@ namespace BD_client.Pages
             {
                 list.Add(this.MyPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
             }
-            MainWindow.MainVM.List = list;
+//            MainWindow.MainVM.List = list;
             MainWindow.MainVM.SelectedIndex = 3;
             MainWindow.MainVM.Page = "DownloadPage.xaml";
         }
         private void OnRemovePhoto(object sender, RoutedEventArgs e)
         {
-            List<int> list = new List<int>();
-
-            foreach (var item in this.MyPhotosListBox.SelectedItems)
-            {
-                list.Add(this.MyPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
-            }
-            MainWindow.MainVM.List = list;
-            MainWindow.MainVM.SelectedIndex = 4;
-            MainWindow.MainVM.Page = "RemovePhotoPage.xaml";
+//            List<int> list = new List<int>();
+//
+//            foreach (var item in this.MyPhotosListBox.SelectedItems)
+//            {
+//                list.Add(this.MyPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
+//            }
+//            MainWindow.MainVM.List = list;
+//            MainWindow.MainVM.SelectedIndex = 4;
+//            MainWindow.MainVM.Page = "RemovePhotoPage.xaml";
         }
 
         private void OnSharePhoto(object sender, RoutedEventArgs e)
         {
-            List<int> list = new List<int>();
-
-            foreach (var item in this.MyPhotosListBox.SelectedItems)
-            {
-                list.Add(this.MyPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
-            }
-            MainWindow.MainVM.List = list;
-            MainWindow.MainVM.SelectedIndex = 5;
-            MainWindow.MainVM.Page = "SharePage.xaml";
+//            List<int> list = new List<int>();
+//
+//            foreach (var item in this.MyPhotosListBox.SelectedItems)
+//            {
+//                list.Add(this.MyPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
+//            }
+//            MainWindow.MainVM.List = list;
+//            MainWindow.MainVM.SelectedIndex = 5;
+//            MainWindow.MainVM.Page = "SharePage.xaml";
         }
 
         private void TextBox_KeyUp(object sender, KeyEventArgs e)
