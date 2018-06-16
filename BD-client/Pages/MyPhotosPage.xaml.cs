@@ -2,6 +2,7 @@ using BD_client.ViewModels;
 using MahApps.Metro.Controls.Dialogs;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,40 +20,26 @@ namespace BD_client.Pages
     /// </summary>
     public partial class MyPhotosPage : Page
     {
-        public MyPhotosPageViewModel ViewModel;
-        public IDialogCoordinator dialogCoordinator;
+        public MyPhotosPageViewModel ViewModel = new MyPhotosPageViewModel(DialogCoordinator.Instance);
 
         public MyPhotosPage()
         {
             InitializeComponent();
-            ViewModel = new MyPhotosPageViewModel(DialogCoordinator.Instance);
             DataContext = ViewModel;
         }
 
 
         private void OnPhotoDbClick(object sender, MouseButtonEventArgs e)
         {
-            var allPhotos = ViewModel.Photos;
-            new PhotoDetailsWindow(allPhotos, MyPhotosListBox.SelectedIndex).Show();
+            int selectedIndex = MyPhotosListBox.SelectedIndex;
+            ViewModel.Preview(selectedIndex);
         }
 
-        private async void OnArchivePhoto(object sender, RoutedEventArgs e)
+        private void OnArchivePhoto(object sender, RoutedEventArgs e)
         {
-            foreach (Photo photo in this.MyPhotosListBox.SelectedItems)
-            {
-                photo.PhotoState = PhotoState.ARCHIVED;
-                IRestResponse response = await new Request($"/photos/{photo.Id}").DoPut(photo);
+            List<Photo> photos = this.MyPhotosListBox.SelectedItems.OfType<Photo>().ToList();
 
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    //TODO action on success
-                }
-                else
-                {
-                    //TODO action on failure
-                }
-            }
-
+            ViewModel.ArchivePhoto(photos);
         }
 
         private void OnEditPhoto(object sender, RoutedEventArgs e)
@@ -85,20 +72,10 @@ namespace BD_client.Pages
 
         private async void OnRemovePhoto(object sender, RoutedEventArgs e)
         {
-            ObservableCollection<Photo> photos = new ObservableCollection<Photo>(ViewModel.Photos);
+            ViewModel.GetAllUserPhotos();
+            List<Photo> photos = this.MyPhotosListBox.SelectedItems.OfType<Photo>().ToList();
 
-            foreach (var item in this.MyPhotosListBox.SelectedItems)
-            {
-                Photo photo = item as Photo;
-
-                IRestResponse response = await new Request($"/photos/{photo.Id}").DoDelete();
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    photos.Remove(photo);
-                }
-            }
-
-            ViewModel.Photos = photos;
+            ViewModel.RemovePhotos(photos);
         }
 
         private void OnSharePhoto(object sender, RoutedEventArgs e)

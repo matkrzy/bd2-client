@@ -1,7 +1,9 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Input;
 using MahApps.Metro.Controls.Dialogs;
 using System.Net;
@@ -65,25 +67,51 @@ namespace BD_client.ViewModels
 
         private async void Add()
         {
-            foreach (var photo in Photos)
+            bool errorOccurred = false;
+            var progressBar = await dialogCoordinator.ShowProgressAsync(this, "Uploading", "Starting uploading");
+            List<string> failedPhotos = new List<string>();
+
+            for (int i = 0; i < Photos.Count; i++)
             {
+                Photo photo = Photos[i];
+
+                progressBar.SetTitle($"Adding {i + 1} of {Photos.Count}");
+                progressBar.SetMessage($"Adding {photo.Name}");
+                progressBar.SetProgress((double) (i + 1) / Photos.Count);
+
                 Request request = new Request("/photos");
                 request.AddFile(photo.Path);
                 request.AddParameter("description", photo.Description);
                 request.AddParameter("name", photo.Name);
                 IRestResponse response = await request.DoPost();
 
-                if (response.StatusCode == HttpStatusCode.Created)
+                if (response.StatusCode != HttpStatusCode.OK)
                 {
-                }
-                else
-                {
-                    await dialogCoordinator.ShowMessageAsync(this, "Error",
-                        "Error occurred during upload" + photo.Name + " file");
+                    errorOccurred = true;
+                    failedPhotos.Add(photo.Name);
                 }
             }
 
-            Photos.Clear();
+            await progressBar.CloseAsync();
+
+
+            if (errorOccurred)
+            {
+                foreach (string name in failedPhotos)
+                {
+                    Photos.Remove(Photos.Single(i => i.Name == name));
+                }
+
+                await dialogCoordinator.ShowMessageAsync(this, "Oooppss", "Something went wrong. Try again!");
+            }
+            else
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Success", "All photos added");
+                Photos.Clear();
+
+                MainWindow.MainVM.Page = "MyPhotosPage.xaml";
+                MainWindow.MainVM.SelectedIndex = -1;
+            }
         }
 
         private void Cancel()
