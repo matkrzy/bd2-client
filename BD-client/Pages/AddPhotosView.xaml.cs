@@ -30,33 +30,5 @@ namespace BD_client.Pages
             InitializeComponent();
             DataContext = vm;
         }
-
-        public void HamburgerMenuControl_OnItemClick(object sender, ItemClickEventArgs e)
-        {
-            //// set the content
-            //this.HamburgerMenuControl.Content = e.ClickedItem;
-            //// close the pane
-            //this.HamburgerMenuControl.IsPaneOpen = false;
-
-            //if (this.HamburgerMenuControl.SelectedIndex == 0)
-            //    MyPhotosPageViewModel.ShowAddPhotos();
-
-            //else if (this.HamburgerMenuControl.SelectedIndex == 1)
-            //    MyPhotosPageViewModel.EditPhoto();
-
-            //else if (this.HamburgerMenuControl.SelectedIndex == 2)
-            //    MyPhotosPageViewModel.Search();
-
-            //else if (this.HamburgerMenuControl.SelectedIndex == 3)
-            //    MyPhotosPageViewModel.Download();
-
-            //else if (this.HamburgerMenuControl.SelectedIndex == 4)
-            //    MyPhotosPageViewModel.RemovePhoto();
-
-            //else if (this.HamburgerMenuControl.SelectedIndex == 5)
-            //    MyPhotosPageViewModel.SharePhoto();
-
-        }
-
     }
 }

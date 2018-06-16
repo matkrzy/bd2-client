@@ -3,10 +3,13 @@ using MahApps.Metro.Controls.Dialogs;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
 using BD_client.Api.Core;
 using BD_client.Dto;
+using BD_client.Enums;
+using BD_client.Windows;
 using Newtonsoft.Json;
 using RestSharp;
 
@@ -14,20 +17,22 @@ namespace BD_client.ViewModels
 {
     public class MyPhotosPageViewModel : INotifyPropertyChanged
     {
+        public IDialogCoordinator dialogCoordinator;
         public event PropertyChangedEventHandler PropertyChanged = null;
 
-        private string _page;
         public ObservableCollection<Photo> _Photos { get; set; }
 
         public ObservableCollection<Photo> Photos
         {
             get { return _Photos; }
-            set { _Photos = value;
+            set
+            {
+                _Photos = value;
                 OnPropertyChanged("Photos");
             }
         }
-        public IDialogCoordinator dialogCoordinator;
 
+        private string _page;
 
         public string Page
         {
@@ -45,32 +50,121 @@ namespace BD_client.ViewModels
             this.GetAllUserPhotos();
         }
 
-
-        protected virtual void OnPropertyChanged(string propName)
+        public void Preview(int selectedIndex)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propName));
+            new PhotoDetailsWindow(Photos, selectedIndex).Show();
         }
 
-        private async void GetAllUserPhotos()
+        public async void ArchivePhoto(List<Photo> photos)
+        {
+            bool errorOccurred = false;
+            var progressBar = await dialogCoordinator.ShowProgressAsync(this, "Archiving", "Starting archiving");
+            List<string> failedPhotos = new List<string>();
+
+
+            for (int i = 0; i < photos.Count; i++)
+            {
+                Photo photo = photos[i];
+
+                progressBar.SetTitle($"Archiving {i + 1} of {photos.Count}");
+                progressBar.SetMessage($"Archiving {photo.Name}");
+                progressBar.SetProgress((double) (i + 1) / photos.Count);
+
+                photo.PhotoState = PhotoState.ARCHIVED;
+                IRestResponse response = await new Request($"/photos/{photo.Id}").DoPut(photo);
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    errorOccurred = true;
+                    failedPhotos.Add(photo.Name);
+                }
+
+                await progressBar.CloseAsync();
+
+
+                if (errorOccurred)
+                {
+                    await dialogCoordinator.ShowMessageAsync(this, "Oooppss",
+                        "Something went wrong. Try again!");
+                }
+                else
+                {
+                    await dialogCoordinator.ShowMessageAsync(this, "Success", "All photos archived");
+
+                    GetAllUserPhotos();
+                }
+            }
+        }
+
+        public async void RemovePhotos(List<Photo> photos)
+        {
+            var confirm =
+                await dialogCoordinator.ShowMessageAsync(this, "Are you sure?",
+                    $"Are you sure that to delete {photos.Count}", MessageDialogStyle.AffirmativeAndNegative,
+                    new MetroDialogSettings
+                    {
+                        AffirmativeButtonText = "OK",
+                        NegativeButtonText = "CANCEL",
+                        AnimateHide = true,
+                        AnimateShow = true,
+                        ColorScheme = MetroDialogColorScheme.Accented,
+                    });
+
+            if (confirm == MessageDialogResult.Negative)
+            {
+                return;
+            }
+
+            bool errorOccurred = false;
+            var progressBar = await dialogCoordinator.ShowProgressAsync(this, "Deleting", "Starting deleting");
+            List<string> failedPhotos = new List<string>();
+
+
+            for (int i = 0; i < photos.Count; i++)
+            {
+                Photo photo = photos[i];
+
+                progressBar.SetTitle($"Deleting {i + 1} of {photos.Count}");
+                progressBar.SetMessage($"Deleting {photo.Name}");
+                progressBar.SetProgress((double) (i + 1) / photos.Count);
+
+                photo.PhotoState = PhotoState.ARCHIVED;
+                IRestResponse response = await new Request($"/photos/{photo.Id}").DoDelete();
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    errorOccurred = true;
+                    failedPhotos.Add(photo.Name);
+                }
+
+                await progressBar.CloseAsync();
+
+
+                if (errorOccurred)
+                {
+                    await dialogCoordinator.ShowMessageAsync(this, "Oooppss",
+                        "Something went wrong. Try again!");
+                }
+                else
+                {
+                    await dialogCoordinator.ShowMessageAsync(this, "Success", "All photos deleted");
+
+                    GetAllUserPhotos();
+                }
+            }
+        }
+
+        public async void GetAllUserPhotos()
         {
             IRestResponse response = await new Request("/photos").DoGet();
 
             this.Photos = JsonConvert.DeserializeObject<ObservableCollection<Photo>>(response.Content);
         }
-        
-        public async void Archive(int id)
+
+        protected virtual void OnPropertyChanged(string propName)
         {
-//            var res = await PhotoService.ChangePhotoState(PhotoState.ARCHIVED, id);
-//            foreach (var photo in MainWindow.MainVM.Photos)
-//            {
-//                if (photo.Id == id)
-//                {
-//                    Photos.Result.Remove(photo);
-//                    MainWindow.MainVM.Photos.Remove(photo);
-//                    break;
-//                }
-//            }
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(propName));
         }
     }
 }
