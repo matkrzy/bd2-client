@@ -3,10 +3,14 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
+using System.Net;
 using System.Windows.Input;
+using BD_client.Api.Core;
 using BD_client.Dto;
 using BD_client.Pages;
 using BD_client.Services;
+using RestSharp;
 
 namespace BD_client.ViewModels
 {
@@ -17,89 +21,16 @@ namespace BD_client.ViewModels
         private IDialogCoordinator dialogCoordinator;
         public ICommand EditCmd { get; set; }
         private String _page;
-        private String _password;
-        private String _email;
-        private String _name;
-        private String _surname;
-        private String _role;
-        private long id;
-        private String oldName;
-        private String oldSurname;
-        private String oldPassword;
 
-        public string Role
-        {
-            get
-            {
-                return _role;
-            }
-            set
-            {
-                _role = value;
-                OnPropertyChanged("Role");
-            }
-        }
+        public User _user { get; set; }
 
-        public string Surname
+        public User user
         {
-            get
-            {
-                return _surname;
-            }
+            get { return _user; }
             set
             {
-                _surname = value;
-                OnPropertyChanged("Surname");
-            }
-        }
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                _name = value;
-                OnPropertyChanged("Name");
-            }
-        }
-        public string Password
-        {
-            get
-            {
-                return _password;
-            }
-            set
-            {
-                _password = value;
-                OnPropertyChanged("Password");
-            }
-        }
-
-        public string Email
-        {
-            get
-            {
-                return _email;
-            }
-            set
-            {
-                _email = value;
-                OnPropertyChanged("Email");
-            }
-        }
-
-        public string Page
-        {
-            get
-            {
-                return _page;
-            }
-            set
-            {
-                _page = value;
-                OnPropertyChanged("Page");
+                _user = value;
+                OnPropertyChanged("user");
             }
         }
 
@@ -108,18 +39,8 @@ namespace BD_client.ViewModels
         {
             dialogCoordinator = instance;
             EditCmd = new RelayCommand(x => Edit());
-            try
-            {
-                GetUserInfo();
-                oldName = Name;
-                oldSurname = Surname;
-                oldPassword = Password;
-            }
-            catch (Exception)
-            {
-                ShowServerError();
-            }
-            
+
+            this.GetUserInfo();
         }
 
         private async void ShowServerError()
@@ -127,55 +48,35 @@ namespace BD_client.ViewModels
             await dialogCoordinator.ShowMessageAsync(this, "Error", "Server error");
         }
 
-        private void GetUserInfo()
+        private async void GetUserInfo()
         {
-            string url = MainWindow.MainVM.BaseUrl + "api/v1/users/"+ MainWindow.MainVM.User;
-            String responseContent = ApiRequest.Get(url);
-            User user = JsonConvert.DeserializeObject<User>(responseContent);
-            id = user.id;
-            Name = user.FirstName;
-            Surname = user.LastName;
-            Email = user.Email;
-            Role = user.Role.ToString();
+            string userId = ConfigurationManager.AppSettings["Id"];
 
-        }
+            IRestResponse response = await new Request($"/users/{userId}").DoGet();
 
-        private void EditUser()
-        {
-            var values = new Dictionary<string, string>
+            if (response.StatusCode == HttpStatusCode.OK)
             {
-                { "firstName", Name },
-                { "lastName", Surname },
-                { "password", Password },
-            };
-
-            string json = JsonConvert.SerializeObject(values, Formatting.Indented);
-
-            String url = MainWindow.MainVM.BaseUrl + "api/v1/users";
-            ApiRequest.Put(url, json);
+                user = Api.Utils.Utils.Deserialize<User>(response);
+            }
         }
 
 
         private async void Edit()
         {
-            try
-            {
-                EditUser();
-                await dialogCoordinator.ShowMessageAsync(this, "Success", "Profile was edited");
-                MainWindow.MainVM.Page = "MyPhotosPage.xaml";
-                MainWindow.MainVM.SelectedIndex = -1;
-            }
-            catch (Exception)
-            {
-                await dialogCoordinator.ShowMessageAsync(this, "Error", "Edit failed");
-                Password = oldPassword;
-                Name = oldName;
-                Surname = oldSurname;
+            IRestResponse response = await new Request($"/users/{user.id}").DoPut(this.user);
 
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Success", "Your profile has been updated");
+                GetUserInfo();
+            }
+            else
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Oooppss", "Something went wrong. Try again!");
             }
         }
 
-        virtual protected void OnPropertyChanged(string propName)
+        protected virtual void OnPropertyChanged(string propName)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));

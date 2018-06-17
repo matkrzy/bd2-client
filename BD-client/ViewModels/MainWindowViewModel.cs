@@ -125,6 +125,8 @@ namespace BD_client.ViewModels
                     var user = Api.Utils.Utils.Deserialize<User>(response);
 //                    var user = Api.Utils.Utils.Deserialize<User>(response, this, dialogCoordinator, "Something went wrong");
                     MainWindow.MainVM.User = user.Email;
+                    ConfigurationManager.AppSettings["Email"] = user.Email;
+                    ConfigurationManager.AppSettings["Id"] = user.id.ToString();
                 }
                 catch (Exception e)
                 {
