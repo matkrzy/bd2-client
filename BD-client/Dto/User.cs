@@ -9,10 +9,10 @@ namespace BD_client.Dto
         [JsonProperty("id")]
         public long id { get; set; }
 
-        [JsonProperty("first_name")]
+        [JsonProperty("firstName")]
         public String FirstName { get; set; }
 
-        [JsonProperty("last_name")]
+        [JsonProperty("lastName")]
         public String LastName { get; set; }
 
         [JsonProperty("email")]
@@ -23,6 +23,9 @@ namespace BD_client.Dto
 
         [JsonProperty("uuid")]
         public String uuid { get; set; }
+
+        [JsonProperty("creationDate")]
+        public String CreationDate { get; set; }
 
         public User()
         {

@@ -70,6 +70,7 @@ namespace BD_client.ViewModels
                     File.WriteAllText("./token", JWT);
 
                     ConfigurationManager.AppSettings["uuid"] = user.uuid;
+                    ConfigurationManager.AppSettings["Id"] = user.id.ToString();
 
                     MainWindow.MainVM.Enabled = true;
                     MainWindow.MainVM.Page = "MyPhotosPage.xaml";

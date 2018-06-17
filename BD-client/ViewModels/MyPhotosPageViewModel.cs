@@ -59,8 +59,6 @@ namespace BD_client.ViewModels
         {
             bool errorOccurred = false;
             var progressBar = await dialogCoordinator.ShowProgressAsync(this, "Archiving", "Starting archiving");
-            List<string> failedPhotos = new List<string>();
-
 
             for (int i = 0; i < photos.Count; i++)
             {
@@ -76,7 +74,6 @@ namespace BD_client.ViewModels
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
                     errorOccurred = true;
-                    failedPhotos.Add(photo.Name);
                 }
 
                 await progressBar.CloseAsync();
@@ -117,7 +114,6 @@ namespace BD_client.ViewModels
 
             bool errorOccurred = false;
             var progressBar = await dialogCoordinator.ShowProgressAsync(this, "Deleting", "Starting deleting");
-            List<string> failedPhotos = new List<string>();
 
 
             for (int i = 0; i < photos.Count; i++)
@@ -134,7 +130,6 @@ namespace BD_client.ViewModels
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
                     errorOccurred = true;
-                    failedPhotos.Add(photo.Name);
                 }
 
                 await progressBar.CloseAsync();
