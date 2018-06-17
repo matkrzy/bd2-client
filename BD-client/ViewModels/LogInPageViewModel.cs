@@ -53,10 +53,10 @@ namespace BD_client.ViewModels
 
         private async void Login()
         {
+            ConfigurationManager.AppSettings["JWT"] = "";
             var values = new {email = Email, password = Password};
 
             IRestResponse response = await new Request("/login").DoPost(values);
-
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -64,18 +64,20 @@ namespace BD_client.ViewModels
                 {
                     var cookie = response.Cookies.ElementAt(0);
 
-                    String JWT = ConfigurationManager.AppSettings["JWT"] = cookie.Value;
+                    String JWT = cookie.Value;
 
                     var user = JsonConvert.DeserializeObject<User>(response.Content);
                     File.WriteAllText("./token", JWT);
 
+                    ConfigurationManager.AppSettings["JWT"] = JWT;
                     ConfigurationManager.AppSettings["uuid"] = user.uuid;
                     ConfigurationManager.AppSettings["Id"] = user.id.ToString();
+                    ConfigurationManager.AppSettings["Email"] = user.Email;
 
                     MainWindow.MainVM.Enabled = true;
                     MainWindow.MainVM.Page = "MyPhotosPage.xaml";
                     MainWindow.MainVM.SelectedIndex = -1;
-                    MainWindow.MainVM.User = Email;
+                    MainWindow.MainVM.User = user.Email;
                 }
                 catch (Exception e)
                 {

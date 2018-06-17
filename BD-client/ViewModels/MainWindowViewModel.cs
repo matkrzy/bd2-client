@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Windows.Input;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Net;
 using BD_client.Services;
 using BD_client.Api.Core;
@@ -88,28 +89,16 @@ namespace BD_client.ViewModels
                 this.AutoLoginAsync();
             }
 
-            String JWT = ConfigurationManager.AppSettings["JWT"];
-            String email = ConfigurationManager.AppSettings["Email"];
 
-            if (JWT == "" && email == "")
-            {
-                Page = "LogInPage.xaml";
-            }
-            else
-            {
-                MyPhotosCmd = new RelayCommand(x => ShowMyPhotos());
-                ArchivedPhotosCmd = new RelayCommand(x => ShowArchivedPhotos());
-                ProfileCmd = new RelayCommand(x => Profile());
-                LogoutCmd = new RelayCommand(x => Logout());
-                HelpCmd = new RelayCommand(x => Help());
-                PublicPhotosCmd = new RelayCommand(x => ShowPublicPhotos());
-                CategoriesCmd = new RelayCommand(x => ShowCategories());
+            MyPhotosCmd = new RelayCommand(x => ShowMyPhotos());
+            ArchivedPhotosCmd = new RelayCommand(x => ShowArchivedPhotos());
+            ProfileCmd = new RelayCommand(x => Profile());
+            LogoutCmd = new RelayCommand(x => Logout());
+            HelpCmd = new RelayCommand(x => Help());
+            PublicPhotosCmd = new RelayCommand(x => ShowPublicPhotos());
+            CategoriesCmd = new RelayCommand(x => ShowCategories());
 
-                Enabled = true;
-                User = email;
-                Page = "MyPhotosPage.xaml";
-                SelectedIndex = -1;
-            }
+            Page = "MyPhotosPage.xaml";           
         }
 
         private async void AutoLoginAsync()
@@ -127,9 +116,14 @@ namespace BD_client.ViewModels
                     MainWindow.MainVM.User = user.Email;
                     ConfigurationManager.AppSettings["Email"] = user.Email;
                     ConfigurationManager.AppSettings["Id"] = user.id.ToString();
+
+                    Enabled = true;
+                    User = user.Email;
+                    SelectedIndex = -1;
                 }
                 catch (Exception e)
                 {
+                    Logout();
                     Page = "LogInPage.xaml";
                 }
             }

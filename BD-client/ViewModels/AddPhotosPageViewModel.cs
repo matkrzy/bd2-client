@@ -85,7 +85,7 @@ namespace BD_client.ViewModels
                 request.AddParameter("name", photo.Name);
                 IRestResponse response = await request.DoPost();
 
-                if (response.StatusCode != HttpStatusCode.OK)
+                if (response.StatusCode != HttpStatusCode.Created)
                 {
                     errorOccurred = true;
                     failedPhotos.Add(photo.Name);
@@ -99,7 +99,7 @@ namespace BD_client.ViewModels
             {
                 foreach (string name in failedPhotos)
                 {
-                    Photos.Remove(Photos.Single(i => i.Name == name));
+                    Photos.Remove(Photos.Single(i => i.Name != name));
                 }
 
                 await dialogCoordinator.ShowMessageAsync(this, "Oooppss", "Something went wrong. Try again!");

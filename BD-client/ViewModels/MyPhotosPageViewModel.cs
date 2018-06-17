@@ -124,28 +124,26 @@ namespace BD_client.ViewModels
                 progressBar.SetMessage($"Deleting {photo.Name}");
                 progressBar.SetProgress((double) (i + 1) / photos.Count);
 
-                photo.PhotoState = PhotoState.ARCHIVED;
                 IRestResponse response = await new Request($"/photos/{photo.Id}").DoDelete();
 
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
                     errorOccurred = true;
                 }
+            }
 
-                await progressBar.CloseAsync();
+            await progressBar.CloseAsync();
 
+            if (errorOccurred)
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Oooppss",
+                    "Something went wrong. Try again!");
+            }
+            else
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Success", "All photos deleted");
 
-                if (errorOccurred)
-                {
-                    await dialogCoordinator.ShowMessageAsync(this, "Oooppss",
-                        "Something went wrong. Try again!");
-                }
-                else
-                {
-                    await dialogCoordinator.ShowMessageAsync(this, "Success", "All photos deleted");
-
-                    GetAllUserPhotos();
-                }
+                GetAllUserPhotos();
             }
         }
 
