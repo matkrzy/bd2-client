@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Windows.Input;
 using System.Configuration;
 using System.IO;
-using System.Linq;
 using System.Net;
 using BD_client.Services;
 using BD_client.Api.Core;
@@ -16,8 +15,9 @@ using RestSharp;
 
 namespace BD_client.ViewModels
 {
-    public class MainWindowViewModel : INotifyPropertyChanged
+    public class MainWindowViewModel :INotifyPropertyChanged
     {
+
         public event PropertyChangedEventHandler PropertyChanged = null;
         private IDialogCoordinator dialogCoordinator;
 
@@ -36,7 +36,6 @@ namespace BD_client.ViewModels
 
         private int _selectedIndex;
         private String _user;
-        public readonly string BaseUrl;
 
         public int SelectedIndex
         {

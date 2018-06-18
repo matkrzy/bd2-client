@@ -63,27 +63,27 @@ namespace BD_client.ViewModels
 
         private void GetTags()
         {
-            string url = MainWindow.MainVM.BaseUrl + "api/v1/tags/"+TagsPhrase;
-            String responseContent = ApiRequest.Get(url);
-            JsonTextReader reader = new JsonTextReader(new StringReader(responseContent));
-            reader.SupportMultipleContent = true;
-            List<Tag> tagsList = null;
-            while (true)
-            {
-                if (!reader.Read())
-                {
-                    break;
-                }
-
-                JsonSerializer serializer = new JsonSerializer();
-                tagsList = serializer.Deserialize<List<Tag>>(reader);
-
-            }
-
-            foreach(var tag in tagsList)
-            {
-                TagsAutocomplete.Add(tag.Name);
-            }
+//            string url = MainWindow.MainVM.BaseUrl + "api/v1/tags/"+TagsPhrase;
+//            String responseContent = ApiRequest.Get(url);
+//            JsonTextReader reader = new JsonTextReader(new StringReader(responseContent));
+//            reader.SupportMultipleContent = true;
+//            List<Tag> tagsList = null;
+//            while (true)
+//            {
+//                if (!reader.Read())
+//                {
+//                    break;
+//                }
+//
+//                JsonSerializer serializer = new JsonSerializer();
+//                tagsList = serializer.Deserialize<List<Tag>>(reader);
+//
+//            }
+//
+//            foreach(var tag in tagsList)
+//            {
+//                TagsAutocomplete.Add(tag.Name);
+//            }
 
         }
 
@@ -94,38 +94,38 @@ namespace BD_client.ViewModels
 
         private void GetCategories()
         {
-            string url = MainWindow.MainVM.BaseUrl + "api/v1/categories";
-            String responseContent = ApiRequest.Get(url);
-            JsonTextReader reader = new JsonTextReader(new StringReader(responseContent));
-            reader.SupportMultipleContent = true;
-            List<Dto.Category> categoriesList = null;
-            while (true)
-            {
-                if (!reader.Read())
-                {
-                    break;
-                }
-
-                JsonSerializer serializer = new JsonSerializer();
-                categoriesList = serializer.Deserialize<List<Dto.Category>>(reader);
-
-            }
-            bool repeated = false;
-            foreach (var category in categoriesList)
-            {
-                foreach (var displayCategory in Categories)
-                {
-                    if (displayCategory.Name.ToLower().Equals(category.Name.ToLower()))
-                    {
-                        repeated = true;
-                        break;
-                    }
-                }
-                if (!repeated)
-                    Categories.Add(category);
-
-                repeated = false;
-            }
+//            string url = MainWindow.MainVM.BaseUrl + "api/v1/categories";
+//            String responseContent = ApiRequest.Get(url);
+//            JsonTextReader reader = new JsonTextReader(new StringReader(responseContent));
+//            reader.SupportMultipleContent = true;
+//            List<Dto.Category> categoriesList = null;
+//            while (true)
+//            {
+//                if (!reader.Read())
+//                {
+//                    break;
+//                }
+//
+//                JsonSerializer serializer = new JsonSerializer();
+//                categoriesList = serializer.Deserialize<List<Dto.Category>>(reader);
+//
+//            }
+//            bool repeated = false;
+//            foreach (var category in categoriesList)
+//            {
+//                foreach (var displayCategory in Categories)
+//                {
+//                    if (displayCategory.Name.ToLower().Equals(category.Name.ToLower()))
+//                    {
+//                        repeated = true;
+//                        break;
+//                    }
+//                }
+//                if (!repeated)
+//                    Categories.Add(category);
+//
+//                repeated = false;
+//            }
 
 
         }
@@ -265,35 +265,35 @@ namespace BD_client.ViewModels
 
         private List<int> SearchCategories(List<int> SelectedCategoriesIds)
         {
-            List<int> photoIndex = new List<int>();
-            List<Photo> photosToDisplay = new List<Photo>();
-            List<Photo> tmpResult = null;
-            foreach (var selectedCategory in SelectedCategoriesIds)
-            {
-                photosToDisplay.Clear();
-                string url = MainWindow.MainVM.BaseUrl + "api/v1/photos/categories/any/" + selectedCategory;
-                string response = ApiRequest.Get(url);
-                var photosFromCategory = JsonConvert.DeserializeObject<List<Photo>>(response);
-                foreach (var photo in photosFromCategory)
-                {
-                    photosToDisplay.Add(photo);
-                }
-
-                tmpResult = Intersect(tmpResult, photosToDisplay);
-
-            }
-            for (int i = 0; i < Photos.Count; i++)
-            {
-                for (int j = 0; j < tmpResult.Count; j++)
-                {
-                    if (Photos[i].Id == tmpResult[j].Id)
-                    {
-                        photoIndex.Add(i);
-                        break;
-                    }
-                }
-            }
-            return photoIndex;
+//            List<int> photoIndex = new List<int>();
+//            List<Photo> photosToDisplay = new List<Photo>();
+//            List<Photo> tmpResult = null;
+//            foreach (var selectedCategory in SelectedCategoriesIds)
+//            {
+//                photosToDisplay.Clear();
+//                string url = MainWindow.MainVM.BaseUrl + "api/v1/photos/categories/any/" + selectedCategory;
+//                string response = ApiRequest.Get(url);
+//                var photosFromCategory = JsonConvert.DeserializeObject<List<Photo>>(response);
+//                foreach (var photo in photosFromCategory)
+//                {
+//                    photosToDisplay.Add(photo);
+//                }
+//
+//                tmpResult = Intersect(tmpResult, photosToDisplay);
+//
+//            }
+//            for (int i = 0; i < Photos.Count; i++)
+//            {
+//                for (int j = 0; j < tmpResult.Count; j++)
+//                {
+//                    if (Photos[i].Id == tmpResult[j].Id)
+//                    {
+//                        photoIndex.Add(i);
+//                        break;
+//                    }
+//                }
+//            }
+            return null;
         }
 
         private List<int> SearchTags(string searchPhrase)

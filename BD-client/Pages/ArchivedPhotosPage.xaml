@@ -5,6 +5,8 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
       xmlns:local="clr-namespace:BD_client.Pages"
+      xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
+      Dialog:DialogParticipation.Register="{Binding}"
       mc:Ignorable="d" 
       Height="500" Width="700"
       Title="ArchivedPhotosPage">
@@ -34,7 +36,7 @@
                     HorizontalAlignment="Left"
                     IsSynchronizedWithCurrentItem="True"
                     Name="MyPhotosListBox" 
-                    ItemsSource="{Binding Photos.Result}"
+                    ItemsSource="{Binding Photos}"
                     SelectionMode="Extended"
                     MouseDoubleClick="OnPhotoDbClick">
                 <ListBox.ItemsPanel>
@@ -44,17 +46,31 @@
                 </ListBox.ItemsPanel>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                            <Image Source="{Binding Path}" Height="{Binding ElementName=ZoomSlider, Path='Value'}" Width="{Binding ElementName=ZoomSlider, Path='Value'}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Stretch="UniformToFill" Margin="0 5 5 0" />
-                            <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Bottom" />
+                        <StackPanel
+                            Orientation="Vertical"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center" Margin="5">
+                            <Image
+                                Source="{Binding Url}"
+                                Height="{Binding ElementName=ZoomSlider, Path='Value'}"
+                                Width="{Binding ElementName=ZoomSlider, Path='Value'}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Stretch="Uniform" Margin="0 5 5 0" />
+                            <TextBlock
+                                Text="{Binding Name}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Bottom"
+                                TextTrimming="CharacterEllipsis"
+                                Width="{Binding ElementName=ZoomSlider, Path='Value'}" />
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
                 <ListBox.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Download" Click="OnDownloadPhoto"/>
+                        <MenuItem Header="Restore" Click="OnRestorePhoto"/>
                         <MenuItem Header="Remove" Click="OnRemovePhoto"/>
-                        <MenuItem Header="Reactive" Click="OnReactivePhoto"/>
                     </ContextMenu>
                 </ListBox.ContextMenu>
             </ListBox>
