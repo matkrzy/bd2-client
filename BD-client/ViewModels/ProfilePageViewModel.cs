@@ -63,7 +63,7 @@ namespace BD_client.ViewModels
 
         private async void Edit()
         {
-            IRestResponse response = await new Request($"/users/{user.id}").DoPut(this.user);
+            IRestResponse response = await new Request($"/users/{user.Id}").DoPut(this.user);
 
             if (response.StatusCode == HttpStatusCode.OK)
             {

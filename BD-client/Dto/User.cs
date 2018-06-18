@@ -7,7 +7,7 @@ namespace BD_client.Dto
     public class User
     {
         [JsonProperty("id")]
-        public long id { get; set; }
+        public long Id { get; set; }
 
         [JsonProperty("firstName")]
         public String FirstName { get; set; }
@@ -22,7 +22,7 @@ namespace BD_client.Dto
         public UserRole Role { get; set; }
 
         [JsonProperty("uuid")]
-        public String uuid { get; set; }
+        public String Uuid { get; set; }
 
         [JsonProperty("creationDate")]
         public String CreationDate { get; set; }
