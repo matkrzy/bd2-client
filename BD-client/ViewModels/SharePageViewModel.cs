@@ -111,73 +111,73 @@ namespace BD_client.ViewModels
 
         private User GetUserInfo(string email)
         {
-            string url = MainWindow.MainVM.BaseUrl + "api/v1/users/" + email;
-            String responseContent = ApiRequest.Get(url);
-            User user = JsonConvert.DeserializeObject<User>(responseContent);
-            return user;
+//            string url = MainWindow.MainVM.BaseUrl + "api/v1/users/" + email;
+//            String responseContent = ApiRequest.Get(url);
+//            User user = JsonConvert.DeserializeObject<User>(responseContent);
+            return null;
         }
 
         private List<int> PublicSharePhoto()
         {
-            var photoIndex = new List<int>();
-
-            for (int i = 0; i < Photos.Count; i++)
-            {
-                var valuesPhoto = new Dictionary<string, string>
-                {
-//                    { "shareState", PhotoVisibility.Public.ToString() }
-                };
-
-                var json = JsonConvert.SerializeObject(valuesPhoto, Formatting.Indented);
-                string url = MainWindow.MainVM.BaseUrl + "api/v1/photos/" + Photos[i].Id;
-                try
-                {
-                    ApiRequest.Put(url, json);
-                    photoIndex.Add(i);
-                }
-                catch (Exception)
-                {
-                }
-            }
-
-            return photoIndex;
+//            var photoIndex = new List<int>();
+//
+//            for (int i = 0; i < Photos.Count; i++)
+//            {
+//                var valuesPhoto = new Dictionary<string, string>
+//                {
+////                    { "shareState", PhotoVisibility.Public.ToString() }
+//                };
+//
+//                var json = JsonConvert.SerializeObject(valuesPhoto, Formatting.Indented);
+//                string url = MainWindow.MainVM.BaseUrl + "api/v1/photos/" + Photos[i].Id;
+//                try
+//                {
+//                    ApiRequest.Put(url, json);
+//                    photoIndex.Add(i);
+//                }
+//                catch (Exception)
+//                {
+//                }
+//            }
+//
+            return null;
         }
 
 
         private List<int> SharePhoto()
         {
-            var photoIndex = new List<int>();
-            User user;
-            try
-            {
-                user = GetUserInfo(Email);
-            }
-            catch (Exception)
-            {
-                return photoIndex;
-            }
+//            var photoIndex = new List<int>();
+//            User user;
+//            try
+//            {
+//                user = GetUserInfo(Email);
+//            }
+//            catch (Exception)
+//            {
+//                return photoIndex;
+//            }
+//
+//            for (int i = 0; i < Photos.Count; i++)
+//            {
+//                var valuesPhoto = new Dictionary<string, long>
+//                {
+//                    {"user", user.Id},
+//                    {"photo", Photos[i].Id}
+//                };
+//
+//                var json = JsonConvert.SerializeObject(valuesPhoto, Formatting.Indented);
+////                var photosUrl = MainWindow.MainVM.BaseUrl + "api/v1/shares";
+//                try
+//                {
+//                    ApiRequest.Post(photosUrl, json);
+//                    photoIndex.Add(i);
+//                }
+//                catch (Exception)
+//                {
+//                }
+//            }
 
-            for (int i = 0; i < Photos.Count; i++)
-            {
-                var valuesPhoto = new Dictionary<string, long>
-                {
-                    {"user", user.Id},
-                    {"photo", Photos[i].Id}
-                };
-
-                var json = JsonConvert.SerializeObject(valuesPhoto, Formatting.Indented);
-                var photosUrl = MainWindow.MainVM.BaseUrl + "api/v1/shares";
-                try
-                {
-                    ApiRequest.Post(photosUrl, json);
-                    photoIndex.Add(i);
-                }
-                catch (Exception)
-                {
-                }
-            }
-
-            return photoIndex;
+            return null;
         }
 
         private void Cancel()

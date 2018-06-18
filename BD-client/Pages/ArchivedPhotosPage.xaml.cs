@@ -2,9 +2,11 @@
 using BD_client.Windows;
 using MahApps.Metro.Controls.Dialogs;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using BD_client.Dto;
 
 namespace BD_client.Pages
 {
@@ -23,52 +25,27 @@ namespace BD_client.Pages
         }
 
 
-
         private void OnPhotoDbClick(object sender, MouseButtonEventArgs e)
         {
-            var allPhotos = ViewModel.Photos.Result;
-            new PhotoDetailsWindow(allPhotos, MyPhotosListBox.SelectedIndex).Show();
+            int selectedIndex = MyPhotosListBox.SelectedIndex;
+            ViewModel.Preview(selectedIndex);
         }
 
-        private void OnReactivePhoto(object sender, RoutedEventArgs e)
+        private void OnRestorePhoto(object sender, RoutedEventArgs e)
         {
-            List<long> list = new List<long>();
-
-            foreach (var item in this.MyPhotosListBox.SelectedItems)
-            {
-                list.Add((MainWindow.MainVM.Photos[this.MyPhotosListBox.Items.IndexOf(item)].Id));
-            }
-
-            foreach(var id in list)
-            {
-                ViewModel.Reactive(id);
-            }
-            ViewModel.Photos.Result.Update();
+            List<Photo> photos = this.MyPhotosListBox.SelectedItems.OfType<Photo>().ToList();
+            ViewModel.Restore(photos);
         }
 
         private void OnDownloadPhoto(object sender, RoutedEventArgs e)
         {
-            List<int> list = new List<int>();
-
-            foreach (var item in this.MyPhotosListBox.SelectedItems)
-            {
-                list.Add(this.MyPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
-            }
-//            MainWindow.MainVM.List = list;
-            MainWindow.MainVM.SelectedIndex = 3;
-            MainWindow.MainVM.Page = "Pages/DownloadPage.xaml";
+            List<Photo> photos = this.MyPhotosListBox.SelectedItems.OfType<Photo>().ToList();
         }
+
         private void OnRemovePhoto(object sender, RoutedEventArgs e)
         {
-            List<int> list = new List<int>();
-
-            foreach (var item in this.MyPhotosListBox.SelectedItems)
-            {
-                list.Add(this.MyPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
-            }
-//            MainWindow.MainVM.List = list;
-            MainWindow.MainVM.SelectedIndex = 4;
-            MainWindow.MainVM.Page = "Pages/RemovePhotoPage.xaml";
+            List<Photo> photos = this.MyPhotosListBox.SelectedItems.OfType<Photo>().ToList();
+            ViewModel.Remove(photos);
         }
     }
 }

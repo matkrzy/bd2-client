@@ -1,11 +1,9 @@
-﻿using BD_client.Common;
-using MahApps.Metro.Controls.Dialogs;
+﻿using MahApps.Metro.Controls.Dialogs;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Configuration;
 using System.Net;
-using System.Threading.Tasks;
-using System.Windows;
 using BD_client.Api.Core;
 using BD_client.Dto;
 using BD_client.Enums;
@@ -75,21 +73,21 @@ namespace BD_client.ViewModels
                 {
                     errorOccurred = true;
                 }
+            }
 
-                await progressBar.CloseAsync();
+            await progressBar.CloseAsync();
+        
 
+            if (errorOccurred)
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Oooppss",
+                    "Something went wrong. Try again!");
+            }
+            else
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Success", "All photos archived");
 
-                if (errorOccurred)
-                {
-                    await dialogCoordinator.ShowMessageAsync(this, "Oooppss",
-                        "Something went wrong. Try again!");
-                }
-                else
-                {
-                    await dialogCoordinator.ShowMessageAsync(this, "Success", "All photos archived");
-
-                    GetAllUserPhotos();
-                }
+                GetAllUserPhotos();
             }
         }
 
@@ -147,9 +145,13 @@ namespace BD_client.ViewModels
             }
         }
 
-        public async void GetAllUserPhotos()
+        public async void GetAllUserPhotos(PhotoState state = PhotoState.ACTIVE)
         {
-            IRestResponse response = await new Request("/photos").DoGet();
+            Request request = new Request("/photos");
+            request.AddParameter("state", state.ToString());
+            request.AddParameter("userId", ConfigurationManager.AppSettings["Id"]);
+
+            IRestResponse response = await request.DoGet();
 
             this.Photos = JsonConvert.DeserializeObject<ObservableCollection<Photo>>(response.Content);
         }

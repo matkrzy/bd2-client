@@ -1,32 +1,47 @@
-﻿using BD_client.Common;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using BD_client.Common;
 using BD_client.Services;
 using MahApps.Metro.Controls.Dialogs;
 using System.ComponentModel;
+using System.Configuration;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
+using BD_client.Api.Core;
+using BD_client.Dto;
 using BD_client.Enums;
 using BD_client.Models;
 using BD_client.Pages;
+using BD_client.Windows;
+using Newtonsoft.Json;
+using RestSharp;
 
 namespace BD_client.ViewModels
 {
     public class ArchivedPhotosPageViewModel : INotifyPropertyChanged
     {
-
         public event PropertyChangedEventHandler PropertyChanged = null;
 
         private string _page;
-        public NotifyTaskCompletion<PhotoCollection> Photos { get; set; }
+        public ObservableCollection<Photo> _Photos { get; set; }
+
+        public ObservableCollection<Photo> Photos
+        {
+            get { return _Photos; }
+            set
+            {
+                _Photos = value;
+                OnPropertyChanged("Photos");
+            }
+        }
 
         private IDialogCoordinator dialogCoordinator;
 
 
         public string Page
         {
-            get
-            {
-                return _page;
-            }
+            get { return _page; }
             set
             {
                 _page = value;
@@ -37,8 +52,7 @@ namespace BD_client.ViewModels
         public ArchivedPhotosPageViewModel(IDialogCoordinator instance)
         {
             dialogCoordinator = instance;
-            var path = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + "//Img//photos";
-            Photos = new NotifyTaskCompletion<PhotoCollection>(GetArchivedUserPhotos());
+            GetArchivedUserPhotos();
         }
 
 
@@ -48,44 +62,112 @@ namespace BD_client.ViewModels
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));
         }
 
-        private async Task<PhotoCollection> GetArchivedUserPhotos()
+        private async void GetArchivedUserPhotos()
         {
-            var destination = Directory.GetCurrentDirectory() + @"\..\..\tmp\own";
-            var photos = await PhotoService.GetArchivedUserPhotos();
-            MainWindow.MainVM.Photos = photos;
-            //TODO: różne typy zdjęć, nie tylko jpg
-            foreach (var photo in photos)
+            Request request = new Request("/photos");
+            request.AddParameter("state", PhotoState.ARCHIVED.ToString());
+            request.AddParameter("userId", ConfigurationManager.AppSettings["Id"]);
+
+            IRestResponse response = await request.DoGet();
+
+            Photos = JsonConvert.DeserializeObject<ObservableCollection<Photo>>(response.Content);
+        }
+
+        public async void Restore(List<Photo> photos)
+        {
+            bool errorOccurred = false;
+            var progressBar = await dialogCoordinator.ShowProgressAsync(this, "Restoring", "Starting restoring");
+
+            for (int i = 0; i < photos.Count; i++)
             {
-                var completePath = $@"{destination}\{photo.Id}.jpg";
-                if (!File.Exists(completePath))
+                Photo photo = photos[i];
+
+                progressBar.SetTitle($"Restoring {i + 1} of {photos.Count}");
+                progressBar.SetMessage($"Restoring {photo.Name}");
+                progressBar.SetProgress((double) (i + 1) / photos.Count);
+
+                photo.PhotoState = PhotoState.ACTIVE;
+                IRestResponse response = await new Request($"/photos/{photo.Id}").DoPut(photo);
+
+                if (response.StatusCode != HttpStatusCode.OK)
                 {
-                    // jeżeli zdjęcie nie jest jeszcze pobrane
-                    if (!(await ImageService.DownloadImageToLocation(completePath, photo.Id)))
+                    errorOccurred = true;
+                }
+            }
+
+            await progressBar.CloseAsync();
+
+
+            if (errorOccurred)
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Oooppss",
+                    "Something went wrong. Try again!");
+            }
+            else
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Success", "All photos restored");
+
+                GetArchivedUserPhotos();
+            }
+        }
+
+        public async void Remove(List<Photo> photos)
+        {
+            var confirm =
+                await dialogCoordinator.ShowMessageAsync(this, "Are you sure?",
+                    $"Are you sure that to delete {photos.Count}", MessageDialogStyle.AffirmativeAndNegative,
+                    new MetroDialogSettings
                     {
-                        //TODO: wyświetlić komunikat informujący o błędzie
-                    }
-                }
-            }
-            return new PhotoCollection(destination, photos);
-        }
+                        AffirmativeButtonText = "OK",
+                        NegativeButtonText = "CANCEL",
+                        AnimateHide = true,
+                        AnimateShow = true,
+                        ColorScheme = MetroDialogColorScheme.Accented,
+                    });
 
-        public async void Reactive(long id)
-        {
-            var res = await PhotoService.ChangePhotoState(PhotoState.ACTIVE, id);
-            foreach(var photo in MainWindow.MainVM.Photos)
+            if (confirm == MessageDialogResult.Negative)
             {
-                if (photo.Id == id)
+                return;
+            }
+
+            bool errorOccurred = false;
+            var progressBar = await dialogCoordinator.ShowProgressAsync(this, "Deleting", "Starting deleting");
+
+
+            for (int i = 0; i < photos.Count; i++)
+            {
+                Photo photo = photos[i];
+
+                progressBar.SetTitle($"Deleting {i + 1} of {photos.Count}");
+                progressBar.SetMessage($"Deleting {photo.Name}");
+                progressBar.SetProgress((double) (i + 1) / photos.Count);
+
+                IRestResponse response = await new Request($"/photos/{photo.Id}").DoDelete();
+
+                if (response.StatusCode != HttpStatusCode.OK)
                 {
-                    Photos.Result.Remove(photo);
-                    MainWindow.MainVM.Photos.Remove(photo);
-                    break;
+                    errorOccurred = true;
                 }
             }
-            
-            
+
+            await progressBar.CloseAsync();
+
+            if (errorOccurred)
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Oooppss",
+                    "Something went wrong. Try again!");
+            }
+            else
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Success", "All photos deleted");
+
+                GetArchivedUserPhotos();
+            }
         }
 
-
-
+        public void Preview(int selectedIndex)
+        {
+            new PhotoDetailsWindow(Photos, selectedIndex).Show();
+        }
     }
 }

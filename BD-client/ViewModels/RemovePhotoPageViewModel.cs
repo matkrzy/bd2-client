@@ -101,22 +101,22 @@ namespace BD_client.ViewModels
 
         private List<int> RemovePhotoFromServer()
         {
-            var photoIndex = new List<int>();
-            for (int i = 0; i < Photos.Count; i++)
-            {
-                var photosUrl = MainWindow.MainVM.BaseUrl + "api/v1/photos/"+Photos[i].Id;
-                try
-                {
-                    RemovePhotoFromDisc(Photos[i].Id);
-                    ApiRequest.Delete(photosUrl);
-                    photoIndex.Add(i);
-                }
-                catch (Exception e)
-                {
-                    string msg = e.Message;
-                }
-            }
-            return photoIndex;
+//            var photoIndex = new List<int>();
+//            for (int i = 0; i < Photos.Count; i++)
+//            {
+//                var photosUrl = MainWindow.MainVM.BaseUrl + "api/v1/photos/"+Photos[i].Id;
+//                try
+//                {
+//                    RemovePhotoFromDisc(Photos[i].Id);
+//                    ApiRequest.Delete(photosUrl);
+//                    photoIndex.Add(i);
+//                }
+//                catch (Exception e)
+//                {
+//                    string msg = e.Message;
+//                }
+//            }
+            return null;
 
         }
 

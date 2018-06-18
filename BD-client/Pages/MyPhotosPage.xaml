@@ -71,9 +71,9 @@
                     <ContextMenu>
                         <MenuItem Header="Edit" Click="OnEditPhoto" />
                         <MenuItem Header="Download" Click="OnDownloadPhoto" />
-                        <MenuItem Header="Remove" Click="OnRemovePhoto" />
                         <MenuItem Header="Share" Click="OnSharePhoto" />
                         <MenuItem Header="Archive" Click="OnArchivePhoto" />
+                        <MenuItem Header="Remove" Click="OnRemovePhoto" />
                     </ContextMenu>
                 </ListBox.ContextMenu>
             </ListBox>

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Input;
 using BD_client.Pages;
-using BD_client.Services;
 
 namespace BD_client.ViewModels
 {
@@ -123,8 +122,8 @@ namespace BD_client.ViewModels
             };
 
             string json = JsonConvert.SerializeObject(values, Formatting.Indented);
-            String url = MainWindow.MainVM.BaseUrl + "api/v1/users";
-            ApiRequest.Post(url, json);
+//            String url = MainWindow.MainVM.BaseUrl + "api/v1/users";
+//            ApiRequest.Post(url, json);
         }
 
         virtual protected void OnPropertyChanged(string propName)
