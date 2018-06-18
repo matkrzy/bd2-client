@@ -88,7 +88,10 @@ namespace BD_client.ViewModels
             {
                 this.AutoLoginAsync();
             }
-
+            else
+            {
+                Page = "LogInPage.xaml";
+            }
 
             MyPhotosCmd = new RelayCommand(x => ShowMyPhotos());
             ArchivedPhotosCmd = new RelayCommand(x => ShowArchivedPhotos());
@@ -98,7 +101,6 @@ namespace BD_client.ViewModels
             PublicPhotosCmd = new RelayCommand(x => ShowPublicPhotos());
             CategoriesCmd = new RelayCommand(x => ShowCategories());
 
-            Page = "MyPhotosPage.xaml";           
         }
 
         private async void AutoLoginAsync()
@@ -115,11 +117,12 @@ namespace BD_client.ViewModels
 //                    var user = Api.Utils.Utils.Deserialize<User>(response, this, dialogCoordinator, "Something went wrong");
                     MainWindow.MainVM.User = user.Email;
                     ConfigurationManager.AppSettings["Email"] = user.Email;
-                    ConfigurationManager.AppSettings["Id"] = user.id.ToString();
+                    ConfigurationManager.AppSettings["Id"] = user.Id.ToString();
 
                     Enabled = true;
                     User = user.Email;
                     SelectedIndex = -1;
+                    Page = "MyPhotosPage.xaml";
                 }
                 catch (Exception e)
                 {

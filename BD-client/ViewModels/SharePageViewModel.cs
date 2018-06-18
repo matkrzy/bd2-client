@@ -28,10 +28,7 @@ namespace BD_client.ViewModels
 
         public int DataGridSelectedIndex
         {
-            get
-            {
-                return _dataGridSelectedIndex;
-            }
+            get { return _dataGridSelectedIndex; }
             set
             {
                 _dataGridSelectedIndex = value;
@@ -46,10 +43,7 @@ namespace BD_client.ViewModels
 
         public string Page
         {
-            get
-            {
-                return _page;
-            }
+            get { return _page; }
             set
             {
                 _page = value;
@@ -59,17 +53,13 @@ namespace BD_client.ViewModels
 
         public string Email
         {
-            get
-            {
-                return _email ;
-            }
+            get { return _email; }
             set
             {
                 _email = value;
                 OnPropertyChanged("Email");
             }
         }
-
 
 
         public SharePageViewModel(IDialogCoordinator instance)
@@ -92,6 +82,7 @@ namespace BD_client.ViewModels
                 Photo newPhoto = MainWindow.MainVM.Photos[index];
                 Photos.Add(newPhoto);
             }
+
             MainWindow.MainVM.List.Clear();
             MainWindow.MainVM.List = null;
         }
@@ -100,19 +91,22 @@ namespace BD_client.ViewModels
         {
             Photos.RemoveAt(DataGridSelectedIndex);
         }
+
         private async void Share()
         {
             if (UserShare)
             {
                 List<int> photoIndex = SharePhoto();
-                await dialogCoordinator.ShowMessageAsync(this, "Result", photoIndex.Count + " of " + Photos.Count + " photos was shared");
+                await dialogCoordinator.ShowMessageAsync(this, "Result",
+                    photoIndex.Count + " of " + Photos.Count + " photos was shared");
             }
+
             if (PublicShare)
             {
                 List<int> photoIndex = PublicSharePhoto();
-                await dialogCoordinator.ShowMessageAsync(this, "Result", photoIndex.Count + " of " + Photos.Count + " photos was shared");
+                await dialogCoordinator.ShowMessageAsync(this, "Result",
+                    photoIndex.Count + " of " + Photos.Count + " photos was shared");
             }
-
         }
 
         private User GetUserInfo(string email)
@@ -121,7 +115,6 @@ namespace BD_client.ViewModels
             String responseContent = ApiRequest.Get(url);
             User user = JsonConvert.DeserializeObject<User>(responseContent);
             return user;
-
         }
 
         private List<int> PublicSharePhoto()
@@ -130,7 +123,6 @@ namespace BD_client.ViewModels
 
             for (int i = 0; i < Photos.Count; i++)
             {
-
                 var valuesPhoto = new Dictionary<string, string>
                 {
 //                    { "shareState", PhotoVisibility.Public.ToString() }
@@ -145,11 +137,10 @@ namespace BD_client.ViewModels
                 }
                 catch (Exception)
                 {
-
                 }
             }
-            return photoIndex;
 
+            return photoIndex;
         }
 
 
@@ -159,7 +150,7 @@ namespace BD_client.ViewModels
             User user;
             try
             {
-                 user = GetUserInfo(Email);
+                user = GetUserInfo(Email);
             }
             catch (Exception)
             {
@@ -168,11 +159,10 @@ namespace BD_client.ViewModels
 
             for (int i = 0; i < Photos.Count; i++)
             {
-
                 var valuesPhoto = new Dictionary<string, long>
                 {
-                    { "user", user.id },
-                    {"photo", Photos[i].Id }
+                    {"user", user.Id},
+                    {"photo", Photos[i].Id}
                 };
 
                 var json = JsonConvert.SerializeObject(valuesPhoto, Formatting.Indented);
@@ -184,11 +174,10 @@ namespace BD_client.ViewModels
                 }
                 catch (Exception)
                 {
-
                 }
             }
-            return photoIndex;
 
+            return photoIndex;
         }
 
         private void Cancel()
@@ -202,6 +191,5 @@ namespace BD_client.ViewModels
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));
         }
-
     }
 }

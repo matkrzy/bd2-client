@@ -20,7 +20,7 @@ namespace BD_client.Api.Core
         private static String apiHost = ConfigurationManager.AppSettings["ApiHost"];
         private static String apiPath = ConfigurationManager.AppSettings["ApiPath"];
         private static String apiUrl = apiHost + apiPath;
-        private static String JWT = ConfigurationManager.AppSettings["JWT"];
+        private String JWT = "";
         private AuthorizationType authType = AuthorizationType.Cookies;
 
         private RestClient client = null;
@@ -44,6 +44,7 @@ namespace BD_client.Api.Core
 
         public Request(String endpoint)
         {
+            this.JWT = ConfigurationManager.AppSettings["JWT"];
             this.client = new RestClient(apiUrl);
             this.request = new RestRequest(endpoint);
             this.AddJwtToken();

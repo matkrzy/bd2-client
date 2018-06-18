@@ -53,7 +53,6 @@ namespace BD_client.ViewModels
 
         private async void Login()
         {
-            ConfigurationManager.AppSettings["JWT"] = "";
             var values = new {email = Email, password = Password};
 
             IRestResponse response = await new Request("/login").DoPost(values);
@@ -70,8 +69,8 @@ namespace BD_client.ViewModels
                     File.WriteAllText("./token", JWT);
 
                     ConfigurationManager.AppSettings["JWT"] = JWT;
-                    ConfigurationManager.AppSettings["uuid"] = user.uuid;
-                    ConfigurationManager.AppSettings["Id"] = user.id.ToString();
+                    ConfigurationManager.AppSettings["uuid"] = user.Uuid;
+                    ConfigurationManager.AppSettings["Id"] = user.Id.ToString();
                     ConfigurationManager.AppSettings["Email"] = user.Email;
 
                     MainWindow.MainVM.Enabled = true;
