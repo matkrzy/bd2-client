@@ -123,7 +123,6 @@ namespace BD_client.ViewModels
                         NegativeButtonText = "CANCEL",
                         AnimateHide = true,
                         AnimateShow = true,
-                        ColorScheme = MetroDialogColorScheme.Accented,
                     });
 
             if (confirm == MessageDialogResult.Negative)

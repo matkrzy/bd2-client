@@ -126,9 +126,6 @@
     <Compile Include="Pages\CategoriesPage.xaml.cs">
       <DependentUpon>CategoriesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\DownloadPage.xaml.cs">
-      <DependentUpon>DownloadPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\EditPhotoPage.xaml.cs">
       <DependentUpon>EditPhotoPage.xaml</DependentUpon>
     </Compile>
@@ -161,7 +158,6 @@
     <Compile Include="ViewModels\ArchivedPhotosPageViewModel.cs" />
     <Compile Include="ViewModels\CategoriesPageViewModel.cs" />
     <Compile Include="ViewModels\CategoryViewModel.cs" />
-    <Compile Include="ViewModels\DownloadPageViewModel.cs" />
     <Compile Include="ViewModels\EditPhotoPageViewModel.cs" />
     <Compile Include="ViewModels\HelpPageViewModel.cs" />
     <Compile Include="ViewModels\LogInPageViewModel.cs" />
@@ -205,10 +201,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\CategoriesPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\DownloadPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

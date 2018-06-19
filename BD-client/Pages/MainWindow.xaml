@@ -94,8 +94,6 @@
 
                     <Controls:HamburgerMenuGlyphItem Glyph="" Label="Search" />
 
-                    <Controls:HamburgerMenuGlyphItem Glyph="" Label="Download" />
-
                     <Controls:HamburgerMenuGlyphItem Glyph="" Label="Remove" />
 
                     <Controls:HamburgerMenuGlyphItem Glyph="" Label="Share" />

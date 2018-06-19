@@ -37,12 +37,9 @@ namespace BD_client.Pages
                     page = "SearchPage.xaml";
                     break;
                 case 3:
-                    page = "DownloadPage.xaml";
-                    break;
-                case 4:
                     page = "RemovePhotoPage.xaml";
                     break;
-                case 5:
+                case 4:
                     page = "SharePage.xaml";
                     break;
             }
