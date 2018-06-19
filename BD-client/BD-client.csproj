@@ -99,6 +99,11 @@
     <Compile Include="Common\DataGridBehavior.cs" />
     <Compile Include="Common\NotifyTaskCompletion.cs" />
     <Compile Include="Common\PasswordBoxAssistant.cs" />
+    <Compile Include="Dialogs\CustomDialog.cs" />
+    <Compile Include="Dialogs\Share\ShareDialog.cs" />
+    <Compile Include="Dialogs\Share\ShareDialogTemplate.xaml.cs">
+      <DependentUpon>ShareDialogTemplate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utils\ExifMetadata.cs" />
     <Compile Include="Models\PhotoCollection.cs" />
     <Compile Include="Enums\PhotoState.cs" />
@@ -180,6 +185,10 @@
     <Compile Include="Windows\SelectPhotosModalWindow.xaml.cs">
       <DependentUpon>SelectPhotosModalWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Dialogs\Share\ShareDialogTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -71,16 +71,9 @@ namespace BD_client.Pages
 
         private void OnSharePhoto(object sender, RoutedEventArgs e)
         {
-            List<int> list = new List<int>();
+            List<Photo> photos = this.MyPhotosListBox.SelectedItems.OfType<Photo>().ToList();
 
-            foreach (var item in this.MyPhotosListBox.SelectedItems)
-            {
-                list.Add(this.MyPhotosListBox.Items.IndexOf(item)); // Add selected indexes to the List<int>
-            }
-
-//            MainWindow.MainVM.List = list;
-            MainWindow.MainVM.SelectedIndex = 5;
-            MainWindow.MainVM.Page = "SharePage.xaml";
+            ViewModel.ShareDialog(photos);
         }
     }
 }

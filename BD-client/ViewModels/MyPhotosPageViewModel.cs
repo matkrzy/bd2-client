@@ -5,8 +5,11 @@ using System.ComponentModel;
 using System.Configuration;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using BD_client.Api.Core;
+using BD_client.Dialogs.Share;
 using BD_client.Dto;
 using BD_client.Enums;
 using BD_client.Windows;
@@ -202,6 +205,34 @@ namespace BD_client.ViewModels
             IRestResponse response = await request.DoGet();
 
             this.Photos = JsonConvert.DeserializeObject<ObservableCollection<Photo>>(response.Content);
+        }
+
+        public async void ShareDialog(List<Photo> photos)
+        {
+            var customDialog = new CustomDialog() {Title = "Select share type"};
+
+            var dataContext = new ShareDialog();
+            dataContext.SetMessage($"You can share {photos.Count} photos via e-mail and make it public");
+
+
+            ShareDialogTemplate template = new ShareDialogTemplate(
+                    instance =>
+                    {
+                        this.Share(photos,dataContext);
+                        dialogCoordinator.HideMetroDialogAsync(this, customDialog);
+                    },
+                    instance => { dialogCoordinator.HideMetroDialogAsync(this, customDialog); })
+                {DataContext = dataContext};
+
+            customDialog.Content = template;
+
+            await dialogCoordinator.ShowMetroDialogAsync(this, customDialog);
+        }
+
+        public void Share(List<Photo> photos,object dataContext)
+        {
+            //TODO request to api
+            
         }
 
         protected virtual void OnPropertyChanged(string propName)
