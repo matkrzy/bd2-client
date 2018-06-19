@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Newtonsoft.Json;
 using RestSharp;
+using RestSharp.Extensions;
 
 namespace BD_client.Api.Core
 {
@@ -95,7 +96,7 @@ namespace BD_client.Api.Core
             var output = JsonConvert.SerializeObject(data);
 //            request.AddBody(output);
 
-             request.AddParameter("application/json",JsonConvert.SerializeObject(data), ParameterType.RequestBody);
+            request.AddParameter("application/json", JsonConvert.SerializeObject(data), ParameterType.RequestBody);
 
             return await ExecuteRequest();
         }
@@ -105,6 +106,20 @@ namespace BD_client.Api.Core
             this.request.Method = Method.DELETE;
 
             return await ExecuteRequest();
+        }
+
+        public async Task<bool> Download(String path, String name, String extension)
+        {
+            try
+            {
+                client.DownloadData(request).SaveAs($"{path}/{name}{extension}");
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
         }
 
         private async Task<IRestResponse> ExecuteRequest()
