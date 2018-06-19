@@ -40,6 +40,7 @@ namespace BD_client.Pages
         private void OnDownloadPhoto(object sender, RoutedEventArgs e)
         {
             List<Photo> photos = this.MyPhotosListBox.SelectedItems.OfType<Photo>().ToList();
+            ViewModel.Download(photos);
         }
 
         private void OnRemovePhoto(object sender, RoutedEventArgs e)

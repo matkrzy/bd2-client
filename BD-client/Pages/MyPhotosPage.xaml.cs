@@ -58,21 +58,12 @@ namespace BD_client.Pages
 
         private void OnDownloadPhoto(object sender, RoutedEventArgs e)
         {
-            List<int> list = new List<int>();
-
-            foreach (var item in this.MyPhotosListBox.SelectedItems)
-            {
-                list.Add(this.MyPhotosListBox.Items.IndexOf(item)); // Add selected indexes to the List<int>
-            }
-
-//            MainWindow.MainVM.List = list;
-            MainWindow.MainVM.SelectedIndex = 3;
-            MainWindow.MainVM.Page = "DownloadPage.xaml";
+            List<Photo> photos = this.MyPhotosListBox.SelectedItems.OfType<Photo>().ToList();
+            ViewModel.Download(photos);
         }
 
         private async void OnRemovePhoto(object sender, RoutedEventArgs e)
         {
-            ViewModel.GetAllUserPhotos();
             List<Photo> photos = this.MyPhotosListBox.SelectedItems.OfType<Photo>().ToList();
 
             ViewModel.RemovePhotos(photos);

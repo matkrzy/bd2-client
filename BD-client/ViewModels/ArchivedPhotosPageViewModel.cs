@@ -8,6 +8,7 @@ using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using BD_client.Api.Core;
 using BD_client.Dto;
 using BD_client.Enums;
@@ -162,6 +163,49 @@ namespace BD_client.ViewModels
                 await dialogCoordinator.ShowMessageAsync(this, "Success", "All photos deleted");
 
                 GetArchivedUserPhotos();
+            }
+        }
+
+        public async void Download(List<Photo> photos)
+        {
+            bool errorOccurred = false;
+
+            var dialog = new FolderBrowserDialog();
+            var progressBar =
+                await dialogCoordinator.ShowProgressAsync(this, "Downloading", "Starting downloading");
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                for (int i = 0; i < photos.Count; i++)
+                {
+                    Photo photo = photos[i];
+                    bool status = await new Request(photo.Url).Download(dialog.SelectedPath, photo.Name,
+                        Path.GetExtension(photo.Path));
+
+
+                    progressBar.SetTitle($"Downloading {i + 1} of {photos.Count}");
+                    progressBar.SetMessage($"Downloading {photo.Name}");
+                    progressBar.SetProgress((double)(i + 1) / photos.Count);
+
+                    if (!status)
+                    {
+                        errorOccurred = true;
+                    }
+                }
+
+                await progressBar.CloseAsync();
+
+                if (errorOccurred)
+                {
+                    await dialogCoordinator.ShowMessageAsync(this, "Oooppss",
+                        "Something went wrong. Try again!");
+                }
+                else
+                {
+                    await dialogCoordinator.ShowMessageAsync(this, "Success", "All photos downloaded");
+
+                    GetArchivedUserPhotos();
+                }
             }
         }
 
