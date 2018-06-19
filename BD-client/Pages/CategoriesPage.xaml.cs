@@ -400,8 +400,8 @@ namespace BD_client.Pages
                 list.Add(CategoryPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
             }
 //            MainWindow.MainVM.List = list;
-            MainWindow.MainVM.SelectedIndex = 3;
-            MainWindow.MainVM.Page = "Pages/DownloadPage.xaml";
+//            MainWindow.MainVM.SelectedIndex = 3;
+//            MainWindow.MainVM.Page = "Pages/DownloadPage.xaml";
         }
         private void OnRemovePhoto(object sender, RoutedEventArgs e)
         {
