@@ -11,6 +11,8 @@ namespace BD_client.Dialogs.Share
 {
     public class ShareDialog : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public String Message { get; set; }
 
         public string Email { get; set; }
@@ -26,9 +28,6 @@ namespace BD_client.Dialogs.Share
         {
             Message = message;
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
 
         protected virtual void OnPropertyChanged(string propertyName = null)
         {

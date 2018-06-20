@@ -3,85 +3,27 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Net;
 using System.Windows.Input;
+using BD_client.Api.Core;
+using BD_client.Dto;
 using BD_client.Pages;
+using RestSharp;
 
 namespace BD_client.ViewModels
 {
-    class RegisterPageViewModel : INotifyPropertyChanged
+    class RegisterPageViewModel 
     {
         private IDialogCoordinator dialogCoordinator;
-        public event PropertyChangedEventHandler PropertyChanged = null;
+
         public ICommand CancelCmd { get; set; }
         public ICommand RegisterCmd { get; set; }
-        private String _page;
-        private String _password;
-        private String _email;
-        private String _name;
-        private String _surname;
+        public String Password { get; set; } = "";
+        public String RepeatedPassword { get; set; } = "";
+        public String FirstName { get; set; } = "";
+        public String LastName { get; set; } = "";
+        public String Email { get; set; } = "";
 
-        public string Surname
-        {
-            get
-            {
-                return _surname;
-            }
-            set
-            {
-                _surname = value;
-                OnPropertyChanged("Surname");
-            }
-        }
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                _name = value;
-                OnPropertyChanged("Name");
-            }
-        }
-        public string Password
-        {
-            get
-            {
-                return _password;
-            }
-            set
-            {
-                _password = value;
-                OnPropertyChanged("Password");
-            }
-        }
-
-        public string Email
-        {
-            get
-            {
-                return _email;
-            }
-            set
-            {
-                _email = value;
-                OnPropertyChanged("Email");
-            }
-        }
-
-        public string Page
-        {
-            get
-            {
-                return _page;
-            }
-            set
-            {
-                _page = value;
-                OnPropertyChanged("Page");
-            }
-        }
 
         public RegisterPageViewModel(IDialogCoordinator instance)
         {
@@ -92,44 +34,41 @@ namespace BD_client.ViewModels
 
         private void Cancel()
         {
-            MainWindow.MainVM.Page= "LogInPage.xaml";
+            MainWindow.MainVM.Page = "LogInPage.xaml";
         }
 
         private async void Register()
         {
-            try
+            if (Email.Equals(""))
             {
-                RegisterUser();
+                await dialogCoordinator.ShowMessageAsync(this, "Validation", "Email cannot be empty");
+                return;
+            }
+
+            if (Password.Equals(""))
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Validation", "Password cannot be empty");
+                return;
+            }
+
+            if (!Password.Equals(RepeatedPassword))
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Validation", "Password does not match");
+                return;
+            }
+
+            User user = new User() {FirstName = FirstName, LastName = LastName, Email = Email, Password = Password};
+            IRestResponse response = await new Request("/users").DoPost(user);
+
+            if (response.StatusCode == HttpStatusCode.Created)
+            {
                 await dialogCoordinator.ShowMessageAsync(this, "Success", "User registered");
                 MainWindow.MainVM.Page = "LogInPage.xaml";
-
             }
-            catch (Exception)
+            else
             {
-                await dialogCoordinator.ShowMessageAsync(this, "Error", "Register failed");
+                await dialogCoordinator.ShowMessageAsync(this, "Ooops..", "Register failed. Try again");
             }
-        }
-
-        private void RegisterUser()
-        {
-            var values = new Dictionary<string, string>
-            {
-                { "firstName", Name },
-                { "lastName", Surname },
-                { "email", Email },
-                { "password", Password },
-                { "role", "User" }
-            };
-
-            string json = JsonConvert.SerializeObject(values, Formatting.Indented);
-//            String url = MainWindow.MainVM.BaseUrl + "api/v1/users";
-//            ApiRequest.Post(url, json);
-        }
-
-        virtual protected void OnPropertyChanged(string propName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propName));
         }
     }
 }

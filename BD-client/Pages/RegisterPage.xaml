@@ -26,22 +26,22 @@
     </Page.Resources>
 
     <Grid>
-        <TextBox x:Name="name"
-                 Controls:TextBoxHelper.Watermark="Name"
+        <TextBox x:Name="firstName"
+                 Controls:TextBoxHelper.Watermark="First name"
                  HorizontalAlignment="Left"
                  Controls:TextBoxHelper.ClearTextButton="True"
                  Height="23" Margin="174,147,0,0"
                  TextWrapping="Wrap"
-                 Text="{Binding Path=Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 Text="{Binding Path=FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  VerticalAlignment="Top"
                  Width="352" />
         <TextBox x:Name="surname"
-                 Controls:TextBoxHelper.Watermark="Surname"
+                 Controls:TextBoxHelper.Watermark="Last Name"
                  HorizontalAlignment="Left"
                  Controls:TextBoxHelper.ClearTextButton="True"
                  Height="23" Margin="174,178,0,0"
                  TextWrapping="Wrap"
-                 Text="{Binding Path=Surname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 Text="{Binding LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  VerticalAlignment="Top"
                  Width="352" />
         <TextBox x:Name="email"
@@ -51,7 +51,7 @@
                  Height="23"
                  Margin="174,209,0,0"
                  TextWrapping="Wrap"
-                 Text="{Binding Path=Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  VerticalAlignment="Top"
                  Width="352" />
         <PasswordBox x:Name="password"
@@ -61,20 +61,30 @@
                      Height="23" Margin="174,240,0,0"
                      VerticalAlignment="Top" Width="352"
                      common:PasswordBoxAssistant.BindPassword="True"
-                     common:PasswordBoxAssistant.BoundPassword="{Binding Path=Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                     common:PasswordBoxAssistant.BoundPassword="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <PasswordBox x:Name="repeatedPassword"
+                     Controls:TextBoxHelper.Watermark="Repeat password"
+                     HorizontalAlignment="Left"
+                     Controls:TextBoxHelper.ClearTextButton="True"
+                     Height="23" Margin="174,270,0,0"
+                     VerticalAlignment="Top" Width="352"
+                     common:PasswordBoxAssistant.BindPassword="True"
+                     common:PasswordBoxAssistant.BoundPassword="{Binding RepeatedPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+
         <Button x:Name="cancelBtn"
                 Content="Cancel"
                 Height="50"
                 Width="150"
                 Style="{StaticResource AccentedSquareButtonStyle}"
                 Command="{Binding CancelCmd}"
-                Margin="376,297,174,153" />
+                Margin="376,337,174,113" />
         <Button x:Name="registerBtn"
                 Content="Register"
                 Height="50"
                 Width="150"
                 Style="{StaticResource AccentedSquareButtonStyle}"
                 Command="{Binding RegisterCmd}"
-                Margin="174,297,376,153" />
+                Margin="174,337,376,113" />
     </Grid>
 </Page>

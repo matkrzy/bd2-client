@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using BD_client.Enums;
 using Newtonsoft.Json;
 
@@ -26,6 +27,9 @@ namespace BD_client.Dto
 
         [JsonProperty("creationDate")]
         public String CreationDate { get; set; }
+
+        [JsonProperty("password")]
+        public String Password { get; set; }
 
         public User()
         {
