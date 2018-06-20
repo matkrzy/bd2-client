@@ -36,12 +36,6 @@ namespace BD_client.Pages
                 case 2:
                     page = "SearchPage.xaml";
                     break;
-                case 3:
-                    page = "RemovePhotoPage.xaml";
-                    break;
-                case 4:
-                    page = "SharePage.xaml";
-                    break;
             }
 
             MainWindow.MainVM.Page = page;

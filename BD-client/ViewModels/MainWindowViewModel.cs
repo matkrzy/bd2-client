@@ -143,7 +143,7 @@ namespace BD_client.ViewModels
 
         private void Help()
         {
-            string pathToHtmlFile = System.IO.Directory.GetCurrentDirectory() + @"\..\..\Resources\help.html";
+            string pathToHtmlFile = System.IO.Directory.GetCurrentDirectory() + @"\..\..\Assets\help.html";
             System.Diagnostics.Process.Start(pathToHtmlFile);
             MainWindow.MainVM.SelectedIndex = -1;
         }
