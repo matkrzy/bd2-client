@@ -94,10 +94,6 @@
 
                     <Controls:HamburgerMenuGlyphItem Glyph="" Label="Search" />
 
-                    <Controls:HamburgerMenuGlyphItem Glyph="" Label="Remove" />
-
-                    <Controls:HamburgerMenuGlyphItem Glyph="" Label="Share" />
-
                 </Controls:HamburgerMenuItemCollection>
             </Controls:HamburgerMenu.ItemsSource>
 
