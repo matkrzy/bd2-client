@@ -75,7 +75,7 @@ namespace BD_client.Api.Core
             this.request.Method = Method.POST;
             this.request.AddHeader("Content-type", "application/json");
             this.request.RequestFormat = DataFormat.Json;
-            request.AddJsonBody(data);
+            this.AddBody(data);
 
             return await ExecuteRequest();
         }
@@ -93,10 +93,8 @@ namespace BD_client.Api.Core
             this.request.Method = Method.PUT;
             this.request.AddHeader("Content-type", "application/json");
             this.request.RequestFormat = DataFormat.Json;
-            var output = JsonConvert.SerializeObject(data);
-//            request.AddBody(output);
-
-            request.AddParameter("application/json", JsonConvert.SerializeObject(data), ParameterType.RequestBody);
+            
+            this.AddBody(data);
 
             return await ExecuteRequest();
         }
@@ -120,6 +118,12 @@ namespace BD_client.Api.Core
             {
                 return false;
             }
+        }
+
+        private void AddBody(object data)
+        {
+            var output = JsonConvert.SerializeObject(data);
+            request.AddParameter("application/json", JsonConvert.SerializeObject(data), ParameterType.RequestBody);
         }
 
         private async Task<IRestResponse> ExecuteRequest()
