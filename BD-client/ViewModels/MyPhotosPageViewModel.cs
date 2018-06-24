@@ -1,4 +1,5 @@
-﻿using MahApps.Metro.Controls.Dialogs;
+﻿using System;
+using MahApps.Metro.Controls.Dialogs;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -198,9 +199,9 @@ namespace BD_client.ViewModels
 
         public async void GetAllUserPhotos(PhotoState state = PhotoState.ACTIVE)
         {
-            Request request = new Request("/photos");
+            String userId = ConfigurationManager.AppSettings["Id"];
+            Request request = new Request($"/users/{userId}/photos");
             request.AddParameter("state", state.ToString());
-            request.AddParameter("userId", ConfigurationManager.AppSettings["Id"]);
 
             IRestResponse response = await request.DoGet();
 

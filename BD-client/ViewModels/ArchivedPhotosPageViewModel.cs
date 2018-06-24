@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using BD_client.Common;
 using BD_client.Services;
@@ -63,11 +64,11 @@ namespace BD_client.ViewModels
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));
         }
 
-        private async void GetArchivedUserPhotos()
+        private async void GetArchivedUserPhotos(PhotoState state = PhotoState.ARCHIVED)
         {
-            Request request = new Request("/photos");
-            request.AddParameter("state", PhotoState.ARCHIVED.ToString());
-            request.AddParameter("userId", ConfigurationManager.AppSettings["Id"]);
+            String userId = ConfigurationManager.AppSettings["Id"];
+            Request request = new Request($"/users/{userId}/photos");
+            request.AddParameter("state", state.ToString());
 
             IRestResponse response = await request.DoGet();
 
