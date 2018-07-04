@@ -11,6 +11,9 @@ using BD_client.Models;
 using BD_client.Pages;
 using BD_client.Services;
 using BD_client.Utils;
+using BD_client.Api.Core;
+using RestSharp;
+using System.Configuration;
 
 namespace BD_client.ViewModels
 {
@@ -63,27 +66,28 @@ namespace BD_client.ViewModels
 
         private void GetTags()
         {
-//            string url = MainWindow.MainVM.BaseUrl + "api/v1/tags/"+TagsPhrase;
-//            String responseContent = ApiRequest.Get(url);
-//            JsonTextReader reader = new JsonTextReader(new StringReader(responseContent));
-//            reader.SupportMultipleContent = true;
-//            List<Tag> tagsList = null;
-//            while (true)
-//            {
-//                if (!reader.Read())
-//                {
-//                    break;
-//                }
-//
-//                JsonSerializer serializer = new JsonSerializer();
-//                tagsList = serializer.Deserialize<List<Tag>>(reader);
-//
-//            }
-//
-//            foreach(var tag in tagsList)
-//            {
-//                TagsAutocomplete.Add(tag.Name);
-//            }
+            //TagsAutocomplete.Clear();
+            //            string url = MainWindow.MainVM.BaseUrl + "api/v1/tags/"+TagsPhrase;
+            //            String responseContent = ApiRequest.Get(url);
+            //            JsonTextReader reader = new JsonTextReader(new StringReader(responseContent));
+            //            reader.SupportMultipleContent = true;
+            //            List<Tag> tagsList = null;
+            //            while (true)
+            //            {
+            //                if (!reader.Read())
+            //                {
+            //                    break;
+            //                }
+            //
+            //                JsonSerializer serializer = new JsonSerializer();
+            //                tagsList = serializer.Deserialize<List<Tag>>(reader);
+            //
+            //            }
+            //
+            //            foreach(var tag in tagsList)
+            //            {
+            //                TagsAutocomplete.Add(tag.Name);
+            //            }
 
         }
 
@@ -92,43 +96,74 @@ namespace BD_client.ViewModels
             PhotosResult.RemoveAt(DataGridPhotoSelectedIndex);
         }
 
-        private void GetCategories()
+        private async void GetCategories()
         {
-//            string url = MainWindow.MainVM.BaseUrl + "api/v1/categories";
-//            String responseContent = ApiRequest.Get(url);
-//            JsonTextReader reader = new JsonTextReader(new StringReader(responseContent));
-//            reader.SupportMultipleContent = true;
-//            List<Dto.Category> categoriesList = null;
-//            while (true)
-//            {
-//                if (!reader.Read())
-//                {
-//                    break;
-//                }
-//
-//                JsonSerializer serializer = new JsonSerializer();
-//                categoriesList = serializer.Deserialize<List<Dto.Category>>(reader);
-//
-//            }
-//            bool repeated = false;
-//            foreach (var category in categoriesList)
-//            {
-//                foreach (var displayCategory in Categories)
-//                {
-//                    if (displayCategory.Name.ToLower().Equals(category.Name.ToLower()))
-//                    {
-//                        repeated = true;
-//                        break;
-//                    }
-//                }
-//                if (!repeated)
-//                    Categories.Add(category);
-//
-//                repeated = false;
-//            }
+
+            Request request = new Request("/categories");
+            IRestResponse response = await request.DoGet();
+            ObservableCollection<Category> categoriesList = JsonConvert.DeserializeObject<ObservableCollection<Category>>(response.Content);
+
+            if(categoriesList.Count!=0)
+            {
+                foreach(var category in categoriesList)
+                {
+                    if (category.UserId.ToString().Equals(ConfigurationManager.AppSettings["Id"].ToString()))
+                    {
+                        bool repeated = false;
+                        foreach (var displayCategory in Categories)
+                        {
+                            if (displayCategory.Name.ToLower().Equals(category.Name.ToLower()))
+                            {
+                                repeated = true;
+                                break;
+                            }
+                        }
+                        if (!repeated)
+                            Categories.Add(category);
+
+                        repeated = false;
+
+                        }
+
+                }
+            }
+         
+
+                //            string url = MainWindow.MainVM.BaseUrl + "api/v1/categories";
+                //            String responseContent = ApiRequest.Get(url);
+                //            JsonTextReader reader = new JsonTextReader(new StringReader(responseContent));
+                //            reader.SupportMultipleContent = true;
+                //            List<Dto.Category> categoriesList = null;
+                //            while (true)
+                //            {
+                //                if (!reader.Read())
+                //                {
+                //                    break;
+                //                }
+                //
+                //                JsonSerializer serializer = new JsonSerializer();
+                //                categoriesList = serializer.Deserialize<List<Dto.Category>>(reader);
+                //
+                //            }
+                //            bool repeated = false;
+                //            foreach (var category in categoriesList)
+                //            {
+                //                foreach (var displayCategory in Categories)
+                //                {
+                //                    if (displayCategory.Name.ToLower().Equals(category.Name.ToLower()))
+                //                    {
+                //                        repeated = true;
+                //                        break;
+                //                    }
+                //                }
+                //                if (!repeated)
+                //                    Categories.Add(category);
+                //
+                //                repeated = false;
+                //            }
 
 
-        }
+            }
 
         private void AddExifFilter()
         {

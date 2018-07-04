@@ -205,6 +205,33 @@ namespace BD_client.ViewModels
             IRestResponse response = await request.DoGet();
 
             this.Photos = JsonConvert.DeserializeObject<ObservableCollection<Photo>>(response.Content);
+
+            Request requestTags = new Request("/tags");
+            IRestResponse responseTags = await requestTags.DoGet();
+            ObservableCollection<Tag> tags = JsonConvert.DeserializeObject<ObservableCollection<Tag>>(responseTags.Content);
+
+            if (Photos.Count != 0)
+            {
+                foreach (var photo in Photos)
+                {
+                    if (tags.Count != 0)
+                    {
+                        foreach (var tag in tags)
+                        {
+                            if (tag.PhotoID == photo.Id)
+                                photo.Tags.Add(tag.Name);
+                        }
+                    }
+
+                    foreach (var tag in photo.Tags)
+                    {
+                        photo.TagsList += tag + " ";
+                    }
+                }
+
+
+            }
+
         }
 
         public async void ShareDialog(List<Photo> photos)

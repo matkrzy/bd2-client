@@ -37,7 +37,7 @@ namespace BD_client.Pages
 
             foreach (var column in this.PhotosDataGrid.Columns)
             {
-                if (column.Header.Equals("Description"))
+                if (column.Header.Equals("Description") || column.Header.Equals("TagsList"))
                 {
                     bool checkboxState = (bool) EditAllCheckbox.IsChecked;
                     column.Visibility = checkboxState ? Visibility.Hidden : Visibility.Visible;

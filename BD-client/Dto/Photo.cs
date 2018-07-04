@@ -55,6 +55,11 @@ namespace BD_client.Dto
         [JsonProperty("visibility")]
         public PhotoVisibility ShareState { get; set; }
 
+        [Browsable(false)]
+        public List<string> Tags { get; set; }
+
+        public string TagsList { get; set; }
+
         public Photo()
         {
         }

@@ -63,10 +63,80 @@ namespace BD_client.ViewModels
                 if (IsChecked)
                 {
                     photo.Description = Description;
+
+                    //Tags
+                    Request requestTags = new Request("/tags");
+                    IRestResponse responseTags = await requestTags.DoGet();
+                    ObservableCollection<Tag> tags = JsonConvert.DeserializeObject<ObservableCollection<Tag>>(responseTags.Content);
+
+                    //delete
+                    foreach(var tag in tags)
+                    {
+                        Request requestTag = new Request("/tags/"+tag.Name);
+                        IRestResponse responseTag = await requestTag.DoDelete();
+                        if(responseTag.StatusCode != HttpStatusCode.OK)
+                        {
+                            errorOccurred = true;
+                            failedPhotos.Add(photo.Id);
+                        }
+
+                    }
+
+                    //add
+                    var tagsToAdd = photo.TagsList.Split(' ');
+                    for(int j=0; j<tagsToAdd.Length-1;j++)
+                    {
+                        Tag newTag = new Tag();
+                        newTag.PhotoID = photo.Id;
+                        newTag.Name = tagsToAdd[j];
+                        Request requestTag = new Request("/tags");
+                        IRestResponse responseTag = await requestTag.DoPost(newTag);
+                        if (responseTag.StatusCode != HttpStatusCode.OK)
+                        {
+                            errorOccurred = true;
+                            failedPhotos.Add(photo.Id);
+                        }
+                    }
                 }
 
 
                 IRestResponse response = await new Request($"/photos/{photo.Id}").DoPut(photo);
+                if (!IsChecked)
+                {
+                    //Tags
+                    Request requestTags = new Request("/tags");
+                    IRestResponse responseTags = await requestTags.DoGet();
+                    ObservableCollection<Tag> tags = JsonConvert.DeserializeObject<ObservableCollection<Tag>>(responseTags.Content);
+
+                    //delete
+                    foreach (var tag in tags)
+                    {
+                        Request requestTag = new Request("/tags/" + tag.Name);
+                        IRestResponse responseTag = await requestTag.DoDelete();
+                        if (responseTag.StatusCode != HttpStatusCode.OK)
+                        {
+                            errorOccurred = true;
+                            failedPhotos.Add(photo.Id);
+                        }
+
+                    }
+
+                    //add
+                    var tagsToAdd = photo.TagsList.Split(' ');
+                    for (int j = 0; j < tagsToAdd.Length - 1; j++)
+                    {
+                        Tag newTag = new Tag();
+                        newTag.PhotoID = photo.Id;
+                        newTag.Name = tagsToAdd[j];
+                        Request requestTag = new Request("/tags");
+                        IRestResponse responseTag = await requestTag.DoPost(newTag);
+                        if (responseTag.StatusCode != HttpStatusCode.OK)
+                        {
+                            errorOccurred = true;
+                            failedPhotos.Add(photo.Id);
+                        }
+                    }
+                }
 
                 if (response.StatusCode != HttpStatusCode.OK)
                 {

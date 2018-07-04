@@ -12,5 +12,8 @@ namespace BD_client.Dto
 
         [JsonProperty("parent_id")]
         public int? ParentId { get; set; }
+
+        [JsonProperty("userId")]
+        public long UserId { get; set; }
     }
 }

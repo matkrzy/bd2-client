@@ -71,12 +71,12 @@ namespace BD_client.ViewModels
                     ConfigurationManager.AppSettings["JWT"] = JWT;
                     ConfigurationManager.AppSettings["uuid"] = user.Uuid;
                     ConfigurationManager.AppSettings["Id"] = user.Id.ToString();
-                    ConfigurationManager.AppSettings["Email"] = user.Email;
+                    ConfigurationManager.AppSettings["Email"] = Email;
 
                     MainWindow.MainVM.Enabled = true;
                     MainWindow.MainVM.Page = "MyPhotosPage.xaml";
                     MainWindow.MainVM.SelectedIndex = -1;
-                    MainWindow.MainVM.User = user.Email;
+                    MainWindow.MainVM.User = Email;
                 }
                 catch (Exception e)
                 {

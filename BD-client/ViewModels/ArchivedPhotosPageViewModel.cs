@@ -65,9 +65,9 @@ namespace BD_client.ViewModels
 
         private async void GetArchivedUserPhotos()
         {
-            Request request = new Request("/photos");
-            request.AddParameter("state", PhotoState.ARCHIVED.ToString());
-            request.AddParameter("userId", ConfigurationManager.AppSettings["Id"]);
+            Request request = new Request("/users/" + ConfigurationManager.AppSettings["Id"].ToString()+"/photos/archived");
+            //request.AddParameter("state", PhotoState.ARCHIVED.ToString());
+            //request.AddParameter("userId", ConfigurationManager.AppSettings["Id"]);
 
             IRestResponse response = await request.DoGet();
 
