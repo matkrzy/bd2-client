@@ -63,6 +63,7 @@ namespace BD_client.ViewModels
 
         private async void Edit()
         {
+            user.Password = "pass";
             IRestResponse response = await new Request($"/users/{user.Id}").DoPut(this.user);
 
             if (response.StatusCode == HttpStatusCode.OK)

@@ -64,79 +64,110 @@ namespace BD_client.ViewModels
                 {
                     photo.Description = Description;
 
-                    //Tags
-                    Request requestTags = new Request("/tags");
-                    IRestResponse responseTags = await requestTags.DoGet();
-                    ObservableCollection<Tag> tags = JsonConvert.DeserializeObject<ObservableCollection<Tag>>(responseTags.Content);
-
                     //delete
-                    foreach(var tag in tags)
+                    if (photo.Tags.Count != 0)
                     {
-                        Request requestTag = new Request("/tags/"+tag.Name);
-                        IRestResponse responseTag = await requestTag.DoDelete();
-                        if(responseTag.StatusCode != HttpStatusCode.OK)
-                        {
-                            errorOccurred = true;
-                            failedPhotos.Add(photo.Id);
-                        }
-
+                        photo.Tags.Clear();
                     }
 
+
+
                     //add
-                    var tagsToAdd = photo.TagsList.Split(' ');
-                    for(int j=0; j<tagsToAdd.Length-1;j++)
+                    if (photo.TagsList != null && photo.TagsList.Length != 0)
                     {
-                        Tag newTag = new Tag();
-                        newTag.PhotoID = photo.Id;
-                        newTag.Name = tagsToAdd[j];
-                        Request requestTag = new Request("/tags");
-                        IRestResponse responseTag = await requestTag.DoPost(newTag);
-                        if (responseTag.StatusCode != HttpStatusCode.OK)
+                        Request requestTags = new Request("/tags");
+                        IRestResponse responseTags = await requestTags.DoGet();
+                        ObservableCollection<Tag> tags = JsonConvert.DeserializeObject<ObservableCollection<Tag>>(responseTags.Content);
+
+
+                        var tagsToAdd = Tags.Split(' ');
+                        for (int j = 0; j < tagsToAdd.Length; j++)
                         {
-                            errorOccurred = true;
-                            failedPhotos.Add(photo.Id);
+                            if (tagsToAdd[j] != "")
+                            {
+                                bool addToDatabase = true;
+                                foreach (var tag in tags)
+                                {
+                                    if (tag.Name == tagsToAdd[j])
+                                    {
+                                        addToDatabase = false;
+                                        break;
+                                    }
+
+                                }
+                                photo.Tags.Add(tagsToAdd[j]);
+
+                                if (addToDatabase)
+                                {
+                                    Request requestTag = new Request("/tags");
+                                    requestTag.AddParameter("name", tagsToAdd[j]);
+                                    IRestResponse responseTag = await requestTag.DoPost();
+                                    if (responseTag.StatusCode != HttpStatusCode.OK)
+                                    {
+                                        errorOccurred = true;
+                                        failedPhotos.Add(photo.Id);
+                                    }
+                                }
+
+                            }
                         }
                     }
                 }
 
 
-                IRestResponse response = await new Request($"/photos/{photo.Id}").DoPut(photo);
                 if (!IsChecked)
                 {
-                    //Tags
-                    Request requestTags = new Request("/tags");
-                    IRestResponse responseTags = await requestTags.DoGet();
-                    ObservableCollection<Tag> tags = JsonConvert.DeserializeObject<ObservableCollection<Tag>>(responseTags.Content);
-
                     //delete
-                    foreach (var tag in tags)
+                    if (photo.Tags.Count != 0)
                     {
-                        Request requestTag = new Request("/tags/" + tag.Name);
-                        IRestResponse responseTag = await requestTag.DoDelete();
-                        if (responseTag.StatusCode != HttpStatusCode.OK)
-                        {
-                            errorOccurred = true;
-                            failedPhotos.Add(photo.Id);
-                        }
-
+                        photo.Tags.Clear();
                     }
+                            
+
 
                     //add
-                    var tagsToAdd = photo.TagsList.Split(' ');
-                    for (int j = 0; j < tagsToAdd.Length - 1; j++)
+                    if (photo.TagsList != null && photo.TagsList.Length != 0)
                     {
-                        Tag newTag = new Tag();
-                        newTag.PhotoID = photo.Id;
-                        newTag.Name = tagsToAdd[j];
-                        Request requestTag = new Request("/tags");
-                        IRestResponse responseTag = await requestTag.DoPost(newTag);
-                        if (responseTag.StatusCode != HttpStatusCode.OK)
+                        Request requestTags = new Request("/tags");
+                        IRestResponse responseTags = await requestTags.DoGet();
+                        ObservableCollection<Tag> tags = JsonConvert.DeserializeObject<ObservableCollection<Tag>>(responseTags.Content);
+                        
+  
+                        var tagsToAdd = photo.TagsList.Split(' ');
+                        for (int j = 0; j < tagsToAdd.Length; j++)
                         {
-                            errorOccurred = true;
-                            failedPhotos.Add(photo.Id);
+                            if (tagsToAdd[j] != "")
+                            {
+                                bool addToDatabase = true;
+                                foreach (var tag in tags)
+                                {
+                                    if (tag.Name == tagsToAdd[j])
+                                    {
+                                        addToDatabase = false;
+                                        break;
+                                    }
+
+                                }
+                                photo.Tags.Add(tagsToAdd[j]);
+
+                                if (addToDatabase)
+                                {
+                                    Request requestTag = new Request("/tags");
+                                    requestTag.AddParameter("name", tagsToAdd[j]);
+                                    IRestResponse responseTag = await requestTag.DoPost();
+                                    if (responseTag.StatusCode != HttpStatusCode.OK)
+                                    {
+                                        errorOccurred = true;
+                                        failedPhotos.Add(photo.Id);
+                                    }
+                                }
+
+                            }
                         }
                     }
                 }
+
+                IRestResponse response = await new Request($"/photos/{photo.Id}").DoPut(photo);
 
                 if (response.StatusCode != HttpStatusCode.OK)
                 {

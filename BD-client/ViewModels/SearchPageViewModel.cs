@@ -14,6 +14,10 @@ using BD_client.Utils;
 using BD_client.Api.Core;
 using RestSharp;
 using System.Configuration;
+using System.Net.Http;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Net;
 
 namespace BD_client.ViewModels
 {
@@ -64,32 +68,36 @@ namespace BD_client.ViewModels
             TagsAutocomplete = new List<string>();
         }
 
-        private void GetTags()
+        private async void GetTags()
         {
-            //TagsAutocomplete.Clear();
-            //            string url = MainWindow.MainVM.BaseUrl + "api/v1/tags/"+TagsPhrase;
-            //            String responseContent = ApiRequest.Get(url);
-            //            JsonTextReader reader = new JsonTextReader(new StringReader(responseContent));
-            //            reader.SupportMultipleContent = true;
-            //            List<Tag> tagsList = null;
-            //            while (true)
-            //            {
-            //                if (!reader.Read())
-            //                {
-            //                    break;
-            //                }
-            //
-            //                JsonSerializer serializer = new JsonSerializer();
-            //                tagsList = serializer.Deserialize<List<Tag>>(reader);
-            //
-            //            }
-            //
-            //            foreach(var tag in tagsList)
-            //            {
-            //                TagsAutocomplete.Add(tag.Name);
-            //            }
+            TagsAutocomplete.Clear();
+            IRestResponse response = await new Request($"/tags/").DoGet();
 
-        }
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+            }
+                //            String responseContent = ApiRequest.Get(url);
+                //            JsonTextReader reader = new JsonTextReader(new StringReader(responseContent));
+                //            reader.SupportMultipleContent = true;
+                //            List<Tag> tagsList = null;
+                //            while (true)
+                //            {
+                //                if (!reader.Read())
+                //                {
+                //                    break;
+                //                }
+                //
+                //                JsonSerializer serializer = new JsonSerializer();
+                //                tagsList = serializer.Deserialize<List<Tag>>(reader);
+                //
+                //            }
+                //
+                //            foreach(var tag in tagsList)
+                //            {
+                //                TagsAutocomplete.Add(tag.Name);
+                //            }
+
+            }
 
         private void RemovePhoto()
         {
@@ -300,50 +308,54 @@ namespace BD_client.ViewModels
 
         private List<int> SearchCategories(List<int> SelectedCategoriesIds)
         {
-//            List<int> photoIndex = new List<int>();
-//            List<Photo> photosToDisplay = new List<Photo>();
-//            List<Photo> tmpResult = null;
-//            foreach (var selectedCategory in SelectedCategoriesIds)
-//            {
-//                photosToDisplay.Clear();
-//                string url = MainWindow.MainVM.BaseUrl + "api/v1/photos/categories/any/" + selectedCategory;
-//                string response = ApiRequest.Get(url);
-//                var photosFromCategory = JsonConvert.DeserializeObject<List<Photo>>(response);
-//                foreach (var photo in photosFromCategory)
-//                {
-//                    photosToDisplay.Add(photo);
-//                }
-//
-//                tmpResult = Intersect(tmpResult, photosToDisplay);
-//
-//            }
-//            for (int i = 0; i < Photos.Count; i++)
-//            {
-//                for (int j = 0; j < tmpResult.Count; j++)
-//                {
-//                    if (Photos[i].Id == tmpResult[j].Id)
-//                    {
-//                        photoIndex.Add(i);
-//                        break;
-//                    }
-//                }
-//            }
+            //List<int> photoIndex = new List<int>();
+            //List<Photo> photosToDisplay = new List<Photo>();
+            //List<Photo> tmpResult = null;
+            //foreach (var selectedCategory in SelectedCategoriesIds)
+            //{
+            //    photosToDisplay.Clear();
+            //    string url = MainWindow.MainVM.BaseUrl + "api/v1/photos/categories/any/" + selectedCategory;
+            //    string response = ApiRequest.Get(url);
+            //    var photosFromCategory = JsonConvert.DeserializeObject<List<Photo>>(response);
+            //    foreach (var photo in photosFromCategory)
+            //    {
+            //        photosToDisplay.Add(photo);
+            //    }
+
+            //    tmpResult = Intersect(tmpResult, photosToDisplay);
+
+            //}
+            //for (int i = 0; i < Photos.Count; i++)
+            //{
+            //    for (int j = 0; j < tmpResult.Count; j++)
+            //    {
+            //        if (Photos[i].Id == tmpResult[j].Id)
+            //        {
+            //            photoIndex.Add(i);
+            //            break;
+            //        }
+            //    }
+            //}
             return null;
         }
 
         private List<int> SearchTags(string searchPhrase)
         {
             List<int> photoIndex = new List<int>();
-//            for (int i = 0; i < Photos.Count; i++)
-//            {
-//                for (int j = 0; j < Photos[i].Tags.Count; j++)
-//                {
-//                    if (Photos[i].Tags[j].Name.ToLower().Contains(searchPhrase.ToLower()))
-//                    {
-//                        photoIndex.Add(i);
-//                    }
-//                }
-//            }
+            for (int i = 0; i < Photos.Count; i++)
+            {
+                for (int j = 0; j < Photos[i].Tags.Count; j++)
+                {
+                    var tags = Photos[i].TagsList.Split(' ');
+                    foreach (var tagName in tags)
+                    {
+                        if (tagName.ToLower().Contains(searchPhrase.ToLower()))
+                        {
+                            photoIndex.Add(i);
+                        }
+                    }
+                }
+            }
 
             return photoIndex;
         }
@@ -497,50 +509,64 @@ namespace BD_client.ViewModels
 
         private List<int> GetAllPhotoIndexExif()
         {
-//            List<int> resultPhotoIndex = null;
-//            List<int> tmpResult = new List<int>();
-//            List<string> searchExif = GetExifFilters();
-//            if (searchExif != null)
-//            {
-//                for (int i = 0; i < Photos.Count; i++)
-//                {
-//                    string path = Path + "\\" + Photos[i].Id + ".jpg";
-//                    ExifMetadata exif = ImageService.GetPhotoMetadata(path);
-//                    foreach (var exifPhrase in searchExif)
-//                    {
-//                        CheckInExif(tmpResult, exif, exifPhrase, i);
-//                    }
-//                    resultPhotoIndex = Intersect(resultPhotoIndex, tmpResult);
-//                }
-//                return resultPhotoIndex;
-//            }
-//            else
-//                return null;
+            List<int> resultPhotoIndex = null;
+            List<int> tmpResult = new List<int>();
+            List<string> searchExif = GetExifFilters();
+            if (searchExif != null)
+            {
+                for (int i = 0; i < Photos.Count; i++)
+                {
+                    string path = Path + "\\" + Photos[i].Id + ".jpg";
+                    ObservableCollection<MetadataExtractor.Tag> exif = ReadMetadata(Photos[i].Url).Result;
+                    foreach (var exifPhrase in searchExif)
+                    {
+                        CheckInExif(tmpResult, exif, exifPhrase, i);
+                    }
+                    resultPhotoIndex = Intersect(resultPhotoIndex, tmpResult);
+                }
+                return resultPhotoIndex;
+            }
+            else
+                return null;
 
             return null;
         }
 
-        private void CheckInExif(List<int> tmpResult, ExifMetadata exif, string exifPhrase, int i)
+        private async Task<ObservableCollection<MetadataExtractor.Tag>> ReadMetadata(string path)
         {
-//            if (exif.ExifIFD0 != null)
-//            {
-//                foreach (var tag in exif.ExifIFD0)
-//                {
-//                    if ((!string.IsNullOrEmpty(tag.Name) && tag.Name.ToLower().Contains(exifPhrase.ToLower())) ||
-//                        (!string.IsNullOrEmpty(tag.Description) && tag.Description.ToLower().Contains(exifPhrase.ToLower())))
-//                        tmpResult.Add(i);
-//                }
-//            }
-//
-//            if(exif.ExifSubIFD != null)
-//            {
-//                foreach (var tag in exif.ExifSubIFD)
-//                {
-//                    if ((!string.IsNullOrEmpty(tag.Name) && tag.Name.ToLower().Contains(exifPhrase.ToLower())) ||
-//                        (!string.IsNullOrEmpty(tag.Description) && tag.Description.ToLower().Contains(exifPhrase.ToLower())))
-//                        tmpResult.Add(i);
-//                }
-//            }
+            using (var client = new HttpClient())
+            using (var response = await client.GetAsync(path))
+            using (var content = response.Content)
+            using (var stream = await content.ReadAsStreamAsync())
+            {
+                ObservableCollection<MetadataExtractor.Tag> ExifList = new ExifMetadata(stream).Exif;
+                try
+                {
+                    ExifList.Remove(ExifList.Single(i => i.Type == 700));
+                    ExifList.Remove(ExifList.Single(i => i.Type == 36864));
+                    return ExifList;
+                }
+                catch (Exception e)
+                {
+                    return null;
+                }
+            }
+        }
+
+
+        private void CheckInExif(List<int> tmpResult, ObservableCollection<MetadataExtractor.Tag> exif, string exifPhrase, int i)
+        {
+            if (exif != null)
+            {
+                foreach (var tag in exif)
+                {
+                    if ((!string.IsNullOrEmpty(tag.Name) && tag.Name.ToLower().Contains(exifPhrase.ToLower())) ||
+                        (!string.IsNullOrEmpty(tag.Description) && tag.Description.ToLower().Contains(exifPhrase.ToLower())))
+                        tmpResult.Add(i);
+                }
+            }
+
+            
         }
 
 

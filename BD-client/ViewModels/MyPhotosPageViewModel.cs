@@ -15,6 +15,7 @@ using BD_client.Enums;
 using BD_client.Windows;
 using Newtonsoft.Json;
 using RestSharp;
+using BD_client.Pages;
 
 namespace BD_client.ViewModels
 {
@@ -198,39 +199,20 @@ namespace BD_client.ViewModels
 
         public async void GetAllUserPhotos(PhotoState state = PhotoState.ACTIVE)
         {
-            Request request = new Request("/photos");
-            request.AddParameter("state", state.ToString());
-            request.AddParameter("userId", ConfigurationManager.AppSettings["Id"]);
+            Request request = new Request("/users/"+ConfigurationManager.AppSettings["Id"]+"/photos");
+            //request.AddParameter("state", state.ToString());
+            //request.AddParameter("userId", ConfigurationManager.AppSettings["Id"]);
 
             IRestResponse response = await request.DoGet();
 
+            if (MainWindow.MainVM.Photos.Count != 0)
+                MainWindow.MainVM.Photos.Clear();
             this.Photos = JsonConvert.DeserializeObject<ObservableCollection<Photo>>(response.Content);
-
-            Request requestTags = new Request("/tags");
-            IRestResponse responseTags = await requestTags.DoGet();
-            ObservableCollection<Tag> tags = JsonConvert.DeserializeObject<ObservableCollection<Tag>>(responseTags.Content);
-
-            if (Photos.Count != 0)
+            foreach(var photo in Photos)
             {
-                foreach (var photo in Photos)
-                {
-                    if (tags.Count != 0)
-                    {
-                        foreach (var tag in tags)
-                        {
-                            if (tag.PhotoID == photo.Id)
-                                photo.Tags.Add(tag.Name);
-                        }
-                    }
-
-                    foreach (var tag in photo.Tags)
-                    {
-                        photo.TagsList += tag + " ";
-                    }
-                }
-
-
+                MainWindow.MainVM.Photos.Add(photo);
             }
+
 
         }
 
@@ -256,10 +238,45 @@ namespace BD_client.ViewModels
             await dialogCoordinator.ShowMetroDialogAsync(this, customDialog);
         }
 
-        public void Share(List<Photo> photos,object dataContext)
+        public async void Share(List<Photo> photos, Dialogs.Share.ShareDialog dataContext)
         {
-            //TODO request to api
-            
+            bool errorOccurred = false;
+            foreach (var photo in photos)
+            {
+                if (dataContext.Email != null)
+                {
+                    Request request = new Request("/photos/" + photo.Id + "/shares");
+                    request.AddParameter("photoId ", photo.Id.ToString());
+                    request.AddParameter("userEmail", dataContext.Email);
+
+                    IRestResponse response = await request.DoPost();
+
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    { 
+                        errorOccurred = true;
+                    }
+                }
+                if (dataContext.MakePublic)
+                {
+                    photo.ShareState = PhotoVisibility.PUBLIC;
+
+                    IRestResponse response = await new Request($"/photos/{photo.Id}").DoPut(photo);
+
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        errorOccurred = true;
+                    }
+                    }
+                }
+
+            if (errorOccurred)
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Oooppss", "Something went wrong. Try again!");
+            }
+            else
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Success", "All photos updated");
+            }
         }
 
         protected virtual void OnPropertyChanged(string propName)

@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace BD_client.Dto
 {
@@ -11,9 +12,14 @@ namespace BD_client.Dto
         [JsonProperty("name")]
         public String Name { get; set; }
 
-        [JsonProperty("photo_id")]
-        public long PhotoID { get; set; }
+        [JsonProperty("photoIds")]
+        public List<long> PhotoID { get; set; }
 
-        public Tag() { }
+        [JsonProperty("creationDate")]
+        public String CreationDate { get; set; }
+
+        public Tag() {
+            PhotoID = new List<long>();
+        }
     }
 }

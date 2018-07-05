@@ -99,6 +99,7 @@ namespace BD_client.ViewModels
             HelpCmd = new RelayCommand(x => Help());
             PublicPhotosCmd = new RelayCommand(x => ShowPublicPhotos());
             CategoriesCmd = new RelayCommand(x => ShowCategories());
+            Photos = new List<Photo>();
 
         }
 
