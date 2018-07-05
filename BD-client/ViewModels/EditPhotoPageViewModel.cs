@@ -153,9 +153,10 @@ namespace BD_client.ViewModels
                                 if (addToDatabase)
                                 {
                                     Request requestTag = new Request("/tags");
-                                    requestTag.AddParameter("name", tagsToAdd[j]);
-                                    IRestResponse responseTag = await requestTag.DoPost();
-                                    if (responseTag.StatusCode != HttpStatusCode.OK)
+                                    var values = new { name = tagsToAdd[j] };
+                                    //requestTag.AddParameter("name", tagsToAdd[j]);
+                                    IRestResponse responseTag = await requestTag.DoPost(values);
+                                    if (responseTag.StatusCode != HttpStatusCode.Created)
                                     {
                                         errorOccurred = true;
                                         failedPhotos.Add(photo.Id);

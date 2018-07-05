@@ -57,8 +57,9 @@ namespace BD_client.ViewModels
                 return;
             }
 
-            User user = new User() {FirstName = FirstName, LastName = LastName, Email = Email, Password = Password};
-            IRestResponse response = await new Request("/users").DoPost(user);
+            var values = new { firstName = FirstName, lastName = LastName, email = Email, password = Password };
+            //User user = new User() {FirstName = FirstName, LastName = LastName, Email = Email, Password = Password};
+            IRestResponse response = await new Request("/users").DoPost(values);
 
             if (response.StatusCode == HttpStatusCode.Created)
             {

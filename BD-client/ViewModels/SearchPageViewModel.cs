@@ -71,10 +71,15 @@ namespace BD_client.ViewModels
         private async void GetTags()
         {
             TagsAutocomplete.Clear();
-            IRestResponse response = await new Request($"/tags/").DoGet();
+            IRestResponse response = await new Request($"/users/{ConfigurationManager.AppSettings["Id"]}/tags?q={TagsPhrase}").DoGet();
+            IRestResponse response2 = await new Request($"/users/{ConfigurationManager.AppSettings["Id"]}/tags").DoGet();
+
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
+                ObservableCollection<Tag> tagList = JsonConvert.DeserializeObject<ObservableCollection<Tag>>(response.Content);
+                foreach (var tag in tagList)
+                    TagsAutocomplete.Add(tag.Name);
             }
                 //            String responseContent = ApiRequest.Get(url);
                 //            JsonTextReader reader = new JsonTextReader(new StringReader(responseContent));
@@ -107,7 +112,7 @@ namespace BD_client.ViewModels
         private async void GetCategories()
         {
 
-            Request request = new Request("/categories");
+            Request request = new Request("/users/"+ ConfigurationManager.AppSettings["Id"]+"/categories");
             IRestResponse response = await request.DoGet();
             ObservableCollection<Category> categoriesList = JsonConvert.DeserializeObject<ObservableCollection<Category>>(response.Content);
 
@@ -115,8 +120,6 @@ namespace BD_client.ViewModels
             {
                 foreach(var category in categoriesList)
                 {
-                    if (category.UserId.ToString().Equals(ConfigurationManager.AppSettings["Id"].ToString()))
-                    {
                         bool repeated = false;
                         foreach (var displayCategory in Categories)
                         {
@@ -134,7 +137,7 @@ namespace BD_client.ViewModels
                         }
 
                 }
-            }
+            
          
 
                 //            string url = MainWindow.MainVM.BaseUrl + "api/v1/categories";
@@ -227,7 +230,8 @@ namespace BD_client.ViewModels
             }
             set
             {
-                if (SetField(ref _tagsPhrase, value, "TagsPhrase"))
+                if (SetField(ref _tagsPhrase, value, "TagsPhrase")) { }
+                    //TO DO: UNCOMMENT
                     GetTags();
             }
         }
@@ -344,9 +348,9 @@ namespace BD_client.ViewModels
             List<int> photoIndex = new List<int>();
             for (int i = 0; i < Photos.Count; i++)
             {
-                for (int j = 0; j < Photos[i].Tags.Count; j++)
+                if(Photos[i].Tags.Count!=0)
                 {
-                    var tags = Photos[i].TagsList.Split(' ');
+                    var tags = Photos[i].Tags;
                     foreach (var tagName in tags)
                     {
                         if (tagName.ToLower().Contains(searchPhrase.ToLower()))
@@ -507,22 +511,18 @@ namespace BD_client.ViewModels
         }
 
 
-        private List<int> GetAllPhotoIndexExif()
+        private async Task<List<int>> GetAllPhotoIndexExif()
         {
             List<int> resultPhotoIndex = null;
             List<int> tmpResult = new List<int>();
             List<string> searchExif = GetExifFilters();
             if (searchExif != null)
-            {
-                for (int i = 0; i < Photos.Count; i++)
+            { 
+                foreach (var exifPhrase in searchExif)
                 {
-                    string path = Path + "\\" + Photos[i].Id + ".jpg";
-                    ObservableCollection<MetadataExtractor.Tag> exif = ReadMetadata(Photos[i].Url).Result;
-                    foreach (var exifPhrase in searchExif)
-                    {
-                        CheckInExif(tmpResult, exif, exifPhrase, i);
-                    }
+                    await CheckInExif(tmpResult, exifPhrase);
                     resultPhotoIndex = Intersect(resultPhotoIndex, tmpResult);
+                    tmpResult.Clear();
                 }
                 return resultPhotoIndex;
             }
@@ -532,37 +532,51 @@ namespace BD_client.ViewModels
             return null;
         }
 
-        private async Task<ObservableCollection<MetadataExtractor.Tag>> ReadMetadata(string path)
+        private async Task ReadMetadata(string path, ObservableCollection<MetadataExtractor.Tag> exif)
         {
             using (var client = new HttpClient())
             using (var response = await client.GetAsync(path))
             using (var content = response.Content)
             using (var stream = await content.ReadAsStreamAsync())
             {
-                ObservableCollection<MetadataExtractor.Tag> ExifList = new ExifMetadata(stream).Exif;
+                
                 try
                 {
-                    ExifList.Remove(ExifList.Single(i => i.Type == 700));
-                    ExifList.Remove(ExifList.Single(i => i.Type == 36864));
-                    return ExifList;
+                    ObservableCollection<MetadataExtractor.Tag> ExifList = new ExifMetadata(stream).Exif;
+                    //ExifList.Remove(ExifList.Single(i => i.Type == 700));
+                    //ExifList.Remove(ExifList.Single(i => i.Type == 36864));
+                    if (ExifList != null)
+                    {
+                        foreach (var ex in ExifList)
+                        {
+                            exif.Add(ex);
+                        }
+                    }
                 }
                 catch (Exception e)
                 {
-                    return null;
                 }
             }
         }
 
 
-        private void CheckInExif(List<int> tmpResult, ObservableCollection<MetadataExtractor.Tag> exif, string exifPhrase, int i)
+        private async Task CheckInExif(List<int> tmpResult, string exifPhrase)
         {
-            if (exif != null)
+            for (int i = 0; i < Photos.Count; i++)
             {
-                foreach (var tag in exif)
+                ObservableCollection<MetadataExtractor.Tag> exif = new ObservableCollection<MetadataExtractor.Tag>();
+                await ReadMetadata(Photos[i].Url, exif);
+                if (exif != null)
                 {
-                    if ((!string.IsNullOrEmpty(tag.Name) && tag.Name.ToLower().Contains(exifPhrase.ToLower())) ||
-                        (!string.IsNullOrEmpty(tag.Description) && tag.Description.ToLower().Contains(exifPhrase.ToLower())))
-                        tmpResult.Add(i);
+                    foreach (var tag in exif)
+                    {
+                        if ((!string.IsNullOrEmpty(tag.Name) && tag.Name.ToLower().Contains(exifPhrase.ToLower())) ||
+                            (!string.IsNullOrEmpty(tag.Description) && tag.Description.ToLower().Contains(exifPhrase.ToLower())))
+                        {
+                            tmpResult.Add(i);
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -570,10 +584,10 @@ namespace BD_client.ViewModels
         }
 
 
-        private void ShowResults()
+        private async void ShowResults()
         {
             PhotosResult.Clear();
-            List<int> photoIndexes = commonPart();
+            List<int> photoIndexes = await commonPart();
             if (photoIndexes != null)
             {
                 foreach (var photoIndex in photoIndexes)
@@ -583,12 +597,12 @@ namespace BD_client.ViewModels
             }
         }
 
-        private List<int> commonPart()
+        private async Task<List<int>> commonPart()
         {
             List<int> allPhotoIndexCategories = GetAllPhotoIndexCategories();
             List<int> allPhotoIndexTags = GetAllPhotoIndexTags();
             List<int> allPhotoIndexDescription = GetAllPhotoIndexDescription();
-            List<int> allPhotoIndexExif = GetAllPhotoIndexExif();
+            List<int> allPhotoIndexExif = await GetAllPhotoIndexExif();
             List<int> result = null;
 
             result = Intersect(allPhotoIndexCategories, allPhotoIndexTags);

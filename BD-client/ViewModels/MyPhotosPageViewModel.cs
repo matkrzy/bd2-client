@@ -210,6 +210,11 @@ namespace BD_client.ViewModels
             this.Photos = JsonConvert.DeserializeObject<ObservableCollection<Photo>>(response.Content);
             foreach(var photo in Photos)
             {
+                if (photo.Tags.Count != 0)
+                {
+                    foreach (var tag in photo.Tags)
+                        photo.TagsList += tag;
+                }
                 MainWindow.MainVM.Photos.Add(photo);
             }
 
@@ -246,10 +251,11 @@ namespace BD_client.ViewModels
                 if (dataContext.Email != null)
                 {
                     Request request = new Request("/photos/" + photo.Id + "/shares");
-                    request.AddParameter("photoId ", photo.Id.ToString());
-                    request.AddParameter("userEmail", dataContext.Email);
+                    var values = new { photoId = photo.Id.ToString(), userEmail = dataContext.Email };
+                    //request.AddParameter("photoId ", photo.Id.ToString());
+                    //request.AddParameter("userEmail", dataContext.Email);
 
-                    IRestResponse response = await request.DoPost();
+                    IRestResponse response = await request.DoPost(values);
 
                     if (response.StatusCode != HttpStatusCode.OK)
                     { 
