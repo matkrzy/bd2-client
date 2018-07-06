@@ -18,6 +18,10 @@ using System.Net.Http;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
+using BD_client.Windows;
+using BD_client.Enums;
+using System.Windows.Forms;
+using BD_client.Dialogs.Share;
 
 namespace BD_client.ViewModels
 {
@@ -64,7 +68,6 @@ namespace BD_client.ViewModels
             RemovePhotoCmd = new RelayCommand(x => RemovePhoto());
             GetCategories();
             CategorySelectedIndex = 0;
-            Path = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + "\\tmp\\own";
             TagsAutocomplete = new List<string>();
         }
 
@@ -254,19 +257,6 @@ namespace BD_client.ViewModels
             {
                 _exifPhrase = value;
                 OnPropertyChanged("ExifPhrase");
-            }
-        }
-
-        public string Path
-        {
-            get
-            {
-                return _path;
-            }
-            set
-            {
-                _path = value;
-                OnPropertyChanged("Path");
             }
         }
 
@@ -713,6 +703,212 @@ namespace BD_client.ViewModels
             MainWindow.MainVM.Page = "MyPhotosPage.xaml";
             MainWindow.MainVM.SelectedIndex = -1;
         }
+
+        public void Preview(int selectedIndex)
+        {
+            new PhotoDetailsWindow(PhotosResult, selectedIndex).Show();
+        }
+
+        public async void ArchivePhoto(List<Photo> photos)
+        {
+            bool errorOccurred = false;
+            var progressBar = await dialogCoordinator.ShowProgressAsync(this, "Archiving", "Starting archiving");
+
+            for (int i = 0; i < photos.Count; i++)
+            {
+                Photo photo = photos[i];
+
+                progressBar.SetTitle($"Archiving {i + 1} of {photos.Count}");
+                progressBar.SetMessage($"Archiving {photo.Name}");
+                progressBar.SetProgress((double)(i + 1) / photos.Count);
+
+                photo.PhotoState = PhotoState.ARCHIVED;
+                IRestResponse response = await new Request($"/photos/{photo.Id}").DoPut(photo);
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    errorOccurred = true;
+                }
+            }
+
+            await progressBar.CloseAsync();
+
+
+            if (errorOccurred)
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Oooppss",
+                    "Something went wrong. Try again!");
+            }
+            else
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Success", "All photos archived");
+
+            }
+        }
+
+        public async void RemovePhotos(List<Photo> photos)
+        {
+            var confirm =
+                await dialogCoordinator.ShowMessageAsync(this, "Are you sure?",
+                    $"Are you sure that to delete {photos.Count}", MessageDialogStyle.AffirmativeAndNegative,
+                    new MetroDialogSettings
+                    {
+                        AffirmativeButtonText = "OK",
+                        NegativeButtonText = "CANCEL",
+                        AnimateHide = true,
+                        AnimateShow = true,
+                    });
+
+            if (confirm == MessageDialogResult.Negative)
+            {
+                return;
+            }
+
+            bool errorOccurred = false;
+            var progressBar = await dialogCoordinator.ShowProgressAsync(this, "Deleting", "Starting deleting");
+
+
+            for (int i = 0; i < photos.Count; i++)
+            {
+                Photo photo = photos[i];
+
+                progressBar.SetTitle($"Deleting {i + 1} of {photos.Count}");
+                progressBar.SetMessage($"Deleting {photo.Name}");
+                progressBar.SetProgress((double)(i + 1) / photos.Count);
+
+                IRestResponse response = await new Request($"/photos/{photo.Id}").DoDelete();
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    errorOccurred = true;
+                }
+            }
+
+            await progressBar.CloseAsync();
+
+            if (errorOccurred)
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Oooppss",
+                    "Something went wrong. Try again!");
+            }
+            else
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Success", "All photos deleted");
+
+            }
+        }
+
+        public async void ShareDialog(List<Photo> photos)
+        {
+            var customDialog = new CustomDialog() { Title = "Select share type" };
+
+            var dataContext = new ShareDialog();
+            dataContext.SetMessage($"You can share {photos.Count} photos via e-mail and make it public");
+
+
+            ShareDialogTemplate template = new ShareDialogTemplate(
+                    instance =>
+                    {
+                        this.Share(photos, dataContext);
+                        dialogCoordinator.HideMetroDialogAsync(this, customDialog);
+                    },
+                    instance => { dialogCoordinator.HideMetroDialogAsync(this, customDialog); })
+            { DataContext = dataContext };
+
+            customDialog.Content = template;
+
+            await dialogCoordinator.ShowMetroDialogAsync(this, customDialog);
+        }
+
+        public async void Share(List<Photo> photos, Dialogs.Share.ShareDialog dataContext)
+        {
+            bool errorOccurred = false;
+            foreach (var photo in photos)
+            {
+                if (dataContext.Email != null)
+                {
+                    Request request = new Request("/photos/" + photo.Id + "/shares");
+                    var values = new { photoId = photo.Id.ToString(), userEmail = dataContext.Email };
+                    //request.AddParameter("photoId ", photo.Id.ToString());
+                    //request.AddParameter("userEmail", dataContext.Email);
+
+                    IRestResponse response = await request.DoPost(values);
+
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        errorOccurred = true;
+                    }
+                }
+                if (dataContext.MakePublic)
+                {
+                    photo.ShareState = PhotoVisibility.PUBLIC;
+
+                    IRestResponse response = await new Request($"/photos/{photo.Id}").DoPut(photo);
+
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        errorOccurred = true;
+                    }
+                }
+            }
+
+            if (errorOccurred)
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Oooppss", "Something went wrong. Try again!");
+            }
+            else
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Success", "All photos updated");
+            }
+        }
+
+        public async void Download(List<Photo> photos)
+        {
+            bool errorOccurred = false;
+
+            var dialog = new FolderBrowserDialog();
+            var progressBar =
+                await dialogCoordinator.ShowProgressAsync(this, "Downloading", "Starting downloading");
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                for (int i = 0; i < photos.Count; i++)
+                {
+                    Photo photo = photos[i];
+                    bool status = await new Request(photo.Url).Download(dialog.SelectedPath, photo.Name,
+                        Path.GetExtension(photo.Path));
+
+
+                    progressBar.SetTitle($"Downloading {i + 1} of {photos.Count}");
+                    progressBar.SetMessage($"Downloading {photo.Name}");
+                    progressBar.SetProgress((double)(i + 1) / photos.Count);
+
+                    if (!status)
+                    {
+                        errorOccurred = true;
+                    }
+                }
+
+                await progressBar.CloseAsync();
+
+                if (errorOccurred)
+                {
+                    await dialogCoordinator.ShowMessageAsync(this, "Oooppss",
+                        "Something went wrong. Try again!");
+                }
+                else
+                {
+                    await dialogCoordinator.ShowMessageAsync(this, "Success", "All photos downloaded");
+                }
+            }
+            else
+            {
+                await progressBar.CloseAsync();
+            }
+        }
+
+
+
 
         private void AddCategoryFilter()
         {

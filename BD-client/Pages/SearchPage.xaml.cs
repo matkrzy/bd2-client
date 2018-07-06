@@ -27,14 +27,14 @@ namespace BD_client.Pages
         private void OnPhotoDbClick(object sender, MouseButtonEventArgs e)
         {
             int selectedIndex = MyPhotosListBox.SelectedIndex;
-            MyPhotosVM.Preview(selectedIndex);
+            vm.Preview(selectedIndex);
         }
 
         private void OnArchivePhoto(object sender, RoutedEventArgs e)
         {
             List<Photo> photos = this.MyPhotosListBox.SelectedItems.OfType<Photo>().ToList();
 
-            MyPhotosVM.ArchivePhoto(photos);
+            vm.ArchivePhoto(photos);
         }
 
         private void OnEditPhoto(object sender, RoutedEventArgs e)
@@ -47,6 +47,7 @@ namespace BD_client.Pages
             }
 
 
+
             MainWindow.MainVM.SelectedIndex = 1;
             MainWindow.MainVM.Page = "EditPhotoPage.xaml";
         }
@@ -54,21 +55,21 @@ namespace BD_client.Pages
         private void OnDownloadPhoto(object sender, RoutedEventArgs e)
         {
             List<Photo> photos = this.MyPhotosListBox.SelectedItems.OfType<Photo>().ToList();
-            MyPhotosVM.Download(photos);
+            vm.Download(photos);
         }
 
         private async void OnRemovePhoto(object sender, RoutedEventArgs e)
         {
             List<Photo> photos = this.MyPhotosListBox.SelectedItems.OfType<Photo>().ToList();
 
-            MyPhotosVM.RemovePhotos(photos);
+            vm.RemovePhotos(photos);
         }
 
         private void OnSharePhoto(object sender, RoutedEventArgs e)
         {
             List<Photo> photos = this.MyPhotosListBox.SelectedItems.OfType<Photo>().ToList();
 
-            MyPhotosVM.ShareDialog(photos);
+            vm.ShareDialog(photos);
         }
 
         private void TextBox_KeyUp(object sender, KeyEventArgs e)
