@@ -11,7 +11,7 @@ using BD_client.Dto;
 using BD_client.Pages;
 using MahApps.Metro.Controls.Dialogs;
 using RestSharp;
-
+using System.Windows.Forms;
 
 namespace BD_client.ViewModels
 {
@@ -28,6 +28,7 @@ namespace BD_client.ViewModels
         public ICommand PublicPhotosCmd { get; }
         public ICommand ArchivedPhotosCmd { get; }
         public ICommand CategoriesCmd { get; }
+        public ICommand ReportCmd { get; }
 
         public List<int> List { get; set; } = null;
         public List<Photo> Photos { get; set; } = null;
@@ -92,6 +93,7 @@ namespace BD_client.ViewModels
                 Page = "LogInPage.xaml";
             }
 
+            ReportCmd = new RelayCommand(x => Report());
             MyPhotosCmd = new RelayCommand(x => ShowMyPhotos());
             ArchivedPhotosCmd = new RelayCommand(x => ShowArchivedPhotos());
             ProfileCmd = new RelayCommand(x => Profile());
@@ -101,6 +103,15 @@ namespace BD_client.ViewModels
             CategoriesCmd = new RelayCommand(x => ShowCategories());
             Photos = new List<Photo>();
 
+        }
+
+        private void Report()
+        {
+            var dialog = new FolderBrowserDialog();
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                string path = dialog.SelectedPath;
+            }
         }
 
         private async void AutoLoginAsync()

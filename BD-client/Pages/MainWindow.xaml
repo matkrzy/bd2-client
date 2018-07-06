@@ -138,6 +138,7 @@
             <MenuItem Header="Categories" Command="{Binding CategoriesCmd}" IsEnabled="{Binding Enabled}" />
             <MenuItem Header="Settings" IsEnabled="{Binding Enabled}">
                 <MenuItem Header="Profile" Command="{Binding ProfileCmd}" />
+                <MenuItem Header="Report" Command="{Binding ReportCmd}" />
                 <MenuItem Header="Help" Command="{Binding HelpCmd}" />
                 <MenuItem Header="Log Out" Command="{Binding LogoutCmd}" />
             </MenuItem>
