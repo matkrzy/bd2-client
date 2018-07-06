@@ -12,6 +12,7 @@ using BD_client.Pages;
 using MahApps.Metro.Controls.Dialogs;
 using RestSharp;
 using System.Windows.Forms;
+using System.Text;
 
 namespace BD_client.ViewModels
 {
@@ -105,12 +106,44 @@ namespace BD_client.ViewModels
 
         }
 
-        private void Report()
+        private async void Report()
         {
             var dialog = new FolderBrowserDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 string path = dialog.SelectedPath;
+                IRestResponse response = await new Request($"/{ConfigurationManager.AppSettings["Id"]}/report").DoGet();
+
+                if (response.StatusCode == HttpStatusCode.OK) {
+                    try
+                    {
+                        //TO DO: TEST
+                        var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None);
+                        byte[] byteArray = Encoding.UTF8.GetBytes(response.Content);
+                        //byte[] byteArray = Encoding.ASCII.GetBytes(contents);
+                        MemoryStream stream = new MemoryStream(byteArray);
+                        // convert stream to string
+                        StreamReader reader = new StreamReader(stream);
+                        string text = reader.ReadToEnd();
+                        stream.CopyTo(fileStream);
+                        fileStream.Close();
+                    }
+                    catch (Exception e)
+                    {
+                        //
+                    }
+                }
+
+            }
+        }
+
+        public static void CopyTo(Stream input, Stream outputStream)
+        {
+            byte[] buffer = new byte[16 * 1024]; // Fairly arbitrary size
+            int bytesRead;
+            while ((bytesRead = input.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                outputStream.Write(buffer, 0, bytesRead);
             }
         }
 
