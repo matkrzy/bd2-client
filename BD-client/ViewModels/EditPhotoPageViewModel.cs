@@ -58,7 +58,7 @@ namespace BD_client.ViewModels
 
                 progressBar.SetTitle($"Updating {i + 1} of {Photos.Count}");
                 progressBar.SetMessage($"Updating {photo.Name}");
-                progressBar.SetProgress((double) (i + 1) / Photos.Count);
+                progressBar.SetProgress((double)(i + 1) / Photos.Count);
 
                 if (IsChecked)
                 {
@@ -73,7 +73,7 @@ namespace BD_client.ViewModels
 
 
                     //add
-                    if (photo.TagsList != null && photo.TagsList.Length != 0)
+                    if (Tags != null)
                     {
                         Request requestTags = new Request("/tags");
                         IRestResponse responseTags = await requestTags.DoGet();
@@ -100,9 +100,10 @@ namespace BD_client.ViewModels
                                 if (addToDatabase)
                                 {
                                     Request requestTag = new Request("/tags");
-                                    requestTag.AddParameter("name", tagsToAdd[j]);
-                                    IRestResponse responseTag = await requestTag.DoPost();
-                                    if (responseTag.StatusCode != HttpStatusCode.OK)
+                                    var values = new { name = tagsToAdd[j] };
+                                    //requestTag.AddParameter("name", tagsToAdd[j]);
+                                    IRestResponse responseTag = await requestTag.DoPost(values);
+                                    if (responseTag.StatusCode != HttpStatusCode.Created)
                                     {
                                         errorOccurred = true;
                                         failedPhotos.Add(photo.Id);
@@ -122,7 +123,7 @@ namespace BD_client.ViewModels
                     {
                         photo.Tags.Clear();
                     }
-                            
+
 
 
                     //add
@@ -131,8 +132,8 @@ namespace BD_client.ViewModels
                         Request requestTags = new Request("/tags");
                         IRestResponse responseTags = await requestTags.DoGet();
                         ObservableCollection<Tag> tags = JsonConvert.DeserializeObject<ObservableCollection<Tag>>(responseTags.Content);
-                        
-  
+
+
                         var tagsToAdd = photo.TagsList.Split(' ');
                         for (int j = 0; j < tagsToAdd.Length; j++)
                         {

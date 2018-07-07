@@ -205,15 +205,18 @@ namespace BD_client.ViewModels
 
             IRestResponse response = await request.DoGet();
 
-            if (MainWindow.MainVM.Photos.Count != 0)
+            if (MainWindow.MainVM.Photos!=null && MainWindow.MainVM.Photos.Count != 0)
                 MainWindow.MainVM.Photos.Clear();
             this.Photos = JsonConvert.DeserializeObject<ObservableCollection<Photo>>(response.Content);
             foreach(var photo in Photos)
             {
-                if (photo.Tags.Count != 0)
+                if (photo.Tags != null)
                 {
-                    foreach (var tag in photo.Tags)
-                        photo.TagsList += tag;
+                    if (photo.Tags.Count != 0)
+                    {
+                        foreach (var tag in photo.Tags)
+                            photo.TagsList += tag+" ";
+                    }
                 }
                 MainWindow.MainVM.Photos.Add(photo);
             }
