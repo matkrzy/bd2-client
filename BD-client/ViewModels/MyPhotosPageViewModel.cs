@@ -215,7 +215,7 @@ namespace BD_client.ViewModels
             ShareDialogTemplate template = new ShareDialogTemplate(
                     instance =>
                     {
-                        this.Share(photos,dataContext);
+                        this.Share(photos, dataContext);
                         dialogCoordinator.HideMetroDialogAsync(this, customDialog);
                     },
                     instance => { dialogCoordinator.HideMetroDialogAsync(this, customDialog); })
@@ -226,10 +226,50 @@ namespace BD_client.ViewModels
             await dialogCoordinator.ShowMetroDialogAsync(this, customDialog);
         }
 
-        public void Share(List<Photo> photos,object dataContext)
+        public async void Share(List<Photo> photos, ShareDialog context)
         {
-            //TODO request to api
-            
+            bool errorOccurred = false;
+
+            foreach (var photo in photos)
+            {
+                if (context.Email != null)
+                {
+                    IRestResponse response =
+                        await new Request("/photos/" + photo.Id + "/shares").DoPost(
+                            new
+                            {
+                                photoId = photo.Id,
+                                userEmail = context.Email
+                            }
+                        );
+
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        errorOccurred = true;
+                    }
+                }
+
+                if (context.MakePublic)
+                {
+                    photo.ShareState = PhotoVisibility.PUBLIC;
+
+                    IRestResponse response = await new Request($"/photos/{photo.Id}").DoPut(photo);
+
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        errorOccurred = true;
+                    }
+                }
+            }
+
+            if (errorOccurred)
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Oooppss", "Something went wrong. Try again!");
+            }
+            else
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Success", "All photos shared");
+            }
         }
 
         protected virtual void OnPropertyChanged(string propName)
