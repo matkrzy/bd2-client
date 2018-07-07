@@ -5,6 +5,8 @@ using System.Windows.Input;
 using System.Configuration;
 using System.IO;
 using System.Net;
+using System.Text;
+using System.Windows.Forms;
 using BD_client.Services;
 using BD_client.Api.Core;
 using BD_client.Dto;
@@ -15,9 +17,8 @@ using RestSharp;
 
 namespace BD_client.ViewModels
 {
-    public class MainWindowViewModel :INotifyPropertyChanged
+    public class MainWindowViewModel : INotifyPropertyChanged
     {
-
         public event PropertyChangedEventHandler PropertyChanged = null;
         private IDialogCoordinator dialogCoordinator;
 
@@ -28,6 +29,7 @@ namespace BD_client.ViewModels
         public ICommand PublicPhotosCmd { get; }
         public ICommand ArchivedPhotosCmd { get; }
         public ICommand CategoriesCmd { get; }
+        public ICommand ReportCmd { get; }
 
         public List<int> List { get; set; } = null;
         public List<Photo> Photos { get; set; } = null;
@@ -92,6 +94,7 @@ namespace BD_client.ViewModels
                 Page = "LogInPage.xaml";
             }
 
+            ReportCmd = new RelayCommand(x => Report());
             MyPhotosCmd = new RelayCommand(x => ShowMyPhotos());
             ArchivedPhotosCmd = new RelayCommand(x => ShowArchivedPhotos());
             ProfileCmd = new RelayCommand(x => Profile());
@@ -99,7 +102,28 @@ namespace BD_client.ViewModels
             HelpCmd = new RelayCommand(x => Help());
             PublicPhotosCmd = new RelayCommand(x => ShowPublicPhotos());
             CategoriesCmd = new RelayCommand(x => ShowCategories());
+            Photos = new List<Photo>();
+        }
 
+        private async void Report()
+        {
+            var dialog = new FolderBrowserDialog();
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                string path = dialog.SelectedPath;
+                string userId = ConfigurationManager.AppSettings["Id"];
+                bool status = await new Request($"/users/{userId}/report").Download(path, "Report", ".pdf");
+
+                if (status)
+                {
+                    await dialogCoordinator.ShowMessageAsync(this, "Report status", "Report downloaded successfully");
+                }
+                else
+                {
+                    await dialogCoordinator.ShowMessageAsync(this, "Report status",
+                        "Report download failed. Try again");
+                }
+            }
         }
 
         private async void AutoLoginAsync()

@@ -126,8 +126,11 @@ namespace BD_client.Api.Core
         {
             try
             {
-                await Task.Run(() => client.DownloadData(request).SaveAs($"{path}/{name}{extension}"));
-
+                await Task.Run(() =>
+                {
+                    client.DownloadData(request,true).SaveAs($"{path}/{name}{extension}");
+                });
+              
                 return true;
             }
             catch (Exception e)
