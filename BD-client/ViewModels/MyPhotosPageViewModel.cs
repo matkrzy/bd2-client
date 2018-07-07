@@ -198,11 +198,8 @@ namespace BD_client.ViewModels
 
         public async void GetAllUserPhotos(PhotoState state = PhotoState.ACTIVE)
         {
-            Request request = new Request("/photos");
-            request.AddParameter("state", state.ToString());
-            request.AddParameter("userId", ConfigurationManager.AppSettings["Id"]);
-
-            IRestResponse response = await request.DoGet();
+            string userId = ConfigurationManager.AppSettings["Id"];
+            IRestResponse response = await new Request($"/users/{userId}/photos").DoGet();
 
             this.Photos = JsonConvert.DeserializeObject<ObservableCollection<Photo>>(response.Content);
         }

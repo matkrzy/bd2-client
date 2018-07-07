@@ -7,6 +7,7 @@ using System.Web;
 using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Extensions;
+using RestSharp.Serializers;
 
 namespace BD_client.Api.Core
 {
@@ -62,6 +63,16 @@ namespace BD_client.Api.Core
             request.AddFile("file", path, "application/octet-stream");
         }
 
+        public void addJsonBody(object body)
+        {
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+            };
+
+            request.AddParameter("application/json", JsonConvert.SerializeObject(body, settings),
+                ParameterType.RequestBody);
+        }
 
         public async Task<IRestResponse> DoGet()
         {
@@ -75,7 +86,8 @@ namespace BD_client.Api.Core
             this.request.Method = Method.POST;
             this.request.AddHeader("Content-type", "application/json");
             this.request.RequestFormat = DataFormat.Json;
-            request.AddJsonBody(data);
+//            request.AddJsonBody(data);
+            this.addJsonBody(data);
 
             return await ExecuteRequest();
         }
@@ -93,10 +105,12 @@ namespace BD_client.Api.Core
             this.request.Method = Method.PUT;
             this.request.AddHeader("Content-type", "application/json");
             this.request.RequestFormat = DataFormat.Json;
-            var output = JsonConvert.SerializeObject(data);
+//            var output = JsonConvert.SerializeObject(data);
 //            request.AddBody(output);
+//
+//            request.AddParameter("application/json", JsonConvert.SerializeObject(data), ParameterType.RequestBody);
 
-            request.AddParameter("application/json", JsonConvert.SerializeObject(data), ParameterType.RequestBody);
+            this.addJsonBody(data);
 
             return await ExecuteRequest();
         }
