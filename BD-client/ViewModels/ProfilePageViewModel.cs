@@ -34,6 +34,9 @@ namespace BD_client.ViewModels
             }
         }
 
+        public String NewPassword { get; set; } = null;
+        public String NewPasswordRepeated { get; set; } = null;
+
 
         public ProfilePageViewModel(IDialogCoordinator instance)
         {
@@ -63,12 +66,23 @@ namespace BD_client.ViewModels
 
         private async void Edit()
         {
+            if ((NewPassword != null && NewPasswordRepeated != null) && !NewPassword.Equals(NewPasswordRepeated))
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Validation", "Password does not match");
+                return;
+            }
+
+            if (NewPassword != null)
+                user.Password = NewPassword;
+
             IRestResponse response = await new Request($"/users/{user.Id}").DoPut(this.user);
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 await dialogCoordinator.ShowMessageAsync(this, "Success", "Your profile has been updated");
                 GetUserInfo();
+                NewPassword = null;
+                NewPasswordRepeated = null;
             }
             else
             {

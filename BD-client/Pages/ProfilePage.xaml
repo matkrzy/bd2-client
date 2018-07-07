@@ -31,6 +31,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Grid
@@ -97,6 +99,46 @@
             </Grid.ColumnDefinitions>
             <Label
                 Grid.Column="0"
+                Content="new password" HorizontalAlignment="Right" />
+
+            <PasswordBox x:Name="password" Grid.Column="1"
+                         HorizontalAlignment="Left"
+                         Controls:TextBoxHelper.ClearTextButton="True"
+                         Width="250"
+                         common:PasswordBoxAssistant.BindPassword="True"
+                         common:PasswordBoxAssistant.BoundPassword="{Binding NewPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </Grid>
+
+        <Grid
+            Grid.Row="4"
+            Margin="0 0 0 10"
+            VerticalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="250" />
+            </Grid.ColumnDefinitions>
+            <Label
+                Grid.Column="0"
+                Content="repeat new password" HorizontalAlignment="Right" Margin="-24,0,0,0" Width="124" />
+
+            <PasswordBox x:Name="repeatedPassword" Grid.Column="1"
+                         HorizontalAlignment="Left"
+                         Controls:TextBoxHelper.ClearTextButton="True"
+                         Width="250"
+                         common:PasswordBoxAssistant.BindPassword="True"
+                         common:PasswordBoxAssistant.BoundPassword="{Binding NewPasswordRepeated, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </Grid>
+
+        <Grid
+            Grid.Row="5"
+            Margin="0 0 0 10"
+            VerticalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="250" />
+            </Grid.ColumnDefinitions>
+            <Label
+                Grid.Column="0"
                 Content="Role" HorizontalAlignment="Right" />
 
             <TextBox
@@ -106,7 +148,7 @@
         </Grid>
 
         <Button
-            Grid.Row="4"
+            Grid.Row="6"
             x:Name="editBtn"
             Content="Edit"
             Width="100"
