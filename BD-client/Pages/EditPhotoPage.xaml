@@ -9,8 +9,10 @@
       mc:Ignorable="d"
       Height="500" Width="700"
       Title="EditPhotoPage"
+      xmlns:converters="clr-namespace:BD_client.Converters"
       xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
       Dialog:DialogParticipation.Register="{Binding}">
+
     <Page.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -21,6 +23,8 @@
                 <ResourceDictionary
                     Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <converters:ArrayStringToStringConverter x:Key="ArrayStringToStringConverter" />
+
         </ResourceDictionary>
     </Page.Resources>
 
@@ -31,14 +35,14 @@
             <RowDefinition Height="95" x:Name="DescRow" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <DataGrid 
+        <DataGrid
             AutoGeneratingColumn="PhotosDataGrid_OnAutoGeneratingColumn"
             MaxColumnWidth="300"
             Margin="5"
             Grid.Row="0"
             ItemsSource="{Binding Photos}"
             Name="PhotosDataGrid"
-            AutoGenerateColumns="True"
+            AutoGenerateColumns="False"
             Style="{StaticResource AzureDataGrid}"
             SelectionMode="Single"
             SelectedIndex="{Binding SelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -48,6 +52,11 @@
                     <MenuItem Header="Remove" Command="{Binding RemovePhotoCmd}" />
                 </ContextMenu>
             </DataGrid.ContextMenu>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="Name" Binding="{Binding Description}" />
+                <DataGridTextColumn Binding="{Binding Tags,Converter={StaticResource ArrayStringToStringConverter}}" />
+            </DataGrid.Columns>
         </DataGrid>
 
         <Grid Grid.Row="1">

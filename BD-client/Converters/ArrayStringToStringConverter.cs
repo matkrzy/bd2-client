@@ -14,7 +14,7 @@ namespace BD_client.Converters
             List<string> list = (List<String>) value;
 
             if (list.Count > 0)
-                return String.Join(", ", list.ToArray());
+                return String.Join(" ", list.ToArray());
 
             return "-";
         }
@@ -22,7 +22,15 @@ namespace BD_client.Converters
         public object ConvertBack(object value, Type targetType, object parameter,
             System.Globalization.CultureInfo culture)
         {
-            return null;
+            string rawList = (string) value;
+
+
+            if (rawList.Length > 0)
+            {
+               return new List<string>(rawList.Split(' '));
+            }
+
+            return new List<string>();
         }
     }
 }
