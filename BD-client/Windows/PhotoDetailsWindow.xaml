@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:converters="clr-namespace:BD_client.Converters"
         mc:Ignorable="d"
         Title="Photo details" WindowState="Maximized" ResizeMode="NoResize">
     <Window.Resources>
@@ -22,6 +23,7 @@
                 <Setter Property="Foreground" Value="White" />
                 <Setter Property="FontWeight" Value="Bold" />
             </Style>
+            <converters:ArrayStringToStringConverter x:Key="ArrayStringToStringConverter" />
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
@@ -29,7 +31,7 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="200" />
         </Grid.ColumnDefinitions>
-        <Image Source="{Binding Photo.Url }" Grid.Column="0"/>
+        <Image Source="{Binding Photo.Url }" Grid.Column="0" />
         <Grid Grid.Column="1" Margin="5 0 0 0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="30" />
@@ -51,6 +53,8 @@
                     <Label Content="{Binding Photo.Name}" />
                     <Label Style="{StaticResource MetadataHeader}">Description</Label>
                     <Label Content="{Binding Photo.Description}" />
+                    <Label Style="{StaticResource MetadataHeader}">Tags</Label>
+                    <Label Content="{Binding Photo.Tags, Converter={StaticResource ArrayStringToStringConverter}}" />
                     <Label Style="{StaticResource MetadataHeader}">Upload date</Label>
                     <Label Content="{Binding Photo.CreationDate}" />
                     <Label Style="{StaticResource MetadataHeader}">Author</Label>

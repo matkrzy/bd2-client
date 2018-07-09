@@ -86,9 +86,12 @@
                                         <TextBlock
                                             Grid.Column="0"
                                             Margin="0 0 5 0"
-                                            Text="Author:"
                                             HorizontalAlignment="Left"
-                                            VerticalAlignment="Bottom" />
+                                            VerticalAlignment="Bottom">
+                                            <TextBlock.Inlines>
+                                                <Run FontWeight="Bold" Text="Author:" />
+                                            </TextBlock.Inlines>
+                                        </TextBlock>
                                         <TextBlock
                                             Grid.Column="1"
                                             Text="{Binding UserId}"
@@ -100,9 +103,13 @@
                                     <TextBlock
                                         Grid.Row="1"
                                         Margin="0 0 5 0"
-                                        Text="Tags"
                                         HorizontalAlignment="Left"
-                                        VerticalAlignment="Bottom" />
+                                        VerticalAlignment="Bottom">
+                                        <TextBlock.Inlines>
+                                            <Run FontWeight="Bold" Text="Tags" />
+                                        </TextBlock.Inlines>
+                                    </TextBlock>
+
                                     <TextBlock
                                         Grid.Row="2"
                                         Text="{Binding Tags,  Converter={StaticResource ArrayStringToStringConverter}}"
@@ -112,9 +119,12 @@
                                     <TextBlock
                                         Grid.Row="3"
                                         Margin="0 0 5 0"
-                                        Text="Description"
                                         HorizontalAlignment="Left"
-                                        VerticalAlignment="Bottom" />
+                                        VerticalAlignment="Bottom">
+                                        <TextBlock.Inlines>
+                                            <Run FontWeight="Bold" Text="Description" />
+                                        </TextBlock.Inlines>
+                                    </TextBlock>
 
                                     <TextBlock
                                         Grid.Row="4"
