@@ -99,6 +99,7 @@
     <Compile Include="Common\DataGridBehavior.cs" />
     <Compile Include="Common\NotifyTaskCompletion.cs" />
     <Compile Include="Common\PasswordBoxAssistant.cs" />
+    <Compile Include="Converters\ArrayStringToStringConverter.cs" />
     <Compile Include="Dialogs\CustomDialog.cs" />
     <Compile Include="Dialogs\Share\ShareDialog.cs" />
     <Compile Include="Dialogs\Share\ShareDialogTemplate.xaml.cs">

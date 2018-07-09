@@ -34,14 +34,14 @@ namespace BD_client.Dto
         [JsonProperty("path")]
         public String Path { get; set; }
 
-//      [Browsable(false)]
-//      [JsonProperty("shares")]
-//      public int Shares { get; set; }
+        [Browsable(false)]
+        [JsonProperty("sharesIds")]
+        public List<int> Shares { get; set; }
 
         [Browsable(false)]
         [JsonProperty("state")]
         [JsonConverter(typeof(StringEnumConverter))]
-        public PhotoState PhotoState { get; set; } 
+        public PhotoState PhotoState { get; set; }
 
         [Browsable(false)]
         [JsonProperty("url")]
@@ -54,6 +54,10 @@ namespace BD_client.Dto
         [Browsable(false)]
         [JsonProperty("visibility")]
         public PhotoVisibility ShareState { get; set; }
+
+        [Browsable(false)]
+        [JsonProperty("tags")]
+        public List<string> Tags { get; set; }
 
         public Photo()
         {
