@@ -63,6 +63,7 @@ namespace BD_client.ViewModels
                 if (IsChecked)
                 {
                     photo.Description = Description;
+                    photo.Tags = new List<string>(Tags.Split(' '));
                 }
 
 

@@ -30,6 +30,9 @@
           <e p="NotifyTaskCompletion.cs" t="Include" />
           <e p="PasswordBoxAssistant.cs" t="Include" />
         </e>
+        <e p="Converters" t="Include">
+          <e p="ArrayStringToStringConverter.cs" t="Include" />
+        </e>
         <e p="Dialogs" t="Include">
           <e p="CustomDialog.cs" t="Include" />
           <e p="Share" t="Include">
