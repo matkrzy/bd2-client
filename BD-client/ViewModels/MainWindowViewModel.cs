@@ -110,12 +110,17 @@ namespace BD_client.ViewModels
             var dialog = new FolderBrowserDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
+                var info = await dialogCoordinator.ShowProgressAsync(this, "Generating report", "Please wait...");
+
                 string path = dialog.SelectedPath;
                 string userId = ConfigurationManager.AppSettings["Id"];
-                bool status = await new Request($"/users/{userId}/report").Download(path, "Report", ".pdf");
+                string stamp = DateTime.Now.ToFileTime().ToString();
+                bool status = await new Request($"/users/{userId}/report").Download(path, $"Report_{stamp}", ".pdf");
 
+                
                 if (status)
                 {
+                    await info.CloseAsync();
                     await dialogCoordinator.ShowMessageAsync(this, "Report status", "Report downloaded successfully");
                 }
                 else
@@ -137,7 +142,6 @@ namespace BD_client.ViewModels
                 try
                 {
                     var user = Api.Utils.Utils.Deserialize<User>(response);
-//                    var user = Api.Utils.Utils.Deserialize<User>(response, this, dialogCoordinator, "Something went wrong");
                     MainWindow.MainVM.User = user.Email;
                     ConfigurationManager.AppSettings["Email"] = user.Email;
                     ConfigurationManager.AppSettings["Id"] = user.Id.ToString();

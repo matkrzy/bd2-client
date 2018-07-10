@@ -2,16 +2,14 @@
 using System.Collections.ObjectModel;
 using MahApps.Metro.Controls.Dialogs;
 using System.ComponentModel;
-using System.Diagnostics;
+using System.Configuration;
+using System.Net;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Input;
 using BD_client.Api.Core;
 using BD_client.Dto;
 using BD_client.Enums;
-using BD_client.Models;
 using BD_client.Pages;
 using BD_client.Services;
 using Newtonsoft.Json;
@@ -38,9 +36,14 @@ namespace BD_client.ViewModels
         private IDialogCoordinator dialogCoordinator;
 
 
-        public int SelectedPhoto { get; set; }
+        public Photo SelectedPhoto { get; set; }
 
         public PublicPhotos Template { get; set; }
+
+        public String requestPath { get; set; } = "/photos";
+        public readonly int PhotosPerPage = int.Parse(ConfigurationManager.AppSettings["PhotosPerPage"]);
+        public int currentPage = 0;
+
 
         public PublicPhotosPageViewModel(IDialogCoordinator instance, object template)
         {
@@ -48,49 +51,33 @@ namespace BD_client.ViewModels
             Template = (PublicPhotos) template;
 
             LikeCmd = new RelayCommand(async x => await Like());
-
-
-            //            Template.TabControl.SelectedIndex = 0;
-
-            //            this.OnTabSelectionChanged(null, null);
-
-            //            this.GetPhotos();
         }
 
-        public async void GetPhotos()
-        {
-            Request request = new Request($"/photos");
-            request.AddParameter("orderBy", "asd");
-            request.AddParameter("sort", "desc");
-
-            IRestResponse response = await request.DoGet();
-
-            this.Photos = JsonConvert.DeserializeObject<ObservableCollection<Photo>>(response.Content);
-        }
 
         private async Task Like()
         {
-            var resAdd = await PhotoService.AddRate(Photos[SelectedPhoto].Id);
-            if (resAdd)
+            int photoId = SelectedPhoto.Id;
+
+            IRestResponse response = null;
+
+            if (SelectedPhoto.Liked)
             {
-                await dialogCoordinator.ShowMessageAsync(this, "New like", "You ♥ this photo");
-//                Photos[SelectedPhoto].Rate++;
+                response = await new Request($"/photos/{photoId}/like").DoDelete();
             }
             else
             {
-                var resRemove = await PhotoService.RemoveRate(Photos[SelectedPhoto].Id);
-                if (resRemove)
-                {
-                    await dialogCoordinator.ShowMessageAsync(this, "Unliked", "You disliked this photo");
-//                    Photos[SelectedPhoto].Rate--;
-                }
-                else
-                {
-                    await dialogCoordinator.ShowMessageAsync(this, "Error", "Error occured");
-                }
+                response = await new Request($"/photos/{photoId}/like").DoPost();
             }
 
-//            Photos.Update();
+
+            if (response.StatusCode == HttpStatusCode.Created || response.StatusCode == HttpStatusCode.OK)
+            {
+                this.FetchPhotos();
+            }
+            else
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Error", "Error occured");
+            }
         }
 
         public async Task OnTabSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -98,25 +85,58 @@ namespace BD_client.ViewModels
             if (e.OriginalSource is System.Windows.Controls.TabControl)
             {
                 this.Photos = null;
-                String path = "/photos";
 
                 var tab = (PublicPhotoType) Template.TabControl.SelectedIndex;
 
                 switch (tab)
                 {
                     case PublicPhotoType.Hot:
-                        path += "/hot";
+                        this.requestPath = "/photos/hot";
+                        currentPage = 0;
                         break;
                     case PublicPhotoType.Trending:
-                        path += "/trending";
+                        this.requestPath = "/photos/trending";
+                        currentPage = 0;
+                        break;
+                    default:
+                        this.requestPath = "/photos";
+                        currentPage = 0;
                         break;
                 }
 
-                IRestResponse response = await new Request(path).DoGet();
-                this.Photos = JsonConvert.DeserializeObject<ObservableCollection<Photo>>(response.Content);
+                this.FetchPhotos();
             }
 
             e.Handled = true;
+        }
+
+        public void OnProceedClick(int step)
+        {
+            if (currentPage >= 0)
+            {
+                this.currentPage += step;
+                this.FetchPhotos();
+            }
+
+        }
+
+        public async void FetchPhotos()
+        {
+            Request request = new Request(this.requestPath);
+            request.AddParameter("page", currentPage);
+            request.AddParameter("size", PhotosPerPage);
+
+            IRestResponse response = await request.DoGet();
+            this.Photos = JsonConvert.DeserializeObject<ObservableCollection<Photo>>(response.Content);
+
+            if (currentPage > 0)
+            {
+                this.Template.PreviousButton.IsEnabled = true;
+            }
+            else
+            {
+                this.Template.PreviousButton.IsEnabled = false;
+            }
         }
 
         protected virtual void OnPropertyChanged(string propName)

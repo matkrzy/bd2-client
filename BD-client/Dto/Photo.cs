@@ -26,10 +26,6 @@ namespace BD_client.Dto
         [JsonProperty("id")]
         public int Id { get; set; }
 
-//      [Browsable(false)]
-//      [JsonProperty("likes")]
-//      public int likes { get; set; }
-
         [Browsable(false)]
         [JsonProperty("path")]
         public String Path { get; set; }
@@ -55,8 +51,16 @@ namespace BD_client.Dto
         [JsonProperty("visibility")]
         public PhotoVisibility ShareState { get; set; }
 
-        [JsonProperty("tags")]
-        public List<string> Tags { get; set; }
+        [JsonProperty("tags")] public List<string> Tags { get; set; }
+
+        [Browsable(false)]
+        [JsonProperty("liked")]
+        public bool Liked { get; set; }
+
+        [Browsable(false)]
+        [JsonProperty("likeIds")]
+        public List<int> LikeIds { get; set; }
+
 
         public Photo()
         {
