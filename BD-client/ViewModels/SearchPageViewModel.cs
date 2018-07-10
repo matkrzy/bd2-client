@@ -11,6 +11,17 @@ using BD_client.Models;
 using BD_client.Pages;
 using BD_client.Services;
 using BD_client.Utils;
+using BD_client.Api.Core;
+using RestSharp;
+using System.Configuration;
+using System.Net.Http;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Net;
+using BD_client.Windows;
+using BD_client.Enums;
+using System.Windows.Forms;
+using BD_client.Dialogs.Share;
 
 namespace BD_client.ViewModels
 {
@@ -57,33 +68,22 @@ namespace BD_client.ViewModels
             RemovePhotoCmd = new RelayCommand(x => RemovePhoto());
             GetCategories();
             CategorySelectedIndex = 0;
-            Path = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + "\\tmp\\own";
             TagsAutocomplete = new List<string>();
         }
 
-        private void GetTags()
+        private async void GetTags()
         {
-//            string url = MainWindow.MainVM.BaseUrl + "api/v1/tags/"+TagsPhrase;
-//            String responseContent = ApiRequest.Get(url);
-//            JsonTextReader reader = new JsonTextReader(new StringReader(responseContent));
-//            reader.SupportMultipleContent = true;
-//            List<Tag> tagsList = null;
-//            while (true)
-//            {
-//                if (!reader.Read())
-//                {
-//                    break;
-//                }
-//
-//                JsonSerializer serializer = new JsonSerializer();
-//                tagsList = serializer.Deserialize<List<Tag>>(reader);
-//
-//            }
-//
-//            foreach(var tag in tagsList)
-//            {
-//                TagsAutocomplete.Add(tag.Name);
-//            }
+            TagsAutocomplete.Clear();
+            IRestResponse response = await new Request($"/users/{ConfigurationManager.AppSettings["Id"]}/tags?q={TagsPhrase}").DoGet();
+            IRestResponse response2 = await new Request($"/users/{ConfigurationManager.AppSettings["Id"]}/tags").DoGet();
+
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                ObservableCollection<Tag> tagList = JsonConvert.DeserializeObject<ObservableCollection<Tag>>(response.Content);
+                foreach (var tag in tagList)
+                    TagsAutocomplete.Add(tag.Name);
+            }
 
         }
 
@@ -92,40 +92,69 @@ namespace BD_client.ViewModels
             PhotosResult.RemoveAt(DataGridPhotoSelectedIndex);
         }
 
-        private void GetCategories()
+        private async void GetCategories()
         {
-//            string url = MainWindow.MainVM.BaseUrl + "api/v1/categories";
-//            String responseContent = ApiRequest.Get(url);
-//            JsonTextReader reader = new JsonTextReader(new StringReader(responseContent));
-//            reader.SupportMultipleContent = true;
-//            List<Dto.Category> categoriesList = null;
-//            while (true)
-//            {
-//                if (!reader.Read())
-//                {
-//                    break;
-//                }
-//
-//                JsonSerializer serializer = new JsonSerializer();
-//                categoriesList = serializer.Deserialize<List<Dto.Category>>(reader);
-//
-//            }
-//            bool repeated = false;
-//            foreach (var category in categoriesList)
-//            {
-//                foreach (var displayCategory in Categories)
-//                {
-//                    if (displayCategory.Name.ToLower().Equals(category.Name.ToLower()))
-//                    {
-//                        repeated = true;
-//                        break;
-//                    }
-//                }
-//                if (!repeated)
-//                    Categories.Add(category);
-//
-//                repeated = false;
-//            }
+
+            Request request = new Request("/users/" + ConfigurationManager.AppSettings["Id"] + "/categories");
+            IRestResponse response = await request.DoGet();
+            ObservableCollection<Category> categoriesList = JsonConvert.DeserializeObject<ObservableCollection<Category>>(response.Content);
+
+            if (categoriesList.Count != 0)
+            {
+                foreach (var category in categoriesList)
+                {
+                    bool repeated = false;
+                    foreach (var displayCategory in Categories)
+                    {
+                        if (displayCategory.Name.ToLower().Equals(category.Name.ToLower()))
+                        {
+                            repeated = true;
+                            break;
+                        }
+                    }
+                    if (!repeated)
+                        Categories.Add(category);
+
+                    repeated = false;
+
+                }
+
+            }
+
+
+
+            //            string url = MainWindow.MainVM.BaseUrl + "api/v1/categories";
+            //            String responseContent = ApiRequest.Get(url);
+            //            JsonTextReader reader = new JsonTextReader(new StringReader(responseContent));
+            //            reader.SupportMultipleContent = true;
+            //            List<Dto.Category> categoriesList = null;
+            //            while (true)
+            //            {
+            //                if (!reader.Read())
+            //                {
+            //                    break;
+            //                }
+            //
+            //                JsonSerializer serializer = new JsonSerializer();
+            //                categoriesList = serializer.Deserialize<List<Dto.Category>>(reader);
+            //
+            //            }
+            //            bool repeated = false;
+            //            foreach (var category in categoriesList)
+            //            {
+            //                foreach (var displayCategory in Categories)
+            //                {
+            //                    if (displayCategory.Name.ToLower().Equals(category.Name.ToLower()))
+            //                    {
+            //                        repeated = true;
+            //                        break;
+            //                    }
+            //                }
+            //                if (!repeated)
+            //                    Categories.Add(category);
+            //
+            //                repeated = false;
+            //            }
 
 
         }
@@ -184,8 +213,9 @@ namespace BD_client.ViewModels
             }
             set
             {
-                if (SetField(ref _tagsPhrase, value, "TagsPhrase"))
-                    GetTags();
+                if (SetField(ref _tagsPhrase, value, "TagsPhrase")) { }
+                //TO DO: UNCOMMENT
+                GetTags();
             }
         }
 
@@ -207,19 +237,6 @@ namespace BD_client.ViewModels
             {
                 _exifPhrase = value;
                 OnPropertyChanged("ExifPhrase");
-            }
-        }
-
-        public string Path
-        {
-            get
-            {
-                return _path;
-            }
-            set
-            {
-                _path = value;
-                OnPropertyChanged("Path");
             }
         }
 
@@ -263,52 +280,60 @@ namespace BD_client.ViewModels
         }
 
 
-        private List<int> SearchCategories(List<int> SelectedCategoriesIds)
+        private async Task<List<int>> SearchCategories(List<int> SelectedCategoriesIds)
         {
-//            List<int> photoIndex = new List<int>();
-//            List<Photo> photosToDisplay = new List<Photo>();
-//            List<Photo> tmpResult = null;
-//            foreach (var selectedCategory in SelectedCategoriesIds)
-//            {
-//                photosToDisplay.Clear();
-//                string url = MainWindow.MainVM.BaseUrl + "api/v1/photos/categories/any/" + selectedCategory;
-//                string response = ApiRequest.Get(url);
-//                var photosFromCategory = JsonConvert.DeserializeObject<List<Photo>>(response);
-//                foreach (var photo in photosFromCategory)
-//                {
-//                    photosToDisplay.Add(photo);
-//                }
-//
-//                tmpResult = Intersect(tmpResult, photosToDisplay);
-//
-//            }
-//            for (int i = 0; i < Photos.Count; i++)
-//            {
-//                for (int j = 0; j < tmpResult.Count; j++)
-//                {
-//                    if (Photos[i].Id == tmpResult[j].Id)
-//                    {
-//                        photoIndex.Add(i);
-//                        break;
-//                    }
-//                }
-//            }
-            return null;
+            List<int> photoIndex = new List<int>();
+            List<Photo> photosToDisplay = new List<Photo>();
+            List<Photo> tmpResult = null;
+            foreach (var selectedCategory in SelectedCategoriesIds)
+            {
+                photosToDisplay.Clear();
+                IRestResponse response = await new Request($"/photos?categoryIds={selectedCategory}").DoGet();
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var photosFromCategory = JsonConvert.DeserializeObject<List<Photo>>(response.Content);
+                    foreach (var photo in photosFromCategory)
+                    {
+                        photosToDisplay.Add(photo);
+                    }
+
+                    tmpResult = Intersect(tmpResult, photosToDisplay);
+
+                }
+            }
+            for (int i = 0; i < Photos.Count; i++)
+            {
+                for (int j = 0; j < tmpResult.Count; j++)
+                {
+                    if (Photos[i].Id == tmpResult[j].Id)
+                    {
+                        photoIndex.Add(i);
+                        break;
+                    }
+                }
+            }
+
+            return photoIndex;
         }
 
         private List<int> SearchTags(string searchPhrase)
         {
             List<int> photoIndex = new List<int>();
-//            for (int i = 0; i < Photos.Count; i++)
-//            {
-//                for (int j = 0; j < Photos[i].Tags.Count; j++)
-//                {
-//                    if (Photos[i].Tags[j].Name.ToLower().Contains(searchPhrase.ToLower()))
-//                    {
-//                        photoIndex.Add(i);
-//                    }
-//                }
-//            }
+            for (int i = 0; i < Photos.Count; i++)
+            {
+                if (Photos[i].Tags.Count != 0)
+                {
+                    var tags = Photos[i].Tags;
+                    foreach (var tagName in tags)
+                    {
+                        if (tagName.ToLower().Contains(searchPhrase.ToLower()))
+                        {
+                            photoIndex.Add(i);
+                        }
+                    }
+                }
+            }
 
             return photoIndex;
         }
@@ -408,12 +433,12 @@ namespace BD_client.ViewModels
         }
 
 
-        private List<int> GetAllPhotoIndexCategories()
+        private async Task<List<int>> GetAllPhotoIndexCategories()
         {
             List<int> searchCategories = GetCategoriesFilters();
             if (searchCategories != null)
             {
-                List<int> photoIndexCategories = SearchCategories(searchCategories);
+                List<int> photoIndexCategories = await SearchCategories(searchCategories);
                 return photoIndexCategories;
             }
             else
@@ -460,59 +485,83 @@ namespace BD_client.ViewModels
         }
 
 
-        private List<int> GetAllPhotoIndexExif()
+        private async Task<List<int>> GetAllPhotoIndexExif()
         {
-//            List<int> resultPhotoIndex = null;
-//            List<int> tmpResult = new List<int>();
-//            List<string> searchExif = GetExifFilters();
-//            if (searchExif != null)
-//            {
-//                for (int i = 0; i < Photos.Count; i++)
-//                {
-//                    string path = Path + "\\" + Photos[i].Id + ".jpg";
-//                    ExifMetadata exif = ImageService.GetPhotoMetadata(path);
-//                    foreach (var exifPhrase in searchExif)
-//                    {
-//                        CheckInExif(tmpResult, exif, exifPhrase, i);
-//                    }
-//                    resultPhotoIndex = Intersect(resultPhotoIndex, tmpResult);
-//                }
-//                return resultPhotoIndex;
-//            }
-//            else
-//                return null;
+            List<int> resultPhotoIndex = null;
+            List<int> tmpResult = new List<int>();
+            List<string> searchExif = GetExifFilters();
+            if (searchExif != null)
+            {
+                foreach (var exifPhrase in searchExif)
+                {
+                    await CheckInExif(tmpResult, exifPhrase);
+                    resultPhotoIndex = Intersect(resultPhotoIndex, tmpResult);
+                    tmpResult.Clear();
+                }
+                return resultPhotoIndex;
+            }
+            else
+                return null;
 
             return null;
         }
 
-        private void CheckInExif(List<int> tmpResult, ExifMetadata exif, string exifPhrase, int i)
+        private async Task ReadMetadata(string path, ObservableCollection<MetadataExtractor.Tag> exif)
         {
-//            if (exif.ExifIFD0 != null)
-//            {
-//                foreach (var tag in exif.ExifIFD0)
-//                {
-//                    if ((!string.IsNullOrEmpty(tag.Name) && tag.Name.ToLower().Contains(exifPhrase.ToLower())) ||
-//                        (!string.IsNullOrEmpty(tag.Description) && tag.Description.ToLower().Contains(exifPhrase.ToLower())))
-//                        tmpResult.Add(i);
-//                }
-//            }
-//
-//            if(exif.ExifSubIFD != null)
-//            {
-//                foreach (var tag in exif.ExifSubIFD)
-//                {
-//                    if ((!string.IsNullOrEmpty(tag.Name) && tag.Name.ToLower().Contains(exifPhrase.ToLower())) ||
-//                        (!string.IsNullOrEmpty(tag.Description) && tag.Description.ToLower().Contains(exifPhrase.ToLower())))
-//                        tmpResult.Add(i);
-//                }
-//            }
+            using (var client = new HttpClient())
+            using (var response = await client.GetAsync(path))
+            using (var content = response.Content)
+            using (var stream = await content.ReadAsStreamAsync())
+            {
+
+                try
+                {
+                    ObservableCollection<MetadataExtractor.Tag> ExifList = new ExifMetadata(stream).Exif;
+                    //ExifList.Remove(ExifList.Single(i => i.Type == 700));
+                    //ExifList.Remove(ExifList.Single(i => i.Type == 36864));
+                    if (ExifList != null)
+                    {
+                        foreach (var ex in ExifList)
+                        {
+                            exif.Add(ex);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                }
+            }
         }
 
 
-        private void ShowResults()
+        private async Task CheckInExif(List<int> tmpResult, string exifPhrase)
+        {
+            for (int i = 0; i < Photos.Count; i++)
+            {
+                ObservableCollection<MetadataExtractor.Tag> exif = new ObservableCollection<MetadataExtractor.Tag>();
+                await ReadMetadata(Photos[i].Url, exif);
+                if (exif != null)
+                {
+                    foreach (var tag in exif)
+                    {
+                        if ((!string.IsNullOrEmpty(tag.Name) && tag.Name.ToLower().Contains(exifPhrase.ToLower())) ||
+                            (!string.IsNullOrEmpty(tag.Description) && tag.Description.ToLower().Contains(exifPhrase.ToLower())))
+                        {
+                            tmpResult.Add(i);
+                            break;
+                        }
+                    }
+                }
+            }
+
+
+        }
+
+
+        private async void ShowResults()
         {
             PhotosResult.Clear();
-            List<int> photoIndexes = commonPart();
+            List<int> photoIndexes = await commonPart();
             if (photoIndexes != null)
             {
                 foreach (var photoIndex in photoIndexes)
@@ -522,12 +571,12 @@ namespace BD_client.ViewModels
             }
         }
 
-        private List<int> commonPart()
+        private async Task<List<int>> commonPart()
         {
-            List<int> allPhotoIndexCategories = GetAllPhotoIndexCategories();
+            List<int> allPhotoIndexCategories = await GetAllPhotoIndexCategories();
             List<int> allPhotoIndexTags = GetAllPhotoIndexTags();
             List<int> allPhotoIndexDescription = GetAllPhotoIndexDescription();
-            List<int> allPhotoIndexExif = GetAllPhotoIndexExif();
+            List<int> allPhotoIndexExif = await GetAllPhotoIndexExif();
             List<int> result = null;
 
             result = Intersect(allPhotoIndexCategories, allPhotoIndexTags);
@@ -638,6 +687,212 @@ namespace BD_client.ViewModels
             MainWindow.MainVM.Page = "MyPhotosPage.xaml";
             MainWindow.MainVM.SelectedIndex = -1;
         }
+
+        public void Preview(int selectedIndex)
+        {
+            new PhotoDetailsWindow(PhotosResult, selectedIndex).Show();
+        }
+
+        public async void ArchivePhoto(List<Photo> photos)
+        {
+            bool errorOccurred = false;
+            var progressBar = await dialogCoordinator.ShowProgressAsync(this, "Archiving", "Starting archiving");
+
+            for (int i = 0; i < photos.Count; i++)
+            {
+                Photo photo = photos[i];
+
+                progressBar.SetTitle($"Archiving {i + 1} of {photos.Count}");
+                progressBar.SetMessage($"Archiving {photo.Name}");
+                progressBar.SetProgress((double)(i + 1) / photos.Count);
+
+                photo.PhotoState = PhotoState.ARCHIVED;
+                IRestResponse response = await new Request($"/photos/{photo.Id}").DoPut(photo);
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    errorOccurred = true;
+                }
+            }
+
+            await progressBar.CloseAsync();
+
+
+            if (errorOccurred)
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Oooppss",
+                    "Something went wrong. Try again!");
+            }
+            else
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Success", "All photos archived");
+
+            }
+        }
+
+        public async void RemovePhotos(List<Photo> photos)
+        {
+            var confirm =
+                await dialogCoordinator.ShowMessageAsync(this, "Are you sure?",
+                    $"Are you sure that to delete {photos.Count}", MessageDialogStyle.AffirmativeAndNegative,
+                    new MetroDialogSettings
+                    {
+                        AffirmativeButtonText = "OK",
+                        NegativeButtonText = "CANCEL",
+                        AnimateHide = true,
+                        AnimateShow = true,
+                    });
+
+            if (confirm == MessageDialogResult.Negative)
+            {
+                return;
+            }
+
+            bool errorOccurred = false;
+            var progressBar = await dialogCoordinator.ShowProgressAsync(this, "Deleting", "Starting deleting");
+
+
+            for (int i = 0; i < photos.Count; i++)
+            {
+                Photo photo = photos[i];
+
+                progressBar.SetTitle($"Deleting {i + 1} of {photos.Count}");
+                progressBar.SetMessage($"Deleting {photo.Name}");
+                progressBar.SetProgress((double)(i + 1) / photos.Count);
+
+                IRestResponse response = await new Request($"/photos/{photo.Id}").DoDelete();
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    errorOccurred = true;
+                }
+            }
+
+            await progressBar.CloseAsync();
+
+            if (errorOccurred)
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Oooppss",
+                    "Something went wrong. Try again!");
+            }
+            else
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Success", "All photos deleted");
+
+            }
+        }
+
+        public async void ShareDialog(List<Photo> photos)
+        {
+            var customDialog = new CustomDialog() { Title = "Select share type" };
+
+            var dataContext = new ShareDialog();
+            dataContext.SetMessage($"You can share {photos.Count} photos via e-mail and make it public");
+
+
+            ShareDialogTemplate template = new ShareDialogTemplate(
+                    instance =>
+                    {
+                        this.Share(photos, dataContext);
+                        dialogCoordinator.HideMetroDialogAsync(this, customDialog);
+                    },
+                    instance => { dialogCoordinator.HideMetroDialogAsync(this, customDialog); })
+            { DataContext = dataContext };
+
+            customDialog.Content = template;
+
+            await dialogCoordinator.ShowMetroDialogAsync(this, customDialog);
+        }
+
+        public async void Share(List<Photo> photos, Dialogs.Share.ShareDialog dataContext)
+        {
+            bool errorOccurred = false;
+            foreach (var photo in photos)
+            {
+                if (dataContext.Email != null)
+                {
+                    Request request = new Request("/photos/" + photo.Id + "/shares");
+                    var values = new { photoId = photo.Id.ToString(), userEmail = dataContext.Email };
+                    //request.AddParameter("photoId ", photo.Id.ToString());
+                    //request.AddParameter("userEmail", dataContext.Email);
+
+                    IRestResponse response = await request.DoPost(values);
+
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        errorOccurred = true;
+                    }
+                }
+                if (dataContext.MakePublic)
+                {
+                    photo.ShareState = PhotoVisibility.PUBLIC;
+
+                    IRestResponse response = await new Request($"/photos/{photo.Id}").DoPut(photo);
+
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        errorOccurred = true;
+                    }
+                }
+            }
+
+            if (errorOccurred)
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Oooppss", "Something went wrong. Try again!");
+            }
+            else
+            {
+                await dialogCoordinator.ShowMessageAsync(this, "Success", "All photos updated");
+            }
+        }
+
+        public async void Download(List<Photo> photos)
+        {
+            bool errorOccurred = false;
+
+            var dialog = new FolderBrowserDialog();
+            var progressBar =
+                await dialogCoordinator.ShowProgressAsync(this, "Downloading", "Starting downloading");
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                for (int i = 0; i < photos.Count; i++)
+                {
+                    Photo photo = photos[i];
+                    bool status = await new Request(photo.Url).Download(dialog.SelectedPath, photo.Name,
+                        Path.GetExtension(photo.Path));
+
+
+                    progressBar.SetTitle($"Downloading {i + 1} of {photos.Count}");
+                    progressBar.SetMessage($"Downloading {photo.Name}");
+                    progressBar.SetProgress((double)(i + 1) / photos.Count);
+
+                    if (!status)
+                    {
+                        errorOccurred = true;
+                    }
+                }
+
+                await progressBar.CloseAsync();
+
+                if (errorOccurred)
+                {
+                    await dialogCoordinator.ShowMessageAsync(this, "Oooppss",
+                        "Something went wrong. Try again!");
+                }
+                else
+                {
+                    await dialogCoordinator.ShowMessageAsync(this, "Success", "All photos downloaded");
+                }
+            }
+            else
+            {
+                await progressBar.CloseAsync();
+            }
+        }
+
+
+
 
         private void AddCategoryFilter()
         {

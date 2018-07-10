@@ -15,6 +15,7 @@ using BD_client.Enums;
 using BD_client.Windows;
 using Newtonsoft.Json;
 using RestSharp;
+using BD_client.Pages;
 
 namespace BD_client.ViewModels
 {
@@ -202,6 +203,14 @@ namespace BD_client.ViewModels
             IRestResponse response = await new Request($"/users/{userId}/photos").DoGet();
 
             this.Photos = JsonConvert.DeserializeObject<ObservableCollection<Photo>>(response.Content);
+
+            if (MainWindow.MainVM.Photos != null && MainWindow.MainVM.Photos.Count != 0)
+                MainWindow.MainVM.Photos.Clear();
+            foreach (var photo in Photos)
+            {
+                MainWindow.MainVM.Photos.Add(photo);
+            }
+           
         }
 
         public async void ShareDialog(List<Photo> photos)
