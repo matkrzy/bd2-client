@@ -15,7 +15,7 @@ using BD_client.Enums;
 
 namespace BD_client.Pages
 {
-    /// <summary>
+    /// <summaryPhotos
     /// Interaction logic for CategoriesPage.xaml
     /// </summary>
     public partial class CategoriesPage : Page
@@ -24,15 +24,19 @@ namespace BD_client.Pages
         /// True gdy ma wyszukiwać zdjęcia będące w każdej z zaznaczonych kategorii, False gdy w jakiejkolwiek z zaznaczonych kategorii
         /// </summary>
         private bool All;
+
         /// <summary>
         /// Lista Id zaznaczonych kategorii
         /// </summary>
         public List<int> SelectedCategoriesIds { get; set; }
+
         /// <summary>
         /// ViewModel, DataContext strony
         /// </summary>
         private CategoriesPageViewModel ViewModel;
+
         private CategoryViewModel CategoryToMove;
+
         /// <summary>
         /// Konstruktor
         /// </summary>
@@ -64,7 +68,8 @@ namespace BD_client.Pages
             PasteCategoryContextMenuItem.IsEnabled = false;
 
             ViewModel = new CategoriesPageViewModel();
-            ViewModel.RootCategories = new NotifyTaskCompletion<ObservableCollection<CategoryViewModel>>(GetUsersRootCategoryViewModels());
+            ViewModel.RootCategories =
+                new NotifyTaskCompletion<ObservableCollection<CategoryViewModel>>(GetUsersRootCategoryViewModels());
             DataContext = ViewModel;
         }
 
@@ -94,7 +99,7 @@ namespace BD_client.Pages
             if (children != null)
             {
                 //TODO: jak Michal poprawi to usunąć parentId z konstruktora
-                var childrenViewModels = children?.Select(x => new CategoryViewModel(x) { ParentId = selectedNode.Id });
+                var childrenViewModels = children?.Select(x => new CategoryViewModel(x) {ParentId = selectedNode.Id});
                 selectedNode.Children.Clear();
                 selectedNode.Children.AddRange(childrenViewModels);
             }
@@ -110,11 +115,10 @@ namespace BD_client.Pages
             {
                 AddToSelectedCategories(selectedNode);
             }
-            else
-            {
-                await ReloadCategoryPhotos(selectedNode.Id);
-            }
+
+            await ReloadCategoryPhotos(selectedNode.Id);
         }
+
         /// <summary>
         /// Triggerowane dla kategorii nie mających potomków
         /// </summary>
@@ -127,6 +131,7 @@ namespace BD_client.Pages
                 AddToSelectedCategories(categoryViewModel);
             }
         }
+
         /// <summary>
         /// Dodaje zaznaczoną kategorię do listy wybranych kategorii
         /// </summary>
@@ -139,6 +144,7 @@ namespace BD_client.Pages
                 SelectedCategories.Items.Add(node.Name);
             }
         }
+
         /// <summary>
         /// Zmień tryb wyszukiwania pomiędzy All i Any
         /// </summary>
@@ -152,19 +158,23 @@ namespace BD_client.Pages
             {
                 AllButton.Content = "All";
             }
+
             All = !All;
         }
+
         /// <summary>
         /// Wyszukaj zdjęcia należące do zaznaczonych kategorii
         /// </summary>
         private async Task OnSearchButtonClick(object sender, RoutedEventArgs e)
         {
-            var photosToDisplay = await PhotoService.GetUsersPhotosByCategoriesIds(All, SelectedCategoriesIds.ToArray());
+            var photosToDisplay =
+                await PhotoService.GetUsersPhotosByCategoriesIds(All, SelectedCategoriesIds.ToArray());
             ViewModel.Photos.Photos.Clear();
             if (photosToDisplay != null)
             {
                 ViewModel.Photos.Photos.AddRange(photosToDisplay);
             }
+
             ViewModel.Photos.Update();
         }
 
@@ -173,6 +183,7 @@ namespace BD_client.Pages
             var allPhotos = ViewModel.Photos;
             new PhotoDetailsWindow(allPhotos, CategoryPhotosListBox.SelectedIndex).Show();
         }
+
         /// <summary>
         /// Dodaj kategorię jako dziecko aktualnie zaznaczonej kategorii bądź jako root jeżeli żadna z kategorii nie jest zaznaczona
         /// </summary>
@@ -181,6 +192,7 @@ namespace BD_client.Pages
             var selectedNode = Categories.SelectedItem as CategoryViewModel;
             await AddCategory(selectedNode);
         }
+
         private async Task OnRenameContextMenuButtonClick(object sender, RoutedEventArgs e)
         {
             var selectedNode = Categories.SelectedItem as CategoryViewModel;
@@ -200,12 +212,9 @@ namespace BD_client.Pages
                         await ReloadCategories();
                     }
                 }
-
             }
-
-
-
         }
+
         private async Task OnRemoveContextMenuButtonClick(object sender, RoutedEventArgs e)
         {
             var selectedNode = Categories.SelectedItem as CategoryViewModel;
@@ -251,7 +260,7 @@ namespace BD_client.Pages
                 var category = new Category
                 {
                     Id = CategoryToMove.Id,
-                    Name = CategoryToMove.Name    
+                    Name = CategoryToMove.Name
                 };
                 if (await CategoryService.EditCategory(category))
                 {
@@ -265,7 +274,6 @@ namespace BD_client.Pages
                 // dodanie nowej root kategorii
                 await AddCategory(null);
             }
-
         }
 
         private async Task AddCategory(CategoryViewModel selectedCategory)
@@ -307,8 +315,8 @@ namespace BD_client.Pages
                     var list = categories.Select(x => new CategoryViewModel(x)).ToList();
                     return new ObservableCollection<CategoryViewModel>(list);
                 }
-                return null;
 
+                return null;
             }
             catch (Exception e)
             {
@@ -333,6 +341,7 @@ namespace BD_client.Pages
                             ///TODO: wyświetlić komunikat o niepowodzeniu
                         }
                     }
+
                     //Przeładowanie zdjęć w kategorii
                     await ReloadCategoryPhotos(selectedNode.Id);
                 }
@@ -345,8 +354,9 @@ namespace BD_client.Pages
             ViewModel.Photos.Photos.Clear();
             if (photosToDisplay != null)
             {
-                ViewModel.Photos.Photos.AddRange(photosToDisplay);
+                ViewModel.Photos.Photos = photosToDisplay;
             }
+
             ViewModel.Photos.Update();
             ChangeMainVMPhotosList();
         }
@@ -366,9 +376,11 @@ namespace BD_client.Pages
                         ///TODO: wyświetlić komunikat o niepowodzeniu
                     }
                 }
+
                 await ReloadCategoryPhotos(selectedCategory.Id);
             }
         }
+
         private async Task OnArchivePhotosContextMenuItemClick(object sender, RoutedEventArgs e)
         {
             foreach (var item in CategoryPhotosListBox.SelectedItems)
@@ -376,44 +388,52 @@ namespace BD_client.Pages
                 await ArchivePhoto((MainWindow.MainVM.Photos[CategoryPhotosListBox.Items.IndexOf(item)].Id));
             }
         }
+
         private async Task ArchivePhoto(int id)
         {
             var res = await PhotoService.ChangePhotoState(PhotoState.ARCHIVED, id);
         }
+
         private void OnEditPhoto(object sender, RoutedEventArgs e)
         {
             var list = new List<int>();
             foreach (var item in CategoryPhotosListBox.SelectedItems)
             {
-                list.Add(CategoryPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
+                list.Add(CategoryPhotosListBox.Items.IndexOf(item)); // Add selected indexes to the List<int>
             }
+
 //            MainWindow.MainVM.List = list;
             MainWindow.MainVM.SelectedIndex = 1;
             MainWindow.MainVM.Page = "Pages/EditPhotoPage.xaml";
         }
+
         private void OnDownloadPhoto(object sender, RoutedEventArgs e)
         {
             var list = new List<int>();
 
             foreach (var item in CategoryPhotosListBox.SelectedItems)
             {
-                list.Add(CategoryPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
+                list.Add(CategoryPhotosListBox.Items.IndexOf(item)); // Add selected indexes to the List<int>
             }
+
 //            MainWindow.MainVM.List = list;
 //            MainWindow.MainVM.SelectedIndex = 3;
 //            MainWindow.MainVM.Page = "Pages/DownloadPage.xaml";
         }
+
         private void OnRemovePhoto(object sender, RoutedEventArgs e)
         {
             var list = new List<int>();
             foreach (var item in CategoryPhotosListBox.SelectedItems)
             {
-                list.Add(CategoryPhotosListBox.Items.IndexOf(item));// Add selected indexes to the List<int>
+                list.Add(CategoryPhotosListBox.Items.IndexOf(item)); // Add selected indexes to the List<int>
             }
+
 //            MainWindow.MainVM.List = list;
             MainWindow.MainVM.SelectedIndex = 4;
             MainWindow.MainVM.Page = "Pages/RemovePhotoPage.xaml";
         }
+
         private void OnSharePhoto(object sender, RoutedEventArgs e)
         {
 //            var list = new List<int>();
@@ -425,9 +445,10 @@ namespace BD_client.Pages
 //            MainWindow.MainVM.SelectedIndex = 5;
 //            MainWindow.MainVM.Page = "Pages/SharePage.xaml";
         }
+
         private void ChangeMainVMPhotosList()
-        {       
-//            MainWindow.MainVM.Photos = ViewModel.Photos.ToList();
+        {
+            MainWindow.MainVM.Photos = ViewModel.Photos.ToList();
         }
     }
 }

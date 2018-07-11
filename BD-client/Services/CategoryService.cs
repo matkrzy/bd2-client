@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BD_client.Dto;
 using BD_client.Services.Base;
+using System.Configuration;
 
 namespace BD_client.Services
 {
@@ -12,7 +13,7 @@ namespace BD_client.Services
     {
         public static async Task<List<Category>> GetUsersRootCategories()
         {
-            return await BaseService.GetAsync<List<Category>>("api/v1/categories");
+            return await BaseService.GetAsync<List<Category>>($"/users/{ConfigurationManager.AppSettings["Id"]}/categories");
         }
 
         public static async Task<List<Category>> GetCategoryChildren(int parentId)
@@ -22,17 +23,17 @@ namespace BD_client.Services
 
         public static async Task<bool> AddCategory(Category category)
         {
-            return await BaseService.PostAsync("api/v1/categories", category);
+            return await BaseService.PostAsync("/categories", category);
         }
 
         public static async Task<bool> DeleteCategory(int categoryId)
         {
-            return await BaseService.DeleteAsync($"api/v1/categories/{categoryId}");
+            return await BaseService.DeleteAsync($"/categories/${categoryId}");
         }
 
         public static async Task<bool> EditCategory(Category category)
         {
-            return await BaseService.PutAsync($"api/v1/categories/{category.Id}", category);
+            return await BaseService.PutAsync($"/categories/{category.Id}", category);
         }
 
         public static async Task<bool> AssignPhotoToCategory(int categoryId, int photoId)

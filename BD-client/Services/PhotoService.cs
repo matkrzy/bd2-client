@@ -24,7 +24,7 @@ namespace BD_client.Services
         {
             var categories = string.Join(",", categoriesIds);
             var mode = all ? "all" : "any";
-            var path = $"api/v1/photos/categories/{mode}/{categories}";
+            var path = $"/photos?categoryIds={categories}";
             return await BaseService.GetAsync<List<Photo>>(path);
         }
 

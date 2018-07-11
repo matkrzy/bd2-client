@@ -13,10 +13,8 @@ namespace BD_client.ViewModels
 
         public CategoriesPageViewModel()
         {
-            var path = System.IO.Directory.GetCurrentDirectory() + @"\..\..\tmp\own";
-            Photos = new PhotoCollection(path);
            
-        }
+          }
 
 
 
