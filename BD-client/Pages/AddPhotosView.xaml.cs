@@ -23,8 +23,8 @@ namespace BD_client.Pages
     /// </summary>
     public partial class AddPhotosPage : Page
     {
-
         AddPhotosPageViewModel vm = new AddPhotosPageViewModel(DialogCoordinator.Instance);
+
         public AddPhotosPage()
         {
             InitializeComponent();

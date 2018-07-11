@@ -34,6 +34,11 @@
           <e p="ArrayStringToStringConverter.cs" t="Include" />
         </e>
         <e p="Dialogs" t="Include">
+          <e p="Categories" t="Include">
+            <e p="CategoriesDialog.cs" t="Include" />
+            <e p="CategoriesDialogTemplate.xaml" t="Include" />
+            <e p="CategoriesDialogTemplate.xaml.cs" t="Include" />
+          </e>
           <e p="CustomDialog.cs" t="Include" />
           <e p="Share" t="Include">
             <e p="ShareDialog.cs" t="Include" />

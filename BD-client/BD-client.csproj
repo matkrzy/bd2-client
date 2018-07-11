@@ -101,6 +101,10 @@
     <Compile Include="Common\PasswordBoxAssistant.cs" />
     <Compile Include="Converters\ArrayStringToStringConverter.cs" />
     <Compile Include="Dialogs\CustomDialog.cs" />
+    <Compile Include="Dialogs\Categories\CategoriesDialog.cs" />
+    <Compile Include="Dialogs\Categories\CategoriesDialogTemplate.xaml.cs">
+      <DependentUpon>CategoriesDialogTemplate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\Share\ShareDialog.cs" />
     <Compile Include="Dialogs\Share\ShareDialogTemplate.xaml.cs">
       <DependentUpon>ShareDialogTemplate.xaml</DependentUpon>
@@ -180,6 +184,10 @@
     <Compile Include="Windows\SelectPhotosModalWindow.xaml.cs">
       <DependentUpon>SelectPhotosModalWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Dialogs\Categories\CategoriesDialogTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Dialogs\Share\ShareDialogTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

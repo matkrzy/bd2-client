@@ -8,6 +8,8 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using BD_client.Api.Core;
+using BD_client.Dialogs.Categories;
+using BD_client.Dialogs.Share;
 using BD_client.Dto;
 using BD_client.Pages;
 using BD_client.Services;
@@ -29,6 +31,7 @@ namespace BD_client.ViewModels
         private string _tags;
         private int _selectedCategory;
         public bool IsChecked { get; set; }
+        public ICommand SetCategoriesCmd { get; set; }
 
         public EditPhotoPageViewModel(IDialogCoordinator instance)
         {
@@ -37,6 +40,7 @@ namespace BD_client.ViewModels
             Categories = new ObservableCollection<Dto.Category>();
             CancelCmd = new RelayCommand(x => Cancel());
             EditCmd = new RelayCommand(x => Edit());
+            SetCategoriesCmd = new RelayCommand(x => SetCategories());
         }
 
         private void Cancel()
@@ -134,6 +138,51 @@ namespace BD_client.ViewModels
             field = value;
             OnPropertyChanged(propertyName);
             return true;
+        }
+
+        public async void SetCategories()
+        {
+            var customDialog = new CustomDialog() {Title = "Select share type"};
+
+            var dataContext = new CategoriesDialog();
+
+            CategoriesDialogTemplate template = new CategoriesDialogTemplate(
+                    instance =>
+                    {
+                        //close action
+                        dialogCoordinator.HideMetroDialogAsync(this, customDialog);
+                    },
+                    instance =>
+                    {
+                        //open input dialog
+                        this.AddCategoryInput(dataContext);
+                    })
+                {DataContext = dataContext};
+
+            customDialog.Content = template;
+
+
+            await dialogCoordinator.ShowMetroDialogAsync(this, customDialog);
+        }
+
+        private async void AddCategoryInput(CategoriesDialog dataContext)
+        {
+            var result = await dialogCoordinator.ShowInputAsync(this, "Add category", "Type category name");
+            if (result != null)
+            {
+                Category category = new Category() {Name = result};
+                IRestResponse response = await new Request("/categories").DoPost(category);
+
+                if (response.StatusCode == HttpStatusCode.Created || response.StatusCode == HttpStatusCode.OK)
+                {
+                    await dialogCoordinator.ShowMessageAsync(this, "Category added", "Category added");
+                    dataContext.GetCategories();
+                }
+                else
+                {
+                    await dialogCoordinator.ShowMessageAsync(this, "Ooopppss", "Please try again");
+                }
+            }
         }
 
         virtual protected void OnPropertyChanged(string propName)

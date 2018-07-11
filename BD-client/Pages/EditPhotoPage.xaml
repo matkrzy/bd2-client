@@ -57,6 +57,19 @@
                 <DataGridTextColumn Header="Description" Binding="{Binding Description}" />
                 <DataGridTextColumn Header="Tags"
                                     Binding="{Binding Tags,Converter={StaticResource ArrayStringToStringConverter}}" />
+                <DataGridTemplateColumn Header="Categories">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="Hello">
+                                <TextBlock.InputBindings>
+                                    <MouseBinding
+                                        Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.SetCategoriesCmd}"
+                                        MouseAction="LeftClick" />
+                                </TextBlock.InputBindings>
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
 

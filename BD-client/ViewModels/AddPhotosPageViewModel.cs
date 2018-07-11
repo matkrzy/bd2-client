@@ -3,13 +3,19 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Configuration;
 using System.Linq;
 using System.Windows.Input;
 using MahApps.Metro.Controls.Dialogs;
 using System.Net;
+using System.Threading.Tasks;
+using System.Windows.Data;
 using BD_client.Api.Core;
+using BD_client.Dialogs.Categories;
+using BD_client.Dialogs.Share;
 using BD_client.Dto;
 using BD_client.Pages;
+using Newtonsoft.Json;
 using RestSharp;
 
 namespace BD_client.ViewModels
@@ -23,6 +29,7 @@ namespace BD_client.ViewModels
         public ICommand AddCmd { get; set; }
         public ICommand CancelCmd { get; set; }
         public ICommand RemovePhotoCmd { get; set; }
+        public ICommand SetCategoriesCmd { get; set; }
         private OpenFileDialog openFileDialog;
         private IDialogCoordinator dialogCoordinator;
         private int _dataGridSelectedIndex;
@@ -35,12 +42,59 @@ namespace BD_client.ViewModels
             CancelCmd = new RelayCommand(x => Cancel());
             RemovePhotoCmd = new RelayCommand(x => RemovePhoto());
             AddCmd = new RelayCommand(x => Add());
+            SetCategoriesCmd = new RelayCommand(x => SetCategories());
             openFileDialog = new OpenFileDialog
             {
                 Filter = "Image files (*.jpg, *.jpeg, *.png) | *.jpg; *.jpeg; *.png",
                 Multiselect = true
             };
             Photos = new ObservableCollection<Photo>();
+        }
+
+
+        public async void SetCategories()
+        {
+            var customDialog = new CustomDialog() {Title = "Select share type"};
+
+            var dataContext = new CategoriesDialog();
+
+            CategoriesDialogTemplate template = new CategoriesDialogTemplate(
+                    instance =>
+                    {
+                        //close action
+                        dialogCoordinator.HideMetroDialogAsync(this, customDialog);
+                    },
+                    instance =>
+                    {
+                        //open input dialog
+                        this.AddCategoryInput(dataContext);
+                    })
+                {DataContext = dataContext};
+
+            customDialog.Content = template;
+
+
+            await dialogCoordinator.ShowMetroDialogAsync(this, customDialog);
+        }
+
+        private async void AddCategoryInput(CategoriesDialog dataContext)
+        {
+            var result = await dialogCoordinator.ShowInputAsync(this, "Add category", "Type category name");
+            if (result != null)
+            {
+                Category category = new Category() {Name = result};
+                IRestResponse response = await new Request("/categories").DoPost(category);
+
+                if (response.StatusCode == HttpStatusCode.Created || response.StatusCode == HttpStatusCode.OK)
+                {
+                    await dialogCoordinator.ShowMessageAsync(this, "Category added", "Category added");
+                    dataContext.GetCategories();
+                }
+                else
+                {
+                    await dialogCoordinator.ShowMessageAsync(this, "Ooopppss", "Please try again");
+                }
+            }
         }
 
         private void RemovePhoto()
@@ -59,7 +113,8 @@ namespace BD_client.ViewModels
                     Photos.Add(new Photo()
                     {
                         Path = openFileDialog.FileNames[i],
-                        Name = openFileDialog.SafeFileNames[i]
+                        Name = openFileDialog.SafeFileNames[i],
+                        Tags = new List<string>()
                     });
                 }
             }
@@ -99,7 +154,13 @@ namespace BD_client.ViewModels
             {
                 foreach (string name in failedPhotos)
                 {
-                    Photos.Remove(Photos.Single(i => i.Name != name));
+                    try
+                    {
+                        Photos.Remove(Photos.Single(i => i.Name != name));
+                    }
+                    catch (Exception)
+                    {
+                    }
                 }
 
                 await dialogCoordinator.ShowMessageAsync(this, "Oooppss", "Something went wrong. Try again!");
