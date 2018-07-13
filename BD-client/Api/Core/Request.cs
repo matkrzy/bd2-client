@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Net;
@@ -60,6 +61,14 @@ namespace BD_client.Api.Core
         public void AddParameter(String name, int value)
         {
             this.request.AddParameter(name, value);
+        }
+
+        public void AddParameter(String name, List<string> values)
+        {
+            foreach (string value in values)
+            {
+                this.request.AddParameter(name, value);
+            }
         }
 
         public void AddFile(string path)
@@ -131,11 +140,8 @@ namespace BD_client.Api.Core
         {
             try
             {
-                await Task.Run(() =>
-                {
-                    client.DownloadData(request,true).SaveAs($"{path}/{name}{extension}");
-                });
-              
+                await Task.Run(() => { client.DownloadData(request, true).SaveAs($"{path}/{name}{extension}"); });
+
                 return true;
             }
             catch (Exception e)

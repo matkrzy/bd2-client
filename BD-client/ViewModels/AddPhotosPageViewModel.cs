@@ -138,6 +138,7 @@ namespace BD_client.ViewModels
                 request.AddFile(photo.Path);
                 request.AddParameter("description", photo.Description);
                 request.AddParameter("name", photo.Name);
+                request.AddParameter("tags",photo.Tags);
                 IRestResponse response = await request.DoPost();
 
                 if (response.StatusCode != HttpStatusCode.Created)
