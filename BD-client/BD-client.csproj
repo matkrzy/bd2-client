@@ -109,6 +109,7 @@
     <Compile Include="Dialogs\Share\ShareDialogTemplate.xaml.cs">
       <DependentUpon>ShareDialogTemplate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\GroupedCategory.cs" />
     <Compile Include="Utils\ExifMetadata.cs" />
     <Compile Include="Models\PhotoCollection.cs" />
     <Compile Include="Enums\PhotoState.cs" />

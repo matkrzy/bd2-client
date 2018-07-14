@@ -1,20 +1,21 @@
 ﻿using System.Collections.Generic;
+using BD_client.Dto;
 
-namespace BD_client.ViewModels
+namespace BD_client.Models
 {
-    public class CategoryViewModel
+    public class GroupedCategory
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public int? ParentId { get; set; }
 
-        public List<CategoryViewModel> Children { get; set; }
+        public List<GroupedCategory> Categories { get; set; }
 
-        public CategoryViewModel(Dto.Category category)
+        public GroupedCategory(Category category)
         {
-            Id = category.Id;
+            Id = (int) category.Id;
             Name = category.Name;
-            Children = new List<CategoryViewModel>();
+            Categories = new List<GroupedCategory>();
             ParentId = category.ParentId;
         }
     }

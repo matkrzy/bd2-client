@@ -61,6 +61,9 @@ namespace BD_client.Dto
         [JsonProperty("likeIds")]
         public List<int> LikeIds { get; set; }
 
+        [Browsable(false)]
+        [JsonProperty("user")]
+        public User User { get; set; }
 
         public Photo()
         {

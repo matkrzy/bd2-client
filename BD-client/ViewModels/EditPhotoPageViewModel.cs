@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Configuration;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -142,7 +143,7 @@ namespace BD_client.ViewModels
 
         public async void SetCategories()
         {
-            var customDialog = new CustomDialog() {Title = "Select share type"};
+            var customDialog = new CustomDialog() {Title = "Select categories"};
 
             var dataContext = new CategoriesDialog();
 
@@ -170,7 +171,8 @@ namespace BD_client.ViewModels
             var result = await dialogCoordinator.ShowInputAsync(this, "Add category", "Type category name");
             if (result != null)
             {
-                Category category = new Category() {Name = result};
+                int userId = Int32.Parse(ConfigurationManager.AppSettings["Id"]);
+                Category category = new Category() {Name = result, UserId = userId};
                 IRestResponse response = await new Request("/categories").DoPost(category);
 
                 if (response.StatusCode == HttpStatusCode.Created || response.StatusCode == HttpStatusCode.OK)

@@ -8,7 +8,7 @@ namespace BD_client.Dto
     {
         [Browsable(false)]
         [JsonProperty("id")]
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         [JsonProperty("name")]
         public string Name { get; set; }
@@ -19,7 +19,11 @@ namespace BD_client.Dto
 
         [Browsable(false)]
         [JsonProperty("creationDate")]
-        public DateTime CreationDate { get; set; }
+        public DateTime? CreationDate { get; set; }
+
+        [Browsable(false)]
+        [JsonProperty("userId")]
+        public int UserId { get; set; }
 
         public Category()
         {

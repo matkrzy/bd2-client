@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
@@ -7,9 +8,11 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using System.Windows.Input;
 using BD_client.Api.Core;
 using BD_client.Dto;
+using BD_client.Models;
 using BD_client.ViewModels;
 using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
@@ -21,6 +24,7 @@ namespace BD_client.Dialogs.Share
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public List<Category> Categories { get; set; }
+        public List<GroupedCategory> GroupedCategories { get; set; }
 
 
         public CategoriesDialog()
@@ -35,6 +39,7 @@ namespace BD_client.Dialogs.Share
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 Categories = JsonConvert.DeserializeObject<List<Category>>(response.Content);
+                //TODO
             }
         }
 

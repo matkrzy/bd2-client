@@ -6,18 +6,18 @@
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="100" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <TreeView Grid.Row="0" Name="treeView" ItemsSource="{Binding}">
+        <TreeView Grid.Row="0" Name="treeView"  ItemsSource="{Binding CategoriesByParent.Results}">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="TreeViewItem">
                     <Setter Property="IsExpanded" Value="True" />
                 </Style>
             </TreeView.ItemContainerStyle>
             <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                <HierarchicalDataTemplate ItemsSource="{Binding}">
                     <CheckBox IsChecked="{Binding Checked}">
                         <TextBlock Text="{Binding Name}" />
                     </CheckBox>

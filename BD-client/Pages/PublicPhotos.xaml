@@ -135,9 +135,14 @@
                                         </TextBlock>
                                         <TextBlock
                                             Grid.Column="1"
-                                            Text="{Binding UserId}"
                                             HorizontalAlignment="Left"
-                                            VerticalAlignment="Center" />
+                                            VerticalAlignment="Center">
+                                            <TextBlock>
+                                                <Run Text="{Binding User.FirstName}" />
+                                                <Run Text=" " />
+                                                <Run Text="{Binding User.LastName}" />
+                                            </TextBlock>
+                                        </TextBlock>
 
                                     </Grid>
 
@@ -266,9 +271,14 @@
                                         </TextBlock>
                                         <TextBlock
                                             Grid.Column="1"
-                                            Text="{Binding UserId}"
                                             HorizontalAlignment="Left"
-                                            VerticalAlignment="Center" />
+                                            VerticalAlignment="Center">
+                                            <TextBlock>
+                                                <Run Text="{Binding User.FirstName}"/>
+                                                <Run Text=" "/>
+                                                <Run Text="{Binding User.LastName}"/>
+                                            </TextBlock>
+                                        </TextBlock>
 
                                     </Grid>
 
@@ -397,9 +407,14 @@
                                         </TextBlock>
                                         <TextBlock
                                             Grid.Column="1"
-                                            Text="{Binding UserId}"
                                             HorizontalAlignment="Left"
-                                            VerticalAlignment="Center" />
+                                            VerticalAlignment="Center">
+                                            <TextBlock>
+                                                <Run Text="{Binding User.FirstName}"/>
+                                                <Run Text=" "/>
+                                                <Run Text="{Binding User.LastName}"/>
+                                            </TextBlock>
+                                        </TextBlock>
 
                                     </Grid>
 
