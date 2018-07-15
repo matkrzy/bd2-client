@@ -25,6 +25,7 @@
                     Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <converters:ArrayStringToStringConverter x:Key="ArrayStringToStringConverter" />
+            <converters:CategoriestToStringConverter x:Key="CategoriestToStringConverter" />
         </ResourceDictionary>
     </Page.Resources>
 
@@ -38,13 +39,15 @@
         <Button x:Name="cancelBtn" Content="Cancel" Height="50" Width="150"
                 Style="{StaticResource AccentedSquareButtonStyle}" Command="{Binding CancelCmd}" Margin="520,386,30,64" />
 
-        <DataGrid ItemsSource="{Binding Photos}" Margin="55,134,30,128"
-                  MaxColumnWidth="300"
-                  Grid.Row="0"
-                  Name="PhotosDataGrid"
-                  AutoGenerateColumns="False"
-                  Style="{StaticResource AzureDataGrid}"
-                  common:DataGridBehavior.UseBrowsableAttributeOnColumn="True">
+        <DataGrid
+            ItemsSource="{Binding Photos,UpdateSourceTrigger=PropertyChanged}"
+            Margin="55,134,30,128"
+            MaxColumnWidth="300"
+            Grid.Row="0"
+            Name="PhotosDataGrid"
+            AutoGenerateColumns="False"
+            Style="{StaticResource AzureDataGrid}"
+            common:DataGridBehavior.UseBrowsableAttributeOnColumn="True">
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Remove" Command="{Binding RemovePhotoCmd}" />
@@ -58,9 +61,13 @@
                 <DataGridTemplateColumn Header="Categories">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="Hello">
+                            <TextBlock
+                                Text="{Binding Categories,Converter={StaticResource CategoriestToStringConverter}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                                 <TextBlock.InputBindings>
-                                    <MouseBinding Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.SetCategoriesCmd}" MouseAction="LeftClick" />
+                                    <MouseBinding
+                                        Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.SetCategoriesCmd}"
+                                        CommandParameter="{Binding }"
+                                        MouseAction="LeftClick" />
                                 </TextBlock.InputBindings>
                             </TextBlock>
                         </DataTemplate>

@@ -100,6 +100,8 @@
     <Compile Include="Common\NotifyTaskCompletion.cs" />
     <Compile Include="Common\PasswordBoxAssistant.cs" />
     <Compile Include="Converters\ArrayStringToStringConverter.cs" />
+    <Compile Include="Converters\CategoriesToBoolConverter.cs" />
+    <Compile Include="Converters\CategoriestToStringConverter.cs" />
     <Compile Include="Dialogs\CustomDialog.cs" />
     <Compile Include="Dialogs\Categories\CategoriesDialog.cs" />
     <Compile Include="Dialogs\Categories\CategoriesDialogTemplate.xaml.cs">
@@ -110,6 +112,7 @@
       <DependentUpon>ShareDialogTemplate.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\GroupedCategory.cs" />
+    <Compile Include="Models\TreeItem.cs" />
     <Compile Include="Utils\ExifMetadata.cs" />
     <Compile Include="Models\PhotoCollection.cs" />
     <Compile Include="Enums\PhotoState.cs" />
@@ -159,6 +162,7 @@
     <Compile Include="Services\CategoryService.cs" />
     <Compile Include="Services\ImageService.cs" />
     <Compile Include="Services\PhotoService.cs" />
+    <Compile Include="Utils\TreeGenerator.cs" />
     <Compile Include="ViewModels\AddPhotosPageViewModel.cs" />
     <Compile Include="ViewModels\ArchivedPhotosPageViewModel.cs" />
     <Compile Include="ViewModels\CategoriesPageViewModel.cs" />

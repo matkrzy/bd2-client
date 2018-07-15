@@ -23,7 +23,17 @@ namespace BD_client.ViewModels
     class AddPhotosPageViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged = null;
-        public ObservableCollection<Photo> Photos { get; set; }
+        public ObservableCollection<Photo> _Photos { get; set; }
+
+        public ObservableCollection<Photo> Photos
+        {
+            get { return _Photos; }
+            set
+            {
+                _Photos = value;
+                OnPropertyChanged("Photos");
+            }
+        }
 
         public ICommand BrowseCmd { get; set; }
         public ICommand AddCmd { get; set; }
@@ -42,7 +52,7 @@ namespace BD_client.ViewModels
             CancelCmd = new RelayCommand(x => Cancel());
             RemovePhotoCmd = new RelayCommand(x => RemovePhoto());
             AddCmd = new RelayCommand(x => Add());
-            SetCategoriesCmd = new RelayCommand(x => SetCategories());
+            SetCategoriesCmd = new RelayCommand(SetCategories);
             openFileDialog = new OpenFileDialog
             {
                 Filter = "Image files (*.jpg, *.jpeg, *.png) | *.jpg; *.jpeg; *.png",
@@ -52,51 +62,24 @@ namespace BD_client.ViewModels
         }
 
 
-        public async void SetCategories()
+        public async void SetCategories(object param)
         {
-            var customDialog = new CustomDialog() { Title = "Select categories" };
+            Photo selectedPhoto = (Photo) param;
+            var customDialog = new CustomDialog() {Title = "Select categories"};
 
-            var dataContext = new CategoriesDialog();
+            var dataContext = new CategoriesDialog(DialogCoordinator.Instance, selectedPhoto);
 
             CategoriesDialogTemplate template = new CategoriesDialogTemplate(
                     instance =>
                     {
                         //close action
+                        Photos = new ObservableCollection<Photo>(this.Photos);
                         dialogCoordinator.HideMetroDialogAsync(this, customDialog);
-                    },
-                    instance =>
-                    {
-                        //open input dialog
-                        this.AddCategoryInput(dataContext);
                     })
                 {DataContext = dataContext};
 
             customDialog.Content = template;
-
-
             await dialogCoordinator.ShowMetroDialogAsync(this, customDialog);
-        }
-
-        private async void AddCategoryInput(CategoriesDialog dataContext)
-        {
-            var result = await dialogCoordinator.ShowInputAsync(this, "Add category", "Type category name");
-            if (result != null)
-            {
-                int userId = Int32.Parse(ConfigurationManager.AppSettings["Id"]);
-
-                Category category = new Category() {Name = result, UserId = userId};
-                IRestResponse response = await new Request("/categories").DoPost(category);
-
-                if (response.StatusCode == HttpStatusCode.Created || response.StatusCode == HttpStatusCode.OK)
-                {
-                    await dialogCoordinator.ShowMessageAsync(this, "Category added", "Category added");
-                    dataContext.GetCategories();
-                }
-                else
-                {
-                    await dialogCoordinator.ShowMessageAsync(this, "Ooopppss", "Please try again");
-                }
-            }
         }
 
         private void RemovePhoto()
@@ -116,7 +99,8 @@ namespace BD_client.ViewModels
                     {
                         Path = openFileDialog.FileNames[i],
                         Name = openFileDialog.SafeFileNames[i],
-                        Tags = new List<string>()
+                        Tags = new List<string>(),
+                        Categories = new List<Category>()
                     });
                 }
             }

@@ -3,37 +3,103 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls">
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:viewModels="clr-namespace:BD_client.ViewModels"
+             mah:DialogParticipation.Register="{Binding}"
+             xmlns:model="clr-namespace:BD_client.Models"
+             xmlns:converters="clr-namespace:BD_client.Converters">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converters:CategoriestToStringConverter x:Key="CategoriestToStringConverter" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="100" />
+            <RowDefinition Height="150" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <TreeView Grid.Row="0" Name="treeView"  ItemsSource="{Binding CategoriesByParent.Results}">
-            <TreeView.ItemContainerStyle>
-                <Style TargetType="TreeViewItem">
-                    <Setter Property="IsExpanded" Value="True" />
-                </Style>
-            </TreeView.ItemContainerStyle>
-            <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding}">
-                    <CheckBox IsChecked="{Binding Checked}">
-                        <TextBlock Text="{Binding Name}" />
-                    </CheckBox>
+
+
+        <TreeView x:Name="CategoriesTree" Grid.Column="0" Grid.Row="0"
+                  ItemsSource="{Binding GroupedCategories,UpdateSourceTrigger=PropertyChanged}">
+            <TreeView.Resources>
+                <HierarchicalDataTemplate
+                    DataType="{x:Type model:GroupedCategory}"
+                    ItemsSource="{Binding Categories,UpdateSourceTrigger=PropertyChanged}">
+                    <TextBlock
+                        Text="{Binding Name}">
+                        <TextBlock.InputBindings>
+                            <MouseBinding
+                                Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.AddCategoryToPhotoCmd}"
+                                CommandParameter="{Binding }"
+                                MouseAction="LeftDoubleClick" />
+                        </TextBlock.InputBindings>
+                    </TextBlock>
                 </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>
+            </TreeView.Resources>
+            <TreeView.ContextMenu>
+                <ContextMenu DataContext="{Binding PlacementTarget,RelativeSource={RelativeSource Self}}">
+                    <MenuItem Header="Add subcategory" Command="{Binding DataContext.AddSubcategoryCmd}"
+                              CommandParameter="{Binding }" />
+                    <MenuItem Header="Rename" Command="{Binding DataContext.RenameCmd}" CommandParameter="{Binding }" />
+                    <MenuItem Header="Remove" Command="{Binding DataContext.RemoveCmd}" CommandParameter="{Binding }" />
+                </ContextMenu>
+            </TreeView.ContextMenu>
         </TreeView>
 
-        <Button Grid.Row="1"
+
+        <HeaderedItemsControl Grid.Row="1" ItemsSource="{Binding selectedCategories}">
+            <HeaderedItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </HeaderedItemsControl.ItemsPanel>
+            <HeaderedItemsControl.Header>
+                <TextBlock Text="Tags: " />
+            </HeaderedItemsControl.Header>
+            <HeaderedItemsControl.Template>
+                <ControlTemplate TargetType="{x:Type HeaderedItemsControl}">
+                    <WrapPanel>
+                        <ContentPresenter
+                            ContentSource="Header"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                    </WrapPanel>
+                </ControlTemplate>
+            </HeaderedItemsControl.Template>
+            <HeaderedItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock
+                            Margin="3 0 0 0"
+                            Text="{Binding Name}"
+                            Cursor="Hand">
+                            <TextBlock.InputBindings>
+                                <MouseBinding
+                                    Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.RemoveCategoryPhotoCmd}"
+                                    CommandParameter="{Binding }"
+                                    MouseAction="LeftClick" />
+                            </TextBlock.InputBindings>
+                        </TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </HeaderedItemsControl.ItemTemplate>
+        </HeaderedItemsControl>
+
+        <Button Grid.Row="2"
                 MinWidth="80"
                 Height="Auto"
                 Margin="0 10 5 10"
                 HorizontalAlignment="Right"
-                Click="AddCategoryClick"
+                Command="{Binding AddCategoryCmd}"
                 Content="Add category" />
 
-        <Grid Grid.Row="2" HorizontalAlignment="Center">
+        <Grid Grid.Row="3" HorizontalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />

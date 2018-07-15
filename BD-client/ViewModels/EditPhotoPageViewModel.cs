@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -15,6 +16,8 @@ using BD_client.Dto;
 using BD_client.Pages;
 using BD_client.Services;
 using RestSharp;
+using MahApps.Metro.Controls.Dialogs;
+
 
 namespace BD_client.ViewModels
 {
@@ -25,12 +28,24 @@ namespace BD_client.ViewModels
         public ICommand CancelCmd { get; set; }
         public ICommand EditCmd { get; set; }
         private IDialogCoordinator dialogCoordinator;
-        public List<Photo> Photos { get; set; }
-        private int _selectedIndex;
+
+
+        public List<Photo> _Photos { get; set; }
+
+        public List<Photo> Photos
+        {
+            get { return _Photos; }
+            set
+            {
+                _Photos = value;
+                OnPropertyChanged("Photos");
+            }
+        }
+
+
         private string _page;
         private string _description;
         private string _tags;
-        private int _selectedCategory;
         public bool IsChecked { get; set; }
         public ICommand SetCategoriesCmd { get; set; }
 
@@ -41,7 +56,7 @@ namespace BD_client.ViewModels
             Categories = new ObservableCollection<Dto.Category>();
             CancelCmd = new RelayCommand(x => Cancel());
             EditCmd = new RelayCommand(x => Edit());
-            SetCategoriesCmd = new RelayCommand(x => SetCategories());
+            SetCategoriesCmd = new RelayCommand(x => SetCategories(x));
         }
 
         private void Cancel()
@@ -60,6 +75,10 @@ namespace BD_client.ViewModels
             for (int i = 0; i < Photos.Count; i++)
             {
                 Photo photo = Photos[i];
+                photo.CategoryIds = photo.Categories.Select(c => c.Id).ToList();
+                photo.Categories = null;
+                photo.UserId = photo.User.Id;
+                photo.User = null;
 
                 progressBar.SetTitle($"Updating {i + 1} of {Photos.Count}");
                 progressBar.SetMessage($"Updating {photo.Name}");
@@ -96,7 +115,7 @@ namespace BD_client.ViewModels
             {
                 await dialogCoordinator.ShowMessageAsync(this, "Success", "All photos updated");
                 Photos.Clear();
-
+                
                 MainWindow.MainVM.Page = "MyPhotosPage.xaml";
                 MainWindow.MainVM.SelectedIndex = -1;
             }
@@ -141,53 +160,27 @@ namespace BD_client.ViewModels
             return true;
         }
 
-        public async void SetCategories()
+        public async void SetCategories(object param)
         {
+            Photo selectedPhoto = (Photo) param;
             var customDialog = new CustomDialog() {Title = "Select categories"};
 
-            var dataContext = new CategoriesDialog();
+            var dataContext = new CategoriesDialog(DialogCoordinator.Instance, selectedPhoto);
 
             CategoriesDialogTemplate template = new CategoriesDialogTemplate(
                     instance =>
                     {
                         //close action
+                        Photos = new List<Photo>(this.Photos);
                         dialogCoordinator.HideMetroDialogAsync(this, customDialog);
-                    },
-                    instance =>
-                    {
-                        //open input dialog
-                        this.AddCategoryInput(dataContext);
                     })
                 {DataContext = dataContext};
 
             customDialog.Content = template;
-
-
             await dialogCoordinator.ShowMetroDialogAsync(this, customDialog);
         }
 
-        private async void AddCategoryInput(CategoriesDialog dataContext)
-        {
-            var result = await dialogCoordinator.ShowInputAsync(this, "Add category", "Type category name");
-            if (result != null)
-            {
-                int userId = Int32.Parse(ConfigurationManager.AppSettings["Id"]);
-                Category category = new Category() {Name = result, UserId = userId};
-                IRestResponse response = await new Request("/categories").DoPost(category);
-
-                if (response.StatusCode == HttpStatusCode.Created || response.StatusCode == HttpStatusCode.OK)
-                {
-                    await dialogCoordinator.ShowMessageAsync(this, "Category added", "Category added");
-                    dataContext.GetCategories();
-                }
-                else
-                {
-                    await dialogCoordinator.ShowMessageAsync(this, "Ooopppss", "Please try again");
-                }
-            }
-        }
-
-        virtual protected void OnPropertyChanged(string propName)
+        protected virtual void OnPropertyChanged(string propName)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propName));

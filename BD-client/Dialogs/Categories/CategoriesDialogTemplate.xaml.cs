@@ -23,21 +23,16 @@ namespace BD_client.Dialogs.Categories
         private readonly Action<CategoriesDialogTemplate> _closeAction;
         private readonly Action<CategoriesDialogTemplate> _openAddCategoryInput;
 
-        public CategoriesDialogTemplate(Action<CategoriesDialogTemplate> closeAction,
-            Action<CategoriesDialogTemplate> openAddCategoryInput)
+        public CategoriesDialogTemplate(Action<CategoriesDialogTemplate> closeAction)
         {
             InitializeComponent();
             _closeAction = closeAction;
-            _openAddCategoryInput = openAddCategoryInput;
-        }
-
-        private void AddCategoryClick(object sender, RoutedEventArgs e)
-        {
-            this._openAddCategoryInput(this);
         }
 
         private void ConfirmClick(object sender, RoutedEventArgs e)
         {
+            CategoriesDialog context = (CategoriesDialog)this.DataContext;
+            context.UpdatePhotoCategories();
             this._closeAction(this);
         }
 
