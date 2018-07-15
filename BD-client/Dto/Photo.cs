@@ -11,8 +11,13 @@ namespace BD_client.Dto
     public class Photo
     {
         [Browsable(false)]
+        [JsonProperty("categories")]
+        public List<Category> Categories { get; set; } = new List<Category>();
+
+        [Browsable(false)]
         [JsonProperty("categoryIds")]
-        public List<int> CategoryIds { get; set; }
+        public List<int?> CategoryIds { get; set; }
+
 
         [Browsable(false)]
         [JsonProperty("creationDate")]

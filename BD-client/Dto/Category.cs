@@ -25,6 +25,10 @@ namespace BD_client.Dto
         [JsonProperty("userId")]
         public int UserId { get; set; }
 
+        [Browsable(false)]
+        [JsonProperty("user")]
+        public User user { get; set; } = null;
+
         public Category()
         {
         }
