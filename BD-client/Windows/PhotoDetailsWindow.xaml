@@ -24,6 +24,7 @@
                 <Setter Property="FontWeight" Value="Bold" />
             </Style>
             <converters:ArrayStringToStringConverter x:Key="ArrayStringToStringConverter" />
+            <converters:CategoriestToStringConverter x:Key="CategoriestToStringConverter" />
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
@@ -55,10 +56,22 @@
                     <Label Content="{Binding Photo.Description}" />
                     <Label Style="{StaticResource MetadataHeader}">Tags</Label>
                     <Label Content="{Binding Photo.Tags, Converter={StaticResource ArrayStringToStringConverter}}" />
+                    <Label Style="{StaticResource MetadataHeader}">Categories</Label>
+                    <Label
+                        Content="{Binding Photo.Categories, Converter={StaticResource CategoriestToStringConverter}}" />
                     <Label Style="{StaticResource MetadataHeader}">Upload date</Label>
                     <Label Content="{Binding Photo.CreationDate}" />
                     <Label Style="{StaticResource MetadataHeader}">Author</Label>
-                    <Label Content="{Binding Photo.User}" />
+                    <TextBlock>
+                        <TextBlock>
+                            <Run Text="{Binding Photo.User.FirstName}" />
+                            <Run Text=" " />
+                            <Run Text="{Binding Photo.User.LastName}" />
+                            <Run Text=" " />
+                        </TextBlock>
+                    </TextBlock>
+                    <TextBlock Text="{Binding Photo.User.Email}" />
+
                 </StackPanel>
             </GroupBox>
             <TextBlock
