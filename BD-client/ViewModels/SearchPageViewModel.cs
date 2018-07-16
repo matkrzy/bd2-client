@@ -75,14 +75,13 @@ namespace BD_client.ViewModels
         {
             TagsAutocomplete.Clear();
             IRestResponse response = await new Request($"/users/{ConfigurationManager.AppSettings["Id"]}/tags?q={TagsPhrase}").DoGet();
-            IRestResponse response2 = await new Request($"/users/{ConfigurationManager.AppSettings["Id"]}/tags").DoGet();
 
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                ObservableCollection<Tag> tagList = JsonConvert.DeserializeObject<ObservableCollection<Tag>>(response.Content);
+                ObservableCollection<string> tagList = JsonConvert.DeserializeObject<ObservableCollection<string>>(response.Content);
                 foreach (var tag in tagList)
-                    TagsAutocomplete.Add(tag.Name);
+                    TagsAutocomplete.Add(tag);
             }
 
         }

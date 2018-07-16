@@ -103,6 +103,7 @@ namespace BD_client.ViewModels
             PublicPhotosCmd = new RelayCommand(x => ShowPublicPhotos());
             CategoriesCmd = new RelayCommand(x => ShowCategories());
             Photos = new List<Photo>();
+            SelectedIndex = -1;
         }
 
         private async void Report()
