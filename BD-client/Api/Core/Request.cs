@@ -65,6 +65,11 @@ namespace BD_client.Api.Core
 
         public void AddParameter(String name, List<string> values)
         {
+            if (values.Count == 0)
+            {
+                this.request.AddParameter(name, "");
+            }
+
             foreach (string value in values)
             {
                 this.request.AddParameter(name, value);
@@ -119,10 +124,6 @@ namespace BD_client.Api.Core
             this.request.Method = Method.PUT;
             this.request.AddHeader("Content-type", "application/json");
             this.request.RequestFormat = DataFormat.Json;
-//            var output = JsonConvert.SerializeObject(data);
-//            request.AddBody(output);
-//
-//            request.AddParameter("application/json", JsonConvert.SerializeObject(data), ParameterType.RequestBody);
 
             this.addJsonBody(data);
 

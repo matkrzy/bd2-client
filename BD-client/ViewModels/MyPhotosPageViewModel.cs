@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -67,6 +68,10 @@ namespace BD_client.ViewModels
             for (int i = 0; i < photos.Count; i++)
             {
                 Photo photo = photos[i];
+                photo.CategoryIds = photo.Categories.Select(c => c.Id).ToList();
+                photo.Categories = null;
+                photo.UserId = photo.User.Id;
+                photo.User = null;
 
                 progressBar.SetTitle($"Archiving {i + 1} of {photos.Count}");
                 progressBar.SetMessage($"Archiving {photo.Name}");
@@ -261,6 +266,10 @@ namespace BD_client.ViewModels
                 if (context.MakePublic)
                 {
                     photo.ShareState = PhotoVisibility.PUBLIC;
+                    photo.CategoryIds = photo.Categories.Select(c => c.Id).ToList();
+                    photo.Categories = null;
+                    photo.UserId = photo.User.Id;
+                    photo.User = null;
 
                     IRestResponse response = await new Request($"/photos/{photo.Id}").DoPut(photo);
 

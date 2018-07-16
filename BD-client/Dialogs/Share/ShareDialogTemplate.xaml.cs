@@ -41,7 +41,7 @@ namespace BD_client.Dialogs.Share
 
         private void CancelClick(object sender, RoutedEventArgs e)
         {
-            this._closeActionConfirm(this);
+            this._closeActionCancel(this);
         }
 
 

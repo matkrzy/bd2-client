@@ -207,13 +207,14 @@ namespace BD_client.Dialogs.Share
 
             Category category = new Category
             {
+                Id = selected.Id,
                 ParentId = selected.Id,
                 UserId = userId,
                 Name = result
             };
 
             IRestResponse response = await new Request($"/categories/{selected.Id}").DoPut(category);
-            if (response.StatusCode == HttpStatusCode.Created)
+            if (response.StatusCode == HttpStatusCode.OK)
             {
                 await dialogCoordinator.ShowMessageAsync(this, "Category updated", "Category updated");
                 this.GetCategories();
@@ -247,7 +248,7 @@ namespace BD_client.Dialogs.Share
 
 
             IRestResponse response = await new Request($"/categories/{selected.Id}").DoDelete();
-            if (response.StatusCode == HttpStatusCode.Created)
+            if (response.StatusCode == HttpStatusCode.OK)
             {
                 await dialogCoordinator.ShowMessageAsync(this, "Category deleted", "Category deleted");
                 this.GetCategories();

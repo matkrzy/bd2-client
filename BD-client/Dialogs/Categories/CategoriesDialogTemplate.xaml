@@ -58,7 +58,7 @@
                 </ItemsPanelTemplate>
             </HeaderedItemsControl.ItemsPanel>
             <HeaderedItemsControl.Header>
-                <TextBlock Text="Tags: " />
+                <TextBlock Text="Selected categories: " />
             </HeaderedItemsControl.Header>
             <HeaderedItemsControl.Template>
                 <ControlTemplate TargetType="{x:Type HeaderedItemsControl}">

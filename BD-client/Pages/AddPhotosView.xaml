@@ -62,6 +62,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock
+                                Cursor="Hand"
                                 Text="{Binding Categories,Converter={StaticResource CategoriestToStringConverter}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                                 <TextBlock.InputBindings>
                                     <MouseBinding
