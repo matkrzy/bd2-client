@@ -6,6 +6,7 @@
     xmlns:local="clr-namespace:BD_client.Pages"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:model="clr-namespace:BD_client.ViewModels"
+    xmlns:models="clr-namespace:BD_client.Models"
     x:Class="BD_client.Pages.CategoriesPage"
     mc:Ignorable="d"
     d:DesignHeight="300" d:DesignWidth="300"
@@ -46,37 +47,35 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="50" />
-            <RowDefinition Height="65" />
         </Grid.RowDefinitions>
-        <TreeView x:Name="Categories"
-                  Grid.Column="0" Grid.Row="0"
-                  ItemsSource="{Binding RootCategories.Result, Mode=OneWay}">
+        <TreeView x:Name="CategoriesTree" Grid.Column="0" Grid.Row="0"
+                  ItemsSource="{Binding GroupedCategories,UpdateSourceTrigger=PropertyChanged}">
+
             <TreeView.Resources>
-                <HierarchicalDataTemplate DataType="{x:Type model:CategoryViewModel}"
-                                          ItemsSource="{Binding Children, Mode=OneWay}">
-                    <TextBlock Text="{Binding Name}" />
+                <HierarchicalDataTemplate
+                    DataType="{x:Type models:GroupedCategory}"
+                    ItemsSource="{Binding Categories,UpdateSourceTrigger=PropertyChanged}">
+                    <TextBlock
+                        Text="{Binding Name}">
+                        <TextBlock.InputBindings>
+                            <MouseBinding
+                                Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.GetPhotosCmd}"
+                                CommandParameter="{Binding }"
+                                MouseAction="LeftClick" />
+                        </TextBlock.InputBindings>
+                    </TextBlock>
                 </HierarchicalDataTemplate>
             </TreeView.Resources>
-            <TreeView.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Name="AddCategoryContextMenuItem" Header="Add" />
-                    <MenuItem Name="RenameCategoryContextMenuItem" Header="Rename" />
-                    <MenuItem Name="RemoveCategoryContextMenuItem" Header="Remove" />
-                    <MenuItem Name="MoveCategoryContextMenuItem" Header="Move" />
-                    <MenuItem Name="AssignToCategoryContextMenuItem" Header="Assign" />
-                    <MenuItem Name="PasteCategoryContextMenuItem" Header="Paste" />
-                </ContextMenu>
-            </TreeView.ContextMenu>
         </TreeView>
-        <ListBox Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" Width="Auto"
+
+        <ListBox Grid.Column="1" Grid.Row="0" Width="Auto"
                  ScrollViewer.VerticalScrollBarVisibility="Hidden"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  HorizontalAlignment="Left"
                  IsSynchronizedWithCurrentItem="True"
                  Name="CategoryPhotosListBox"
-                 ItemsSource="{Binding Photos}"
-                 SelectionMode="Extended"
-                 MouseDoubleClick="OnPhotoDbClick">
+                 ItemsSource="{Binding Photos, UpdateSourceTrigger=PropertyChanged}"
+                 SelectionMode="Extended">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel Orientation="Horizontal" />
@@ -88,40 +87,26 @@
                         <Image Source="{Binding Url}" Height="{Binding Value, ElementName=ZoomSlider}"
                                Width="{Binding Value, ElementName=ZoomSlider}" HorizontalAlignment="Stretch"
                                VerticalAlignment="Top" Stretch="UniformToFill" Margin="0 5 5 0" />
-                        <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Bottom" />
+                        <TextBlock
+                            Text="{Binding Name}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Bottom"
+                            TextTrimming="CharacterEllipsis"
+                            Width="{Binding ElementName=ZoomSlider, Path='Value'}" />
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-            <ListBox.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Edit" Click="OnEditPhoto" />
-                    <MenuItem Header="Download" Click="OnDownloadPhoto" />
-                    <MenuItem Header="Remove" Click="OnRemovePhoto" />
-                    <MenuItem Name="ArchivePhotosContextMenuItem" Header="Archive" />
-                    <MenuItem Name="DissociatePhotosContextMenuItem" Header="Dissociate" />
-                </ContextMenu>
-            </ListBox.ContextMenu>
         </ListBox>
         <Slider x:Name="ZoomSlider"
-                Margin="10,3,10,67"
+                Margin="5 5 5 0"
                 Orientation="Horizontal"
                 Minimum="40"
                 Maximum="250"
-                Value="100" Grid.Row="1"
+                Value="100"
+                Grid.Row="1"
+                Grid.Column="0"
                 Style="{DynamicResource FlatSlider}"
                 SmallChange="5"
-                LargeChange="20" Grid.RowSpan="2" />
-        <CheckBox Name="EnableSearching" Content="Search" HorizontalAlignment="Left" Margin="79,25,0,0"
-                  VerticalAlignment="Top" Grid.Row="1" Width="66" />
-        <Button Name="AddRootCategoryButton" Content="Add" HorizontalAlignment="Left" Margin="10,21,0,0" Grid.Row="1"
-                VerticalAlignment="Top" Width="64" />
-        <ComboBox Name="SelectedCategories" HorizontalAlignment="Left" Grid.Row="2" VerticalAlignment="Top" Width="90"
-                  Margin="6,3,0,0" IsEnabled="{Binding ElementName=EnableSearching, Path=IsChecked}" />
-        <Button Name="SearchButton" Content="Search" HorizontalAlignment="Left" Margin="56,34,0,0" Grid.Row="2"
-                VerticalAlignment="Top" Width="89" Height="13"
-                IsEnabled="{Binding ElementName=EnableSearching, Path=IsChecked}" />
-        <Button Name="AllButton" Content="ALL" HorizontalAlignment="Left" Margin="6,34,0,0" Grid.Row="2"
-                VerticalAlignment="Top" Width="44" IsEnabled="{Binding ElementName=EnableSearching, Path=IsChecked}"
-                Click="OnAllButtonClick" />
+                LargeChange="20" />
     </Grid>
 </Page>
