@@ -57,6 +57,7 @@ namespace BD_client.ViewModels
             CancelCmd = new RelayCommand(x => Cancel());
             EditCmd = new RelayCommand(x => Edit());
             SetCategoriesCmd = new RelayCommand(x => SetCategories(x));
+            MainWindow.MainVM.AssignSearchAction(null);
         }
 
         private void Cancel()

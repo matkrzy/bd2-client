@@ -76,6 +76,19 @@ namespace BD_client.Api.Core
             }
         }
 
+        public void AddParameter(String name, List<int> values)
+        {
+            if (values.Count == 0)
+            {
+                this.request.AddParameter(name, "");
+            }
+
+            foreach (int value in values)
+            {
+                this.request.AddParameter(name, value);
+            }
+        }
+
         public void AddFile(string path)
         {
             string mimeType = MimeMapping.GetMimeMapping(path);

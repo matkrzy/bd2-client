@@ -54,6 +54,7 @@ namespace BD_client.ViewModels
         public ArchivedPhotosPageViewModel(IDialogCoordinator instance)
         {
             dialogCoordinator = instance;
+            MainWindow.MainVM.AssignSearchAction(this.GetArchivedUserPhotos);
             GetArchivedUserPhotos();
         }
 
@@ -67,8 +68,15 @@ namespace BD_client.ViewModels
         private async void GetArchivedUserPhotos()
         {
             long userId = MainWindow.MainVM.User.Id;
-            IRestResponse response = await new Request($"/users/{userId}/photos/archived").DoGet();
-           
+            string searchString = MainWindow.MainVM.SearchString;
+            string path = $"/users/{userId}/photos/archived";
+            if (searchString != null)
+            {
+                path += searchString;
+            }
+
+            IRestResponse response = await new Request(path).DoGet();
+
             Photos = JsonConvert.DeserializeObject<ObservableCollection<Photo>>(response.Content);
         }
 
@@ -186,7 +194,7 @@ namespace BD_client.ViewModels
 
                     progressBar.SetTitle($"Downloading {i + 1} of {photos.Count}");
                     progressBar.SetMessage($"Downloading {photo.Name}");
-                    progressBar.SetProgress((double)(i + 1) / photos.Count);
+                    progressBar.SetProgress((double) (i + 1) / photos.Count);
 
                     if (!status)
                     {

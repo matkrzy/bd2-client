@@ -39,6 +39,7 @@ namespace BD_client.ViewModels
 
         public MyPhotosPageViewModel(IDialogCoordinator instance)
         {
+            MainWindow.MainVM.AssignSearchAction(this.GetAllUserPhotos);
             dialogCoordinator = instance;
             this.GetAllUserPhotos();
         }
@@ -194,6 +195,12 @@ namespace BD_client.ViewModels
         {
             long userId = MainWindow.MainVM.User.Id;
             string path = $"/users/{userId}/photos";
+            string searchString = MainWindow.MainVM.SearchString;
+
+            if (searchString != null)
+            {
+                path += searchString;
+            }
 
             IRestResponse response = await new Request(path).DoGet();
             this.Photos = JsonConvert.DeserializeObject<List<Photo>>(response.Content);

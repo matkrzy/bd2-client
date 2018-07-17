@@ -4,14 +4,18 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 using System.Configuration;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using BD_client.Services;
 using BD_client.Api.Core;
 using BD_client.Dto;
 using BD_client.Enums;
+using BD_client.Models;
 using BD_client.Pages;
 using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
@@ -22,10 +26,30 @@ namespace BD_client.ViewModels
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
+        static CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+        TextInfo textTransformer = cultureInfo.TextInfo;
+
         public event PropertyChangedEventHandler PropertyChanged = null;
         private IDialogCoordinator dialogCoordinator;
         public MainWindow template;
         public List<Photo> Photos { get; set; } = null;
+
+        private List<Category> _categories { get; set; }
+
+        public List<Category> Categories
+        {
+            get { return _categories; }
+            set
+            {
+                _categories = value;
+                OnPropertyChanged("Categories");
+            }
+        }
+
+        private Action SearchAction { get; set; } = null;
+        public string SearchString { get; set; } = null;
+
+        public object Visibilities { get; set; }
 
         public ICommand ProfileCmd { get; set; }
         public ICommand HelpCmd { get; set; }
@@ -35,6 +59,9 @@ namespace BD_client.ViewModels
         public ICommand ArchivedPhotosCmd { get; }
         public ICommand CategoriesCmd { get; }
         public ICommand ReportCmd { get; }
+        public ICommand ClearSearchFiltersCmd { get; }
+        public ICommand SearchCmd { get; }
+
 
         private int _selectedIndex;
 
@@ -99,6 +126,19 @@ namespace BD_client.ViewModels
             ProfileCmd = new RelayCommand(x => NavigateToPage("ProfilePage.xaml"));
             PublicPhotosCmd = new RelayCommand(x => NavigateToPage("PublicPhotos.xaml"));
             CategoriesCmd = new RelayCommand(x => NavigateToPage("CategoriesPage.xaml"));
+            ClearSearchFiltersCmd = new RelayCommand(x => ClearSearchFilters());
+            SearchCmd = new RelayCommand(x => CallSearchAction());
+
+            template.SearchButton.IsEnabled = false;
+            Visibilities = Enum.GetValues(typeof(PhotoVisibility))
+                .Cast<PhotoVisibility>()
+                .Select(t => new
+                {
+                    Id = ((int) t),
+                    Name = textTransformer.ToTitleCase(t.ToString().ToLower())
+                }).ToList();
+
+
             Photos = new List<Photo>();
 
             if (File.Exists("./token"))
@@ -122,6 +162,7 @@ namespace BD_client.ViewModels
                 try
                 {
                     User = Api.Utils.Utils.Deserialize<User>(response);
+                    this.GetCategories();
 
                     Enabled = true;
                     SelectedIndex = -1;
@@ -215,6 +256,65 @@ namespace BD_client.ViewModels
             IRestResponse response = await new Request(path).DoGet();
             this.Photos = JsonConvert.DeserializeObject<List<Photo>>(response.Content);
         }
+
+        public async void GetCategories()
+        {
+            long userId = MainWindow.MainVM.User.Id;
+            IRestResponse response = await new Request($"/users/{userId}/categories").DoGet();
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                Categories = JsonConvert.DeserializeObject<List<Category>>(response.Content);
+            }
+        }
+
+        public void ClearSearchFilters()
+        {
+            template.nameFilter.Text = null;
+            template.descriptionFilter.Text = null;
+            template.tagsFilter.Text = null;
+            template.creationDateFilter.SelectedDate = null;
+            template.categoryFilter.SelectedValue = null;
+            template.visibilityFilter.SelectedValue = null;
+        }
+
+        public void CallSearchAction()
+        {
+            if (this.SearchAction != null)
+            {
+                string name = template.nameFilter.Text;
+                string description = template.descriptionFilter.Text;
+                string tags = template.tagsFilter.Text;
+                DateTime? creationDate = template.creationDateFilter.SelectedDate;
+                Category category = (Category) template.categoryFilter.SelectedValue;
+                var visibility = template.visibilityFilter.SelectedValue;
+
+                SearchString = String.Format(
+                    "?name={0}&description={1}&tags={2}&creation_date={3:d}&categoryIds={4}&visibility={5}",
+                    name,
+                    description,
+                    tags.Length == 0 ? null : tags.Split(' '),
+                    creationDate,
+                    category?.Id,
+                    visibility);
+
+                this.SearchAction();
+                SearchString = null;
+            }
+        }
+
+        public void AssignSearchAction(Action action)
+        {
+            if (action != null)
+            {
+                this.SearchAction = action;
+                template.SearchButton.IsEnabled = true;
+            }
+            else
+            {
+                template.SearchButton.IsEnabled = false;
+            }
+        }
+
 
         //END GLOBAL METHODS
 

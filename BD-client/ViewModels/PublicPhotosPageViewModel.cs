@@ -49,6 +49,7 @@ namespace BD_client.ViewModels
         {
             dialogCoordinator = instance;
             Template = (PublicPhotos) template;
+            MainWindow.MainVM.AssignSearchAction(this.FetchPhotos);
 
             LikeCmd = new RelayCommand(async x => await Like());
         }
@@ -117,15 +118,19 @@ namespace BD_client.ViewModels
                 this.currentPage += step;
                 this.FetchPhotos();
             }
-
         }
 
         public async void FetchPhotos()
         {
-            Request request = new Request(this.requestPath);
-            request.AddParameter("page", currentPage);
-            request.AddParameter("size", PhotosPerPage);
+            string path = $"{this.requestPath}?page={currentPage}&size={PhotosPerPage}";
+            string searchString = MainWindow.MainVM.SearchString;
 
+            if (searchString != null)
+            {
+                path += "&" + searchString.Substring(0, searchString.Length);
+            }
+
+            Request request = new Request(path);
             IRestResponse response = await request.DoGet();
             this.Photos = JsonConvert.DeserializeObject<ObservableCollection<Photo>>(response.Content);
 

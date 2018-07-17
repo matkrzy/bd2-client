@@ -17,6 +17,7 @@ using System.Windows.Input;
 using BD_client.Api.Core;
 using BD_client.Dto;
 using BD_client.Models;
+using BD_client.Pages;
 using BD_client.Utils;
 using BD_client.ViewModels;
 using MahApps.Metro.Controls.Dialogs;
@@ -110,7 +111,7 @@ namespace BD_client.Dialogs.Share
 
         public async void GetCategories()
         {
-            string userId = ConfigurationManager.AppSettings["Id"];
+            long userId = MainWindow.MainVM.User.Id;
             IRestResponse response = await new Request($"/users/{userId}/categories").DoGet();
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -142,7 +143,7 @@ namespace BD_client.Dialogs.Share
             var result = await dialogCoordinator.ShowInputAsync(this, "Add category", "Type category name");
             if (result != null)
             {
-                int userId = Int32.Parse(ConfigurationManager.AppSettings["Id"]);
+                int userId = (int)MainWindow.MainVM.User.Id;
                 Category category = new Category() {Name = result, UserId = userId};
                 IRestResponse response = await new Request("/categories").DoPost(category);
 
@@ -166,7 +167,7 @@ namespace BD_client.Dialogs.Share
                 return;
             }
 
-            int userId = Int32.Parse(ConfigurationManager.AppSettings["Id"]);
+            int userId = (int)MainWindow.MainVM.User.Id;
 
             TreeView tree = (TreeView) param;
             GroupedCategory selected = (GroupedCategory) tree.SelectedItem;
@@ -202,13 +203,12 @@ namespace BD_client.Dialogs.Share
                 return;
             }
 
-            int userId = Int32.Parse(ConfigurationManager.AppSettings["Id"]);
-
+            int userId = (int)MainWindow.MainVM.User.Id;
 
             Category category = new Category
             {
                 Id = selected.Id,
-                ParentId = selected.Id,
+                ParentId = selected.ParentId,
                 UserId = userId,
                 Name = result
             };

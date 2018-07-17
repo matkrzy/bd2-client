@@ -59,6 +59,7 @@ namespace BD_client.ViewModels
                 Multiselect = true
             };
             Photos = new ObservableCollection<Photo>();
+            MainWindow.MainVM.AssignSearchAction(null);
         }
 
 
@@ -115,7 +116,9 @@ namespace BD_client.ViewModels
             for (int i = 0; i < Photos.Count; i++)
             {
                 Photo photo = Photos[i];
-
+                photo.CategoryIds = photo.Categories.Select(c => c.Id).ToList();
+                photo.Categories = null;
+                
                 progressBar.SetTitle($"Adding {i + 1} of {Photos.Count}");
                 progressBar.SetMessage($"Adding {photo.Name}");
                 progressBar.SetProgress((double) (i + 1) / Photos.Count);
@@ -125,6 +128,8 @@ namespace BD_client.ViewModels
                 request.AddParameter("description", photo.Description);
                 request.AddParameter("name", photo.Name);
                 request.AddParameter("tags", photo.Tags);
+                request.AddParameter("categoriesIds", photo.CategoryIds.Where(x => x != null).Cast<int>().ToList());
+
                 IRestResponse response = await request.DoPost();
 
                 if (response.StatusCode != HttpStatusCode.Created)

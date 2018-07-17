@@ -53,7 +53,7 @@ namespace BD_client.ViewModels
 
         private async void GetUserInfo()
         {
-            string userId = ConfigurationManager.AppSettings["Id"];
+            long userId = MainWindow.MainVM.User.Id;
 
             IRestResponse response = await new Request($"/users/{userId}").DoGet();
 

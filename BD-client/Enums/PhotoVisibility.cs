@@ -3,6 +3,6 @@
     public enum PhotoVisibility
     {
         PRIVATE,
-        PUBLIC
+        PUBLIC,
     }
 }

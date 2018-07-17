@@ -10,6 +10,7 @@ using System.Windows.Input;
 using BD_client.Api.Core;
 using BD_client.Dto;
 using BD_client.Models;
+using BD_client.Pages;
 using RestSharp;
 using static Newtonsoft.Json.JsonConvert;
 
@@ -50,12 +51,13 @@ namespace BD_client.ViewModels
         public CategoriesPageViewModel()
         {
             GetPhotosCmd = new RelayCommand(GetPhotos);
+            MainWindow.MainVM.AssignSearchAction(null);
             this.GetCategories();
         }
 
         public async void GetCategories()
         {
-            string userId = ConfigurationManager.AppSettings["Id"];
+            long userId = MainWindow.MainVM.User.Id;
             IRestResponse response = await new Request($"/users/{userId}/categories").DoGet();
             if (response.StatusCode == HttpStatusCode.OK)
             {

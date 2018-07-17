@@ -39,14 +39,89 @@
                 Header="Search"
                 Width="250"
                 Position="Left">
-                <StackPanel Margin="10" Orientation="Vertical">
-                    <Button Margin="2"
-                            Content="create"
-                            Style="{StaticResource MetroFlatButton}" />
-                    <Button Margin="2"
-                            Content="cancel"
-                            Style="{StaticResource MetroFlatButton}" />
-                </StackPanel>
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0">
+                        <Controls:MetroHeader Header="Name">
+                            <TextBox Text=""
+                                     Name="nameFilter"
+                                     Controls:TextBoxHelper.ClearTextButton="True"
+                                     Controls:TextBoxHelper.Watermark="search by name"
+                                     Controls:TextBoxHelper.WatermarkAlignment="Right" />
+                        </Controls:MetroHeader>
+                        <Controls:MetroHeader Header="Description" Margin="0 10 0 0">
+                            <TextBox Text=""
+                                     Name="descriptionFilter"
+                                     Controls:TextBoxHelper.ClearTextButton="True"
+                                     Controls:TextBoxHelper.Watermark="search by description phrase"
+                                     Controls:TextBoxHelper.WatermarkAlignment="Right" />
+                        </Controls:MetroHeader>
+                        <Controls:MetroHeader Header="Tags" Margin="0 10 0 0">
+                            <TextBox Text=""
+                                     Name="tagsFilter"
+                                     Controls:TextBoxHelper.ClearTextButton="True"
+                                     Controls:TextBoxHelper.Watermark="search by tags"
+                                     Controls:TextBoxHelper.WatermarkAlignment="Right" />
+                        </Controls:MetroHeader>
+                        <Controls:MetroHeader Header="Creation date" Margin="0 10 0 0">
+                            <DatePicker Width="230"
+                                        Name="creationDateFilter"
+                                        Margin="0 10 0 0"
+                                        HorizontalAlignment="Center"
+                                        Controls:TextBoxHelper.Watermark="search by creation date" />
+                        </Controls:MetroHeader>
+                        <Controls:MetroHeader Header="Category" Margin="0 10 0 0">
+                            <ComboBox Width="230"
+                                      Name="categoryFilter"
+                                      Margin="0 10 0 0"
+                                      Controls:TextBoxHelper.Watermark="search by category"
+                                      Controls:TextBoxHelper.WatermarkAlignment="Right"
+                                      Controls:TextBoxHelper.ClearTextButton="True"
+                                      DisplayMemberPath="Name"
+                                      IsEditable="True"
+                                      ItemsSource="{Binding Categories,UpdateSourceTrigger=PropertyChanged}"
+                                      MaxDropDownHeight="125"
+                                      Style="{DynamicResource VirtualisedMetroComboBox}"
+                                      Text="{Binding Name}" />
+                        </Controls:MetroHeader>
+                        <Controls:MetroHeader Header="Share state" Margin="0 10 0 0">
+                            <ComboBox Width="230"
+                                      Name="visibilityFilter"
+                                      Margin="0 10 0 0"
+                                      Controls:TextBoxHelper.Watermark="search by share state"
+                                      Controls:TextBoxHelper.WatermarkAlignment="Right"
+                                      Controls:TextBoxHelper.ClearTextButton="True"
+                                      DisplayMemberPath="Name"
+                                      SelectedValuePath="Id"
+                                      ItemsSource="{Binding Visibilities,UpdateSourceTrigger=PropertyChanged}"
+                                      Text="{Binding Name}" />
+                        </Controls:MetroHeader>
+                    </StackPanel>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0"
+                                Margin="0 0 5 0"
+                                Content="clear all"
+                                Command="{Binding ClearSearchFiltersCmd}"
+                                Style="{DynamicResource SquareButtonStyle}" />
+                        <Button Grid.Column="1"
+                                Name="SearchButton"
+                                Margin="5 0 0 0"
+                                Content="search"
+                                Command="{Binding SearchCmd}"
+                                Style="{DynamicResource SquareButtonStyle}" />
+                    </Grid>
+
+                </Grid>
             </Controls:Flyout>
         </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>
