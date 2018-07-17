@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 using System.Configuration;
@@ -10,8 +11,10 @@ using System.Windows.Forms;
 using BD_client.Services;
 using BD_client.Api.Core;
 using BD_client.Dto;
+using BD_client.Enums;
 using BD_client.Pages;
 using MahApps.Metro.Controls.Dialogs;
+using Newtonsoft.Json;
 using RestSharp;
 
 
@@ -21,6 +24,8 @@ namespace BD_client.ViewModels
     {
         public event PropertyChangedEventHandler PropertyChanged = null;
         private IDialogCoordinator dialogCoordinator;
+        public MainWindow template;
+        public List<Photo> Photos { get; set; } = null;
 
         public ICommand ProfileCmd { get; set; }
         public ICommand HelpCmd { get; set; }
@@ -31,13 +36,7 @@ namespace BD_client.ViewModels
         public ICommand CategoriesCmd { get; }
         public ICommand ReportCmd { get; }
 
-        public List<int> List { get; set; } = null;
-        public List<Photo> Photos { get; set; } = null;
-
-        private bool _enabled;
-
         private int _selectedIndex;
-        private String _user;
 
         public int SelectedIndex
         {
@@ -49,7 +48,9 @@ namespace BD_client.ViewModels
             }
         }
 
-        public String User
+        private User _user;
+
+        public User User
         {
             get { return _user; }
             set
@@ -58,6 +59,8 @@ namespace BD_client.ViewModels
                 OnPropertyChanged("User");
             }
         }
+
+        private bool _enabled;
 
         public bool Enabled
         {
@@ -81,9 +84,22 @@ namespace BD_client.ViewModels
             }
         }
 
-        public MainWindowViewModel(IDialogCoordinator instance)
+        public MainWindowViewModel(IDialogCoordinator instance, MainWindow template)
         {
             dialogCoordinator = instance;
+            this.template = template;
+            SelectedIndex = -1;
+
+            ReportCmd = new RelayCommand(x => Report());
+            LogoutCmd = new RelayCommand(x => Logout());
+            HelpCmd = new RelayCommand(x => Help());
+
+            MyPhotosCmd = new RelayCommand(x => NavigateToPage("MyPhotosPage.xaml"));
+            ArchivedPhotosCmd = new RelayCommand(x => NavigateToPage("ArchivedPhotosPage.xaml"));
+            ProfileCmd = new RelayCommand(x => NavigateToPage("ProfilePage.xaml"));
+            PublicPhotosCmd = new RelayCommand(x => NavigateToPage("PublicPhotos.xaml"));
+            CategoriesCmd = new RelayCommand(x => NavigateToPage("CategoriesPage.xaml"));
+            Photos = new List<Photo>();
 
             if (File.Exists("./token"))
             {
@@ -92,43 +108,6 @@ namespace BD_client.ViewModels
             else
             {
                 Page = "LogInPage.xaml";
-            }
-
-            ReportCmd = new RelayCommand(x => Report());
-            MyPhotosCmd = new RelayCommand(x => ShowMyPhotos());
-            ArchivedPhotosCmd = new RelayCommand(x => ShowArchivedPhotos());
-            ProfileCmd = new RelayCommand(x => Profile());
-            LogoutCmd = new RelayCommand(x => Logout());
-            HelpCmd = new RelayCommand(x => Help());
-            PublicPhotosCmd = new RelayCommand(x => ShowPublicPhotos());
-            CategoriesCmd = new RelayCommand(x => ShowCategories());
-            Photos = new List<Photo>();
-            SelectedIndex = -1;
-        }
-
-        private async void Report()
-        {
-            var dialog = new FolderBrowserDialog();
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                var info = await dialogCoordinator.ShowProgressAsync(this, "Generating report", "Please wait...");
-
-                string path = dialog.SelectedPath;
-                string userId = ConfigurationManager.AppSettings["Id"];
-                string stamp = DateTime.Now.ToFileTime().ToString();
-                bool status = await new Request($"/users/{userId}/report").Download(path, $"Report_{stamp}", ".pdf");
-
-                
-                if (status)
-                {
-                    await info.CloseAsync();
-                    await dialogCoordinator.ShowMessageAsync(this, "Report status", "Report downloaded successfully");
-                }
-                else
-                {
-                    await dialogCoordinator.ShowMessageAsync(this, "Report status",
-                        "Report download failed. Try again");
-                }
             }
         }
 
@@ -142,13 +121,9 @@ namespace BD_client.ViewModels
             {
                 try
                 {
-                    var user = Api.Utils.Utils.Deserialize<User>(response);
-                    MainWindow.MainVM.User = user.Email;
-                    ConfigurationManager.AppSettings["Email"] = user.Email;
-                    ConfigurationManager.AppSettings["Id"] = user.Id.ToString();
+                    User = Api.Utils.Utils.Deserialize<User>(response);
 
                     Enabled = true;
-                    User = user.Email;
                     SelectedIndex = -1;
                     Page = "MyPhotosPage.xaml";
                 }
@@ -164,58 +139,84 @@ namespace BD_client.ViewModels
             }
         }
 
-        private void ShowArchivedPhotos()
+
+        private void Logout()
         {
-            MainWindow.MainVM.Page = "ArchivedPhotosPage.xaml";
-            MainWindow.MainVM.SelectedIndex = -1;
+            File.Delete("./token");
+            ConfigurationManager.AppSettings["JWT"] = "";
+
+            Page = "LogInPage.xaml";
+            SelectedIndex = -1;
+            Enabled = false;
+            User = null;
         }
+
+        public async void Report()
+        {
+            var dialog = new FolderBrowserDialog();
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                var info = await dialogCoordinator.ShowProgressAsync(this, "Generating report", "Please wait...");
+
+                string path = dialog.SelectedPath;
+                long userId = User.Id;
+                string stamp = DateTime.Now.ToFileTime().ToString();
+                bool status = await new Request($"/users/{userId}/report").Download(path, $"Report_{stamp}", ".pdf");
+
+
+                if (status)
+                {
+                    await info.CloseAsync();
+                    await dialogCoordinator.ShowMessageAsync(this, "Report status", "Report downloaded successfully");
+                }
+                else
+                {
+                    await dialogCoordinator.ShowMessageAsync(this, "Report status",
+                        "Report download failed. Try again");
+                }
+            }
+        }
+
 
         private void Help()
         {
             string pathToHtmlFile = System.IO.Directory.GetCurrentDirectory() + @"\..\..\Assets\help.html";
             System.Diagnostics.Process.Start(pathToHtmlFile);
-            MainWindow.MainVM.SelectedIndex = -1;
+            SelectedIndex = -1;
         }
 
-        private void ShowCategories()
+
+        //GLOBAL METHODS
+
+        public void NavigateToPage(string page)
         {
-            MainWindow.MainVM.Page = "CategoriesPage.xaml";
-            MainWindow.MainVM.SelectedIndex = -1;
+            Page = page;
+            SelectedIndex = -1;
         }
 
-        private void ShowMyPhotos()
+        public void OpenSearchPanel()
         {
-            MainWindow.MainVM.Page = "MyPhotosPage.xaml";
-            MainWindow.MainVM.SelectedIndex = -1;
+            bool isOpen = template.Flyout.IsOpen;
+            template.Flyout.IsOpen = !isOpen;
         }
 
-        private void ShowPublicPhotos()
+        public async void GetPhotos(PhotoVisibility visibility = PhotoVisibility.PRIVATE)
         {
-            MainWindow.MainVM.Page = "PublicPhotos.xaml";
-            MainWindow.MainVM.SelectedIndex = -1;
+            string path;
+            if (visibility == PhotoVisibility.PRIVATE)
+            {
+                path = $"/users/{User.Id}/photos";
+            }
+            else
+            {
+                path = "/photos";
+            }
+
+            IRestResponse response = await new Request(path).DoGet();
+            this.Photos = JsonConvert.DeserializeObject<List<Photo>>(response.Content);
         }
 
-        private void Logout()
-        {
-//            Response response = new Request("/account/logout").DoGet();
-            String uuid = ConfigurationManager.AppSettings["uudi"];
-
-            File.Delete("./token");
-            ConfigurationManager.AppSettings["JWT"] = "";
-            ConfigurationManager.AppSettings["uudi"] = "";
-
-            ApiRequest.JWT = null;
-            MainWindow.MainVM.Page = "LogInPage.xaml";
-            MainWindow.MainVM.SelectedIndex = -1;
-            MainWindow.MainVM.Enabled = false;
-            MainWindow.MainVM.User = "";
-        }
-
-        private void Profile()
-        {
-            MainWindow.MainVM.Page = "ProfilePage.xaml";
-            MainWindow.MainVM.SelectedIndex = -1;
-        }
+        //END GLOBAL METHODS
 
         protected virtual void OnPropertyChanged(string propName)
         {

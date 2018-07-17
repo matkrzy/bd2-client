@@ -15,7 +15,7 @@ namespace BD_client.Pages
         public MainWindow()
         {
             InitializeComponent();
-            MainVM = new MainWindowViewModel(DialogCoordinator.Instance);
+            MainVM = new MainWindowViewModel(DialogCoordinator.Instance, this);
             DataContext = MainVM;
         }
 
@@ -34,11 +34,12 @@ namespace BD_client.Pages
                     page = "EditPhotoPage.xaml";
                     break;
                 case 2:
-                    page = "SearchPage.xaml";
+                    page = MainVM.Page;
+                    MainVM.OpenSearchPanel();
                     break;
             }
 
-            MainWindow.MainVM.Page = page;
+            MainVM.Page = page;
         }
     }
 }

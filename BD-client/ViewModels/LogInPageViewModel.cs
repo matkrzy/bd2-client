@@ -65,7 +65,7 @@ namespace BD_client.ViewModels
 
                     String JWT = cookie.Value;
 
-                    var user = JsonConvert.DeserializeObject<User>(response.Content);
+                    User user = JsonConvert.DeserializeObject<User>(response.Content);
                     File.WriteAllText("./token", JWT);
 
                     ConfigurationManager.AppSettings["JWT"] = JWT;
@@ -76,7 +76,7 @@ namespace BD_client.ViewModels
                     MainWindow.MainVM.Enabled = true;
                     MainWindow.MainVM.Page = "MyPhotosPage.xaml";
                     MainWindow.MainVM.SelectedIndex = -1;
-                    MainWindow.MainVM.User = user.Email;
+                    MainWindow.MainVM.User = user;
                 }
                 catch (Exception e)
                 {

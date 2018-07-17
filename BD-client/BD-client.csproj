@@ -176,9 +176,7 @@
     <Compile Include="ViewModels\PublicPhotosPageViewModel.cs" />
     <Compile Include="ViewModels\RegisterPageViewModel.cs" />
     <Compile Include="ViewModels\RelayCommand.cs" />
-    <Compile Include="ViewModels\RemovePhotoPageViewModel.cs" />
     <Compile Include="ViewModels\SearchPageViewModel.cs" />
-    <Compile Include="ViewModels\SharePageViewModel.cs" />
     <Compile Include="ViewModels\PhotoDetailsWindowViewModel.cs" />
     <Compile Include="Windows\InputTextModalWindow.xaml.cs">
       <DependentUpon>InputTextModalWindow.xaml</DependentUpon>

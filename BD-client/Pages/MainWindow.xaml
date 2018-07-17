@@ -10,8 +10,6 @@
                       mc:Ignorable="d"
                       ResizeMode="NoResize"
                       Title="Photos" Height="500" Width="700">
-
-
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
             <Button>
@@ -25,15 +23,36 @@
                     </Rectangle>
                     <TextBlock Margin="4 0 0 0"
                                VerticalAlignment="Center"
-                               Text="{Binding User}" />
+                               Text="{Binding User.Email}" />
                 </StackPanel>
             </Button>
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
 
+    <Controls:MetroWindow.Flyouts>
+        <Controls:FlyoutsControl HorizontalAlignment="Left">
+            <Controls:Flyout
+                Name="Flyout"
+                HorizontalContentAlignment="Left"
+                AnimateOpacity="True"
+                CloseButtonIsCancel="True"
+                Header="Search"
+                Width="250"
+                Position="Left">
+                <StackPanel Margin="10" Orientation="Vertical">
+                    <Button Margin="2"
+                            Content="create"
+                            Style="{StaticResource MetroFlatButton}" />
+                    <Button Margin="2"
+                            Content="cancel"
+                            Style="{StaticResource MetroFlatButton}" />
+                </StackPanel>
+            </Controls:Flyout>
+        </Controls:FlyoutsControl>
+    </Controls:MetroWindow.Flyouts>
+
 
     <Grid>
-
         <Grid.Resources>
             <DataTemplate x:Key="MenuItemTemplate" DataType="{x:Type Controls:HamburgerMenuGlyphItem}">
                 <Grid Height="48">

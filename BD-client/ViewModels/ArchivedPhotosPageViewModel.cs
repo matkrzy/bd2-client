@@ -6,6 +6,7 @@ using MahApps.Metro.Controls.Dialogs;
 using System.ComponentModel;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -65,7 +66,7 @@ namespace BD_client.ViewModels
 
         private async void GetArchivedUserPhotos()
         {
-            string userId = ConfigurationManager.AppSettings["Id"];
+            long userId = MainWindow.MainVM.User.Id;
             IRestResponse response = await new Request($"/users/{userId}/photos/archived").DoGet();
            
             Photos = JsonConvert.DeserializeObject<ObservableCollection<Photo>>(response.Content);
@@ -79,6 +80,10 @@ namespace BD_client.ViewModels
             for (int i = 0; i < photos.Count; i++)
             {
                 Photo photo = photos[i];
+                photo.CategoryIds = photo.Categories.Select(c => c.Id).ToList();
+                photo.Categories = null;
+                photo.UserId = photo.User.Id;
+                photo.User = null;
 
                 progressBar.SetTitle($"Restoring {i + 1} of {photos.Count}");
                 progressBar.SetMessage($"Restoring {photo.Name}");

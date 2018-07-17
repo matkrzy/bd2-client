@@ -25,27 +25,15 @@ namespace BD_client.ViewModels
         public IDialogCoordinator dialogCoordinator;
         public event PropertyChangedEventHandler PropertyChanged = null;
 
-        public ObservableCollection<Photo> _Photos { get; set; }
+        public List<Photo> _Photos { get; set; }
 
-        public ObservableCollection<Photo> Photos
+        public List<Photo> Photos
         {
             get { return _Photos; }
             set
             {
                 _Photos = value;
                 OnPropertyChanged("Photos");
-            }
-        }
-
-        private string _page;
-
-        public string Page
-        {
-            get { return _page; }
-            set
-            {
-                _page = value;
-                OnPropertyChanged("Page");
             }
         }
 
@@ -57,7 +45,7 @@ namespace BD_client.ViewModels
 
         public void Preview(int selectedIndex)
         {
-            new PhotoDetailsWindow(Photos, selectedIndex).Show();
+            new PhotoDetailsWindow(new ObservableCollection<Photo>(Photos), selectedIndex).Show();
         }
 
         public async void ArchivePhoto(List<Photo> photos)
@@ -202,29 +190,20 @@ namespace BD_client.ViewModels
             }
         }
 
-        public async void GetAllUserPhotos(PhotoState state = PhotoState.ACTIVE)
+        private async void GetAllUserPhotos()
         {
-            string userId = ConfigurationManager.AppSettings["Id"];
-            IRestResponse response = await new Request($"/users/{userId}/photos").DoGet();
+            long userId = MainWindow.MainVM.User.Id;
+            string path = $"/users/{userId}/photos";
 
-            this.Photos = JsonConvert.DeserializeObject<ObservableCollection<Photo>>(response.Content);
-
-            if (MainWindow.MainVM.Photos != null && MainWindow.MainVM.Photos.Count != 0)
-                MainWindow.MainVM.Photos.Clear();
-            foreach (var photo in Photos)
-            {
-                MainWindow.MainVM.Photos.Add(photo);
-            }
-           
+            IRestResponse response = await new Request(path).DoGet();
+            this.Photos = JsonConvert.DeserializeObject<List<Photo>>(response.Content);
         }
 
         public async void ShareDialog(List<Photo> photos)
         {
             var customDialog = new CustomDialog() {Title = "Select share type"};
-
             var dataContext = new ShareDialog();
             dataContext.SetMessage($"You can share {photos.Count} photos via e-mail and make it public");
-
 
             ShareDialogTemplate template = new ShareDialogTemplate(
                     instance =>
@@ -236,14 +215,12 @@ namespace BD_client.ViewModels
                 {DataContext = dataContext};
 
             customDialog.Content = template;
-
             await dialogCoordinator.ShowMetroDialogAsync(this, customDialog);
         }
 
         public async void Share(List<Photo> photos, ShareDialog context)
         {
             bool errorOccurred = false;
-
             foreach (var photo in photos)
             {
                 if (context.Email != null)
